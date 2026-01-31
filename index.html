@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Tienda Online</title>
+    <style>
+        /* CSS: El estilo de tu tienda */
+        :root { --accent: #ff4757; --dark: #2f3542; --light: #f1f2f6; }
+        body { font-family: sans-serif; margin: 0; background: var(--light); }
+        
+        header { 
+            background: white; padding: 20px; display: flex; 
+            justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); sticky; top: 0; 
+        }
+
+        .grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; padding: 40px; 
+        }
+
+        .card { 
+            background: white; padding: 15px; border-radius: 10px; 
+            text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+        }
+
+        .card img { width: 100%; border-radius: 5px; }
+        
+        button { 
+            background: var(--dark); color: white; border: none; 
+            padding: 10px 20px; border-radius: 5px; cursor: pointer; 
+        }
+
+        button:hover { background: var(--accent); }
+
+        #cart-count { background: var(--accent); color: white; padding: 2px 8px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>IBRA<span>SHOP</span></h1>
+    <div>Carrito: <span id="cart-count">0</span></div>
+</header>
+
+<div class="grid">
+    <div class="card">
+        <img src="https://picsum.photos/300/300?random=1" alt="Producto">
+        <h3>Producto Original 1</h3>
+        <p>$19.99</p>
+        <button onclick="agregarAlCarrito()">Agregar</button>
+    </div>
+    <div class="card">
+        <img src="https://picsum.photos/300/300?random=2" alt="Producto">
+        <h3>Producto Original 2</h3>
+        <p>$29.99</p>
+        <button onclick="agregarAlCarrito()">Agregar</button>
+    </div>
+</div>
+
+<script>
+    // JS: La lógica del carrito
+    let contador = 0;
+    function agregarAlCarrito() {
+        contador++;
+        document.getElementById('cart-count').innerText = contador;
+        alert("¡Producto añadido con éxito!");
+    }
+</script>
+
+</body>
+</html>
