@@ -8,7 +8,7 @@
     
     <style>
         :root {
-            /* Paleta de colores de World of Warcraft */
+            /* Paleta de colores de World of Warcraft - Siempre oscuro */
             --wow-blue-dark: #0c1c2c;
             --wow-blue-medium: #1a365d;
             --wow-blue-light: #2a5a9f;
@@ -20,7 +20,7 @@
             --wow-red: #a52a2a;
             --wow-green: #2e8b57;
             
-            /* Variables para el tema */
+            /* Variables para el tema - SIEMPRE OSCURO */
             --dark: var(--wow-blue-dark);
             --darker: #050505;
             --panel: rgba(10, 25, 41, 0.95);
@@ -33,6 +33,18 @@
             --primary: var(--wow-blue-light);
             --border: #333;
             --shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+            
+            /* Forzar tema oscuro */
+            color-scheme: dark;
+        }
+
+        /* Forzar tema oscuro en todo el documento */
+        html {
+            color-scheme: dark;
+        }
+        
+        body {
+            color-scheme: dark;
         }
 
         * {
@@ -162,6 +174,100 @@
             left: 100%;
         }
 
+        /* NUEVO: Dropdown de Filtros */
+        .filter-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .filter-dropdown-btn {
+            background: var(--panel-light);
+            border: 2px solid var(--wow-gold-dark);
+            color: var(--text);
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            min-width: 200px;
+            justify-content: space-between;
+        }
+
+        .filter-dropdown-btn:hover, .filter-dropdown-btn.active {
+            background: linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold));
+            color: var(--wow-blue-dark);
+            border-color: var(--wow-gold);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(200, 170, 109, 0.4);
+        }
+
+        .filter-dropdown-content {
+            display: none;
+            position: absolute;
+            background: var(--panel);
+            min-width: 250px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--wow-gold);
+            border-radius: 10px;
+            z-index: 1000;
+            margin-top: 10px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .filter-dropdown-content.show {
+            display: block;
+            animation: dropdownAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes dropdownAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-dropdown-item {
+            color: var(--text);
+            padding: 15px 25px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            border-bottom: 1px solid rgba(139, 107, 41, 0.2);
+            cursor: pointer;
+        }
+
+        .filter-dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .filter-dropdown-item:hover {
+            background: linear-gradient(90deg, rgba(139, 107, 41, 0.2), transparent);
+            color: var(--wow-gold);
+            padding-left: 30px;
+        }
+
+        .filter-dropdown-item.active {
+            background: linear-gradient(90deg, rgba(200, 170, 109, 0.3), transparent);
+            color: var(--wow-gold);
+            border-left: 4px solid var(--wow-gold);
+        }
+
+        .filter-dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
         /* Social Links */
         .social-links {
             display: flex;
@@ -255,6 +361,39 @@
             position: relative;
             z-index: 1;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .quick-action-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--panel-light);
+            border: 2px solid var(--wow-gold-dark);
+            border-radius: 8px;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+            text-decoration: none;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--wow-gold);
+            background: rgba(139, 107, 41, 0.1);
+            transform: translateY(-3px);
         }
 
         /* Sections */
@@ -547,6 +686,35 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
+            color: #90ee90;
+            border: 1px solid rgba(40, 167, 69, 0.3);
+        }
+
+        .status-limited {
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
+            color: #ffdb4d;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+
+        .status-soldout {
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
+            color: #ffb3b3;
+            border: 1px solid rgba(220, 53, 69, 0.3);
         }
 
         /* Sell Section */
@@ -1199,6 +1367,55 @@
             box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
         }
 
+        /* Stats badges */
+        .stats-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(139, 107, 41, 0.3), rgba(200, 170, 109, 0.1));
+            border: 2px solid var(--wow-gold-dark);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--wow-gold);
+            font-weight: 600;
+        }
+
+        /* Tag system */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .tag {
+            background: rgba(200, 170, 109, 0.1);
+            color: var(--wow-gold);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(200, 170, 109, 0.3);
+        }
+
+        /* Feature highlight */
+        .feature-highlight {
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(139, 107, 41, 0.1), transparent);
+            border-radius: 10px;
+            border-left: 5px solid var(--wow-gold);
+            margin: 20px 0;
+        }
+
+        .feature-highlight:before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 1.5rem;
+        }
+
         /* Footer */
         footer {
             background: linear-gradient(to bottom, var(--wow-blue-dark) 0%, #050505 100%);
@@ -1539,36 +1756,6 @@
             margin: 0 auto;
         }
 
-        /* Filter Buttons */
-        .filter-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: var(--panel-light);
-            border: 2px solid var(--wow-gold-dark);
-            color: var(--text);
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.05rem;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            background: linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold));
-            color: var(--wow-blue-dark);
-            border-color: var(--wow-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(200, 170, 109, 0.4);
-        }
-
         /* Animated elements */
         @keyframes glow {
             0% { 
@@ -1656,86 +1843,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Stats badges */
-        .stats-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, rgba(139, 107, 41, 0.3), rgba(200, 170, 109, 0.1));
-            border: 2px solid var(--wow-gold-dark);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: var(--wow-gold);
-            font-weight: 600;
-        }
-
-        /* Price highlight */
-        .price-highlight {
-            background: linear-gradient(135deg, rgba(139, 107, 41, 0.2), transparent);
-            padding: 5px 15px;
-            border-radius: 10px;
-            border-left: 4px solid var(--wow-gold);
-        }
-
-        /* Quick action buttons */
-        .quick-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .quick-action-btn {
-            flex: 1;
-            padding: 12px;
-            background: var(--panel-light);
-            border: 2px solid var(--wow-gold-dark);
-            border-radius: 8px;
-            color: var(--text);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quick-action-btn:hover {
-            border-color: var(--wow-gold);
-            background: rgba(139, 107, 41, 0.1);
-            transform: translateY(-3px);
-        }
-
-        /* Badges for status */
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-available {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-            color: #90ee90;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-
-        .status-limited {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
-            color: #ffdb4d;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
-        .status-soldout {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
-            color: #ffb3b3;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-
         /* Progress bars */
         .progress-bar {
             height: 10px;
@@ -1750,169 +1857,6 @@
             background: linear-gradient(90deg, var(--wow-gold-dark), var(--wow-gold));
             border-radius: 5px;
             transition: width 0.5s ease;
-        }
-
-        /* Countdown timer */
-        .countdown {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .countdown-item {
-            background: var(--panel);
-            border: 2px solid var(--wow-gold-dark);
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            min-width: 70px;
-        }
-
-        .countdown-value {
-            font-size: 2rem;
-            font-weight: 900;
-            color: var(--wow-gold);
-            line-height: 1;
-        }
-
-        .countdown-label {
-            font-size: 0.9rem;
-            color: var(--text-gray);
-            margin-top: 5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Feature highlight */
-        .feature-highlight {
-            position: relative;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(139, 107, 41, 0.1), transparent);
-            border-radius: 10px;
-            border-left: 5px solid var(--wow-gold);
-            margin: 20px 0;
-        }
-
-        .feature-highlight:before {
-            content: '✨';
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            font-size: 1.5rem;
-        }
-
-        /* Tag system */
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .tag {
-            background: rgba(200, 170, 109, 0.1);
-            color: var(--wow-gold);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            border: 1px solid rgba(200, 170, 109, 0.3);
-        }
-
-        /* Rating stars */
-        .rating-stars {
-            color: var(--wow-gold);
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-        }
-
-        /* Notification dot */
-        .notification-dot {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 12px;
-            height: 12px;
-            background: linear-gradient(135deg, #ff0000, #ff6b6b);
-            border-radius: 50%;
-            border: 2px solid var(--panel);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-        }
-
-        /* Avatar with status */
-        .avatar {
-            position: relative;
-            width: 50px;
-            height: 50px;
-        }
-
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 2px solid var(--wow-gold-dark);
-        }
-
-        .avatar-status {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            border: 2px solid var(--panel);
-        }
-
-        .status-online {
-            background: #28a745;
-        }
-
-        .status-offline {
-            background: #6c757d;
-        }
-
-        .status-busy {
-            background: #dc3545;
-        }
-
-        /* Card flip effect */
-        .card-flip {
-            perspective: 1000px;
-        }
-
-        .card-flip-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s;
-            transform-style: preserve-3d;
-        }
-
-        .card-flip:hover .card-flip-inner {
-            transform: rotateY(180deg);
-        }
-
-        .card-flip-front, .card-flip-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 15px;
-        }
-
-        .card-flip-back {
-            transform: rotateY(180deg);
-            background: var(--panel);
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border: 2px solid var(--wow-gold);
         }
 
         /* Responsive */
@@ -1948,11 +1892,6 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 20px;
-            }
-            
-            .filter-buttons {
-                width: 100%;
-                justify-content: center;
             }
         }
 
@@ -2028,6 +1967,29 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+            
+            /* Ajustes para dropdown en móvil */
+            .filter-dropdown {
+                width: 100%;
+            }
+            
+            .filter-dropdown-btn {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .filter-dropdown-content {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+            }
+            
+            .quick-action-btn {
+                width: 100%;
+            }
         }
 
         @media (max-width: 480px) {
@@ -2083,20 +2045,6 @@
             .modal-title {
                 font-size: 1.8rem;
             }
-            
-            .filter-buttons {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .filter-btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .quick-actions {
-                flex-direction: column;
-            }
         }
 
         /* Print styles */
@@ -2130,21 +2078,63 @@
             }
         }
 
-        /* High contrast mode */
-        @media (prefers-contrast: high) {
+        /* Forzar tema oscuro independientemente de las preferencias del sistema */
+        @media (prefers-color-scheme: light) {
+            /* Ignorar preferencias de modo claro */
             :root {
-                --wow-gold: #ffcc00;
-                --wow-gold-dark: #cc9900;
-                --wow-beige: #ffffff;
-                --text-gray: #cccccc;
+                /* Mantener colores WoW oscuros */
+                --wow-blue-dark: #0c1c2c;
+                --wow-blue-medium: #1a365d;
+                --wow-blue-light: #2a5a9f;
+                --wow-gold: #c8aa6d;
+                --wow-gold-dark: #8b6b29;
+                --wow-gold-light: #f7e7a0;
+                --wow-brown: #a89c7d;
+                --wow-beige: #e8d8a6;
+                
+                --dark: var(--wow-blue-dark);
+                --darker: #050505;
+                --panel: rgba(10, 25, 41, 0.95);
+                --panel-light: rgba(26, 58, 95, 0.85);
+                --text: var(--wow-beige);
+                --text-gray: var(--wow-brown);
             }
             
-            .product-card,
-            .gold-card,
-            .sell-info,
-            .discord-join-container {
-                border-width: 3px;
+            body {
+                background: linear-gradient(135deg, var(--wow-blue-dark) 0%, var(--wow-blue-medium) 50%, var(--wow-blue-dark) 100%);
+                color: var(--text);
             }
+            
+            /* Forzar scrollbar oscura */
+            ::-webkit-scrollbar-track {
+                background: var(--wow-blue-dark);
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: linear-gradient(var(--wow-gold-dark), var(--wow-gold));
+            }
+            
+            /* Forzar inputs oscuros */
+            input, select, textarea {
+                background: var(--panel);
+                color: var(--text);
+                border-color: var(--wow-gold-dark);
+            }
+            
+            /* Forzar modales oscuros */
+            .modal {
+                background: rgba(12, 28, 44, 0.97);
+            }
+            
+            /* Forzar footer oscuro */
+            footer {
+                background: linear-gradient(to bottom, var(--wow-blue-dark) 0%, #050505 100%);
+            }
+        }
+
+        /* Dark mode (nuestro tema ya es oscuro) */
+        @media (prefers-color-scheme: dark) {
+            /* No hacer cambios, nuestro tema ya es oscuro */
         }
 
         /* Reduced motion */
@@ -2163,46 +2153,6 @@
             .product-card:hover,
             .gold-card:hover {
                 transform: none !important;
-            }
-        }
-
-        /* Dark mode (already dark, but for consistency) */
-        @media (prefers-color-scheme: dark) {
-            /* Our theme is already dark, so no changes needed */
-        }
-
-        /* Light mode support */
-        @media (prefers-color-scheme: light) {
-            :root {
-                --dark: #e6f2ff;
-                --panel: rgba(255, 255, 255, 0.95);
-                --panel-light: rgba(240, 248, 255, 0.9);
-                --text: #1a365d;
-                --text-gray: #4a5568;
-            }
-            
-            body {
-                background: linear-gradient(135deg, #e6f2ff 0%, #c6d9ff 50%, #e6f2ff 100%);
-            }
-            
-            .wow-bg {
-                background-image: 
-                    radial-gradient(circle at 20% 80%, rgba(139, 107, 41, 0.05) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(139, 107, 41, 0.05) 0%, transparent 50%),
-                    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,50 L100,50 M50,0 L50,100" stroke="%238b6b29" stroke-width="0.3" opacity="0.2"/><circle cx="50" cy="50" r="40" stroke="%23c8aa6d" stroke-width="0.3" fill="none" opacity="0.1"/></svg>');
-            }
-            
-            header {
-                background: linear-gradient(to right, #e6f2ff 0%, #c6d9ff 50%, #e6f2ff 100%);
-                border-bottom: 3px solid var(--wow-gold);
-            }
-            
-            .modal {
-                background: rgba(255, 255, 255, 0.97);
-            }
-            
-            footer {
-                background: linear-gradient(to bottom, #e6f2ff 0%, #c6d9ff 100%);
             }
         }
     </style>
@@ -2289,19 +2239,38 @@
             <h2 class="section-title">Cuentas World of Warcraft</h2>
             <div style="color: var(--text-gray); display: flex; align-items: center; gap: 15px;">
                 <i class="fas fa-filter"></i> 
-                <div class="filter-buttons">
-                    <button class="filter-btn active" onclick="filterProducts('all')">
-                        <i class="fas fa-layer-group"></i> Todas
+                <!-- Dropdown de Filtros -->
+                <div class="filter-dropdown">
+                    <button class="filter-dropdown-btn" onclick="toggleFilterDropdown()">
+                        <span id="current-filter">Todas las Categorías</span>
+                        <i class="fas fa-chevron-down"></i>
                     </button>
-                    <button class="filter-btn" onclick="filterProducts('Turtle WoW')">
-                        <i class="fas fa-dragon"></i> Turtle WoW
-                    </button>
-                    <button class="filter-btn" onclick="filterProducts('World of Warcraft')">
-                        <i class="fab fa-wow"></i> WoW Retail
-                    </button>
-                    <button class="filter-btn" onclick="filterProducts('Albion')">
-                        <i class="fas fa-shield-alt"></i> Albion
-                    </button>
+                    <div class="filter-dropdown-content" id="filter-dropdown">
+                        <div class="filter-dropdown-item active" onclick="filterProducts('all')">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Todas las Categorías</span>
+                        </div>
+                        <div class="filter-dropdown-item" onclick="filterProducts('Turtle WoW')">
+                            <i class="fas fa-dragon"></i>
+                            <span>Turtle WoW</span>
+                        </div>
+                        <div class="filter-dropdown-item" onclick="filterProducts('World of Warcraft')">
+                            <i class="fab fa-wow"></i>
+                            <span>WoW Retail</span>
+                        </div>
+                        <div class="filter-dropdown-item" onclick="filterProducts('Albion')">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>Albion Online</span>
+                        </div>
+                        <div class="filter-dropdown-item" onclick="filterProducts('Runescape')">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Runescape</span>
+                        </div>
+                        <div class="filter-dropdown-item" onclick="filterProducts('Otro')">
+                            <i class="fas fa-plus"></i>
+                            <span>Otros Juegos</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2824,6 +2793,7 @@
     let currentRating = 0;
     let editingAccountId = null;
     let currentImageData = null;
+    let currentFilter = 'all';
     
     // URLs actualizadas
     const DISCORD_LINK = "https://discord.gg/AYJkmeZn";
@@ -3111,6 +3081,9 @@
     // ============================================
     
     function init() {
+        // Forzar tema oscuro
+        forceDarkTheme();
+        
         // Cargar datos
         loadData();
         
@@ -3239,77 +3212,76 @@
         });
     }
     
-    function setupSmoothNavigation() {
-        // Navegación suave para enlaces internos
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 120,
-                        behavior: 'smooth'
-                    });
-                    
-                    // Actualizar botón activo
-                    document.querySelectorAll('.nav-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Cerrar admin section si está abierta
-                    if (targetId !== '#admin-section') {
-                        document.getElementById('admin-section').style.display = 'none';
-                    }
-                }
-            });
-        });
+    // ============================================
+    // FUNCIONES DEL DROPDOWN DE FILTROS
+    // ============================================
+    
+    function toggleFilterDropdown() {
+        const dropdown = document.getElementById('filter-dropdown');
+        dropdown.classList.toggle('show');
+        
+        // Cambiar ícono
+        const icon = document.querySelector('.filter-dropdown-btn i');
+        if (dropdown.classList.contains('show')) {
+            icon.className = 'fas fa-chevron-up';
+        } else {
+            icon.className = 'fas fa-chevron-down';
+        }
     }
     
-    function setupTooltips() {
-        // Tooltips se activan automáticamente con el atributo data-tooltip
-        document.querySelectorAll('[data-tooltip]').forEach(element => {
-            element.addEventListener('mouseenter', function() {
-                // Tooltip ya está configurado por CSS
-            });
-        });
-    }
-    
-    function setupEventListeners() {
-        // Enter key en formularios
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                // Login modal
-                if (document.getElementById('login-modal').style.display === 'flex') {
-                    loginAdmin();
-                }
-                // Account modal
-                if (document.getElementById('account-modal').style.display === 'flex') {
-                    saveAccount();
-                }
-                // Reference modal
-                if (document.getElementById('reference-modal').style.display === 'flex') {
-                    submitReference();
-                }
-            }
+    function filterProducts(category) {
+        currentFilter = category;
+        renderAccounts(category);
+        
+        // Actualizar texto del botón dropdown
+        let filterText = 'Todas las Categorías';
+        switch(category) {
+            case 'all':
+                filterText = 'Todas las Categorías';
+                break;
+            case 'Turtle WoW':
+                filterText = 'Turtle WoW';
+                break;
+            case 'World of Warcraft':
+                filterText = 'WoW Retail';
+                break;
+            case 'Albion':
+                filterText = 'Albion Online';
+                break;
+            case 'Runescape':
+                filterText = 'Runescape';
+                break;
+            case 'Otro':
+                filterText = 'Otros Juegos';
+                break;
+        }
+        
+        document.getElementById('current-filter').textContent = filterText;
+        
+        // Actualizar items activos en el dropdown
+        document.querySelectorAll('.filter-dropdown-item').forEach(item => {
+            item.classList.remove('active');
         });
         
-        // Escape key para cerrar modales
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
+        // Activar el item correspondiente
+        const activeItem = Array.from(document.querySelectorAll('.filter-dropdown-item')).find(item => {
+            return item.textContent.includes(filterText);
         });
         
-        // Click fuera del modal para cerrar
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
-                closeModal();
-            }
-        });
+        if (activeItem) {
+            activeItem.classList.add('active');
+        }
+        
+        // Cerrar el dropdown
+        const dropdown = document.getElementById('filter-dropdown');
+        dropdown.classList.remove('show');
+        
+        // Restaurar ícono
+        const icon = document.querySelector('.filter-dropdown-btn i');
+        icon.className = 'fas fa-chevron-down';
+        
+        // Scroll suave a la sección
+        document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     // ============================================
@@ -3321,7 +3293,7 @@
         let filteredAccounts = accounts;
         
         if (filter !== 'all') {
-            filteredAccounts = accounts.filter(p => p.category.includes(filter));
+            filteredAccounts = accounts.filter(p => p.category === filter);
         }
         
         if (filteredAccounts.length === 0) {
@@ -3380,21 +3352,6 @@
                 </div>
             </div>
         `).join('');
-    }
-    
-    function filterProducts(category) {
-        renderAccounts(category);
-        
-        // Actualizar botones activos
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        // Activar el botón correspondiente
-        event.target.classList.add('active');
-        
-        // Scroll suave a la sección
-        document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     function renderGold() {
@@ -3542,6 +3499,122 @@
     }
     
     // ============================================
+    // FUNCIONES DE UTILIDAD
+    // ============================================
+    
+    function forceDarkTheme() {
+        // Agregar metatag para forzar tema oscuro
+        const metaTheme = document.createElement('meta');
+        metaTheme.name = 'color-scheme';
+        metaTheme.content = 'dark';
+        document.head.appendChild(metaTheme);
+        
+        // Forzar atributo en HTML
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.style.colorScheme = 'dark';
+    }
+    
+    function setupSmoothNavigation() {
+        // Navegación suave para enlaces internos
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 120,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Actualizar botón activo
+                    document.querySelectorAll('.nav-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Cerrar admin section si está abierta
+                    if (targetId !== '#admin-section') {
+                        document.getElementById('admin-section').style.display = 'none';
+                    }
+                    
+                    // Cerrar dropdown de filtros si está abierto
+                    const dropdown = document.getElementById('filter-dropdown');
+                    if (dropdown && dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
+                        const icon = document.querySelector('.filter-dropdown-btn i');
+                        if (icon) icon.className = 'fas fa-chevron-down';
+                    }
+                }
+            });
+        });
+    }
+    
+    function setupTooltips() {
+        // Tooltips se activan automáticamente con el atributo data-tooltip
+        document.querySelectorAll('[data-tooltip]').forEach(element => {
+            element.addEventListener('mouseenter', function() {
+                // Tooltip ya está configurado por CSS
+            });
+        });
+    }
+    
+    function setupEventListeners() {
+        // Cerrar dropdown al hacer clic fuera
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('filter-dropdown');
+            const dropdownBtn = document.querySelector('.filter-dropdown-btn');
+            
+            if (dropdown && dropdownBtn && !dropdown.contains(event.target) && !dropdownBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
+                const icon = document.querySelector('.filter-dropdown-btn i');
+                if (icon) icon.className = 'fas fa-chevron-down';
+            }
+        });
+        
+        // Enter key en formularios
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                // Login modal
+                if (document.getElementById('login-modal').style.display === 'flex') {
+                    loginAdmin();
+                }
+                // Account modal
+                if (document.getElementById('account-modal').style.display === 'flex') {
+                    saveAccount();
+                }
+                // Reference modal
+                if (document.getElementById('reference-modal').style.display === 'flex') {
+                    submitReference();
+                }
+            }
+        });
+        
+        // Escape key para cerrar modales
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+                // También cerrar dropdown de filtros
+                const dropdown = document.getElementById('filter-dropdown');
+                if (dropdown && dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    const icon = document.querySelector('.filter-dropdown-btn i');
+                    if (icon) icon.className = 'fas fa-chevron-down';
+                }
+            }
+        });
+        
+        // Click fuera del modal para cerrar
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        });
+    }
+    
+    // ============================================
     // FUNCIONES DE REFERENCIAS
     // ============================================
     
@@ -3631,28 +3704,6 @@
             text: text,
             date: formattedDate
         };
-        
-        // Agregar con animación visual
-        const tempRef = document.createElement('div');
-        tempRef.innerHTML = `
-            <div class="reference-item" style="opacity: 0; transform: translateY(20px);">
-                <div class="reference-header">
-                    <div class="reference-user">
-                        <div class="user-avatar">${newReference.userInitial}</div>
-                        <div>
-                            <strong style="color: var(--text); font-size: 1.1rem;">${newReference.userName}</strong>
-                            <div class="reference-rating">
-                                ${'★'.repeat(newReference.rating)}${'☆'.repeat(5 - newReference.rating)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="reference-content">"${newReference.text}"</div>
-                <div class="reference-date">
-                    <i class="far fa-calendar"></i> ${newReference.date}
-                </div>
-            </div>
-        `;
         
         references.unshift(newReference);
         localStorage.setItem('epic_references', JSON.stringify(references));
@@ -4438,7 +4489,7 @@
         localStorage.setItem('epic_accounts', JSON.stringify(accounts));
         
         // Renderizar cuentas actualizadas
-        renderAccounts();
+        renderAccounts(currentFilter);
         
         // Cerrar modal
         closeModal();
@@ -4502,66 +4553,24 @@
                 setTimeout(() => {
                     accounts.splice(index, 1);
                     localStorage.setItem('epic_accounts', JSON.stringify(accounts));
-                    renderAccounts();
+                    renderAccounts(currentFilter);
                     if (isAdmin) switchAdminTab('accounts');
                     showMessage('✅ Cuenta eliminada exitosamente', 'success');
                 }, 400);
             } else {
                 accounts.splice(index, 1);
                 localStorage.setItem('epic_accounts', JSON.stringify(accounts));
-                renderAccounts();
+                renderAccounts(currentFilter);
                 if (isAdmin) switchAdminTab('accounts');
                 showMessage('✅ Cuenta eliminada exitosamente', 'success');
             }
         }
     }
     
-    function saveSettings() {
-        // Obtener valores
-        const discord = document.getElementById('setting-discord').value.trim();
-        const whatsapp = document.getElementById('setting-whatsapp').value.trim();
-        const tiktok = document.getElementById('setting-tiktok').value.trim();
-        const email = document.getElementById('setting-email').value.trim();
-        
-        // Validaciones básicas
-        if (!discord) {
-            showMessage('El enlace de Discord es obligatorio', 'error');
-            document.getElementById('setting-discord').focus();
-            return;
-        }
-        
-        if (!discord.startsWith('https://')) {
-            settings.discord = 'https://' + discord;
-        } else {
-            settings.discord = discord;
-        }
-        
-        settings.whatsapp = whatsapp || 'https://wa.me/1234567890';
-        settings.tiktok = tiktok || TIKTOK_LINK;
-        settings.email = email || 'soporte@epiclevelup.com';
-        
-        // Guardar en localStorage
-        localStorage.setItem('epic_settings', JSON.stringify(settings));
-        
-        // Actualizar enlaces
-        updateContactLinks();
-        updateSocialLinks();
-        
-        // Mostrar mensaje de éxito
-        showMessage('✅ Configuración guardada exitosamente', 'success');
-        
-        // Pequeña animación
-        const saveBtn = document.querySelector('[onclick="saveSettings()"]');
-        saveBtn.innerHTML = '<i class="fas fa-check"></i> GUARDADO';
-        saveBtn.style.background = 'linear-gradient(135deg, var(--success), #20c997)';
-        
-        setTimeout(() => {
-            saveBtn.innerHTML = '<i class="fas fa-save"></i> GUARDAR CONFIGURACIÓN';
-            saveBtn.style.background = 'linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold))';
-        }, 2000);
-    }
+    // ============================================
+    // FUNCIONES AUXILIARES DE ADMIN
+    // ============================================
     
-    // Funciones CRUD para oro
     function showAddGoldModal() {
         // Crear un modal simple para añadir oro
         const newGold = {
@@ -4665,6 +4674,51 @@
             if (isAdmin) switchAdminTab('videos');
             showMessage('✅ Video eliminado exitosamente', 'success');
         }
+    }
+    
+    function saveSettings() {
+        // Obtener valores
+        const discord = document.getElementById('setting-discord').value.trim();
+        const whatsapp = document.getElementById('setting-whatsapp').value.trim();
+        const tiktok = document.getElementById('setting-tiktok').value.trim();
+        const email = document.getElementById('setting-email').value.trim();
+        
+        // Validaciones básicas
+        if (!discord) {
+            showMessage('El enlace de Discord es obligatorio', 'error');
+            document.getElementById('setting-discord').focus();
+            return;
+        }
+        
+        if (!discord.startsWith('https://')) {
+            settings.discord = 'https://' + discord;
+        } else {
+            settings.discord = discord;
+        }
+        
+        settings.whatsapp = whatsapp || 'https://wa.me/1234567890';
+        settings.tiktok = tiktok || TIKTOK_LINK;
+        settings.email = email || 'soporte@epiclevelup.com';
+        
+        // Guardar en localStorage
+        localStorage.setItem('epic_settings', JSON.stringify(settings));
+        
+        // Actualizar enlaces
+        updateContactLinks();
+        updateSocialLinks();
+        
+        // Mostrar mensaje de éxito
+        showMessage('✅ Configuración guardada exitosamente', 'success');
+        
+        // Pequeña animación
+        const saveBtn = document.querySelector('[onclick="saveSettings()"]');
+        saveBtn.innerHTML = '<i class="fas fa-check"></i> GUARDADO';
+        saveBtn.style.background = 'linear-gradient(135deg, var(--success), #20c997)';
+        
+        setTimeout(() => {
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> GUARDAR CONFIGURACIÓN';
+            saveBtn.style.background = 'linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold))';
+        }, 2000);
     }
     
     // ============================================
@@ -4814,7 +4868,7 @@
                         localStorage.setItem('epic_settings', JSON.stringify(settings));
                         
                         // Recargar la interfaz
-                        renderAccounts();
+                        renderAccounts(currentFilter);
                         renderGold();
                         renderVideos();
                         renderReferences();
