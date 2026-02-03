@@ -8,7 +8,7 @@
     
     <style>
         :root {
-            /* Paleta de colores de World of Warcraft - Siempre oscuro */
+            /* Paleta de colores de World of Warcraft */
             --wow-blue-dark: #0c1c2c;
             --wow-blue-medium: #1a365d;
             --wow-blue-light: #2a5a9f;
@@ -20,7 +20,7 @@
             --wow-red: #a52a2a;
             --wow-green: #2e8b57;
             
-            /* Variables para el tema - SIEMPRE OSCURO */
+            /* Variables para el tema */
             --dark: var(--wow-blue-dark);
             --darker: #050505;
             --panel: rgba(10, 25, 41, 0.95);
@@ -33,18 +33,6 @@
             --primary: var(--wow-blue-light);
             --border: #333;
             --shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
-            
-            /* Forzar tema oscuro */
-            color-scheme: dark;
-        }
-
-        /* Forzar tema oscuro en todo el documento */
-        html {
-            color-scheme: dark;
-        }
-        
-        body {
-            color-scheme: dark;
         }
 
         * {
@@ -92,10 +80,12 @@
             backdrop-filter: blur(10px);
         }
 
+        /* Logo actualizado con efectos 3D avanzados del primer documento */
         .logo {
             display: flex;
             align-items: center;
             gap: 15px;
+            text-decoration: none;
             position: relative;
         }
 
@@ -362,106 +352,6 @@
             left: 100%;
         }
 
-        /* NUEVO: Dropdown de Filtros */
-        .filter-dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .filter-dropdown-btn {
-            background: var(--panel-light);
-            border: 2px solid var(--wow-gold-dark);
-            color: var(--text);
-            padding: 12px 25px;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 1.05rem;
-            min-width: 200px;
-            justify-content: space-between;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
-        }
-
-        .filter-dropdown-btn:hover, .filter-dropdown-btn.active {
-            background: linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold));
-            color: var(--wow-blue-dark);
-            border-color: var(--wow-gold);
-            transform: translateY(-3px) translateZ(10px);
-            box-shadow: 0 8px 20px rgba(200, 170, 109, 0.4);
-        }
-
-        .filter-dropdown-content {
-            display: none;
-            position: absolute;
-            background: var(--panel);
-            min-width: 250px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.8);
-            border: 2px solid var(--wow-gold);
-            border-radius: 10px;
-            z-index: 1000;
-            margin-top: 10px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(20px);
-        }
-
-        .filter-dropdown-content.show {
-            display: block;
-            animation: dropdownAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes dropdownAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-10px) translateZ(0);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) translateZ(20px);
-            }
-        }
-
-        .filter-dropdown-item {
-            color: var(--text);
-            padding: 15px 25px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s;
-            border-bottom: 1px solid rgba(139, 107, 41, 0.2);
-            cursor: pointer;
-            transform: translateZ(0);
-        }
-
-        .filter-dropdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .filter-dropdown-item:hover {
-            background: linear-gradient(90deg, rgba(139, 107, 41, 0.2), transparent);
-            color: var(--wow-gold);
-            padding-left: 30px;
-            transform: translateX(5px) translateZ(5px);
-        }
-
-        .filter-dropdown-item.active {
-            background: linear-gradient(90deg, rgba(200, 170, 109, 0.3), transparent);
-            color: var(--wow-gold);
-            border-left: 4px solid var(--wow-gold);
-        }
-
-        .filter-dropdown-item i {
-            width: 20px;
-            text-align: center;
-        }
-
         /* Social Links */
         .social-links {
             display: flex;
@@ -537,6 +427,123 @@
             100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
         }
 
+        /* Logo en el Hero - Versión mejorada */
+        .hero-logo-container {
+            max-width: 400px;
+            margin: 0 auto 40px;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        .hero-logo {
+            width: 100%;
+            height: auto;
+            filter: 
+                drop-shadow(0 5px 15px rgba(0, 0, 0, 0.8))
+                drop-shadow(0 20px 35px rgba(200, 170, 109, 0.4))
+                drop-shadow(0 0 25px rgba(200, 170, 109, 0.5));
+            transform-style: preserve-3d;
+            animation: heroLogoFloat 8s ease-in-out infinite;
+            border-radius: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes heroLogoFloat {
+            0%, 100% { 
+                transform: 
+                    translateZ(0px)
+                    rotateX(0deg)
+                    rotateY(0deg)
+                    scale(1); 
+            }
+            25% { 
+                transform: 
+                    translateZ(30px)
+                    rotateX(3deg)
+                    rotateY(5deg)
+                    scale(1.02); 
+            }
+            50% { 
+                transform: 
+                    translateZ(40px)
+                    rotateX(-2deg)
+                    rotateY(-3deg)
+                    scale(1.03); 
+            }
+            75% { 
+                transform: 
+                    translateZ(20px)
+                    rotateX(2deg)
+                    rotateY(7deg)
+                    scale(1.01); 
+            }
+        }
+
+        .hero-logo-container:before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            background: linear-gradient(45deg, 
+                transparent 20%, 
+                rgba(200, 170, 109, 0.2) 50%, 
+                transparent 80%);
+            border-radius: 20px;
+            z-index: 1;
+            animation: heroLogoShine 10s infinite linear;
+            filter: blur(12px);
+            opacity: 0.6;
+        }
+
+        @keyframes heroLogoShine {
+            0% { 
+                transform: 
+                    translateX(-150%) 
+                    translateY(-150%) 
+                    rotate(45deg)
+                    translateZ(-20px); 
+            }
+            100% { 
+                transform: 
+                    translateX(150%) 
+                    translateY(150%) 
+                    rotate(45deg)
+                    translateZ(-20px); 
+            }
+        }
+
+        .hero-logo-container:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(
+                circle at center,
+                rgba(200, 170, 109, 0.15) 0%,
+                rgba(200, 170, 109, 0.08) 30%,
+                transparent 70%
+            );
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            animation: heroLogoGlow 5s ease-in-out infinite alternate;
+        }
+
+        @keyframes heroLogoGlow {
+            0% { 
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            100% { 
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
         .hero-title {
             font-size: 3.5rem;
             color: var(--wow-gold);
@@ -563,7 +570,7 @@
             transform: translateZ(15px);
         }
 
-        /* Quick Actions */
+        /* Quick action buttons */
         .quick-actions {
             display: flex;
             gap: 10px;
@@ -597,6 +604,8 @@
             background: rgba(139, 107, 41, 0.1);
             transform: translateY(-3px) translateZ(10px);
         }
+
+        /* El resto del CSS se mantiene igual que en tu segundo documento... */
 
         /* Sections */
         .section {
@@ -660,12 +669,10 @@
             box-shadow: var(--shadow);
             position: relative;
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .product-card:hover {
-            transform: translateY(-15px) scale(1.02) translateZ(20px);
+            transform: translateY(-15px) scale(1.02);
             border-color: var(--wow-gold);
             box-shadow: 
                 0 25px 50px rgba(0, 0, 0, 0.8),
@@ -714,7 +721,6 @@
             top: 20px;
             right: 20px;
             z-index: 3;
-            transform: translateZ(30px);
         }
 
         .product-content {
@@ -763,7 +769,6 @@
             color: var(--wow-gold);
             text-shadow: 0 0 15px rgba(200, 170, 109, 0.4);
             position: relative;
-            transform: translateZ(10px);
         }
 
         .product-price:before {
@@ -792,13 +797,11 @@
             position: relative;
             overflow: hidden;
             letter-spacing: 0.5px;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .btn-buy:hover {
             background: linear-gradient(135deg, var(--wow-gold), var(--wow-gold-light));
-            transform: translateY(-3px) scale(1.05) translateZ(20px);
+            transform: translateY(-3px) scale(1.05);
             box-shadow: 
                 0 10px 25px rgba(200, 170, 109, 0.5),
                 0 0 20px rgba(200, 170, 109, 0.3);
@@ -837,13 +840,11 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .gold-card:hover {
             border-color: var(--wow-gold);
-            transform: translateY(-10px) scale(1.03) translateZ(20px);
+            transform: translateY(-10px) scale(1.03);
             box-shadow: 
                 0 20px 40px rgba(0, 0, 0, 0.7),
                 0 0 25px rgba(200, 170, 109, 0.3);
@@ -879,7 +880,6 @@
                 0 0 20px rgba(200, 170, 109, 0.5),
                 0 0 30px rgba(200, 170, 109, 0.3);
             position: relative;
-            transform: translateZ(15px);
         }
 
         .gold-game {
@@ -899,35 +899,6 @@
             gap: 8px;
         }
 
-        /* Status badges */
-        .status-badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-available {
-            background: linear-gradient(135deg, rgba(40, 167, 69, 0.2), rgba(40, 167, 69, 0.1));
-            color: #90ee90;
-            border: 1px solid rgba(40, 167, 69, 0.3);
-        }
-
-        .status-limited {
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.1));
-            color: #ffdb4d;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
-        .status-soldout {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.2), rgba(220, 53, 69, 0.1));
-            color: #ffb3b3;
-            border: 1px solid rgba(220, 53, 69, 0.3);
-        }
-
         /* Sell Section */
         .sell-container {
             display: grid;
@@ -944,8 +915,6 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .sell-info:before, .discord-join-container:before {
@@ -979,12 +948,10 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .sell-step:hover {
-            transform: translateX(15px) translateZ(10px);
+            transform: translateX(15px);
             background: linear-gradient(90deg, rgba(139, 107, 41, 0.15), transparent);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
@@ -1015,7 +982,6 @@
             box-shadow: 
                 0 5px 15px rgba(139, 107, 41, 0.5),
                 inset 0 2px 0 rgba(255,255,255,0.3);
-            transform: translateZ(15px);
         }
 
         .step-content h4 {
@@ -1048,15 +1014,14 @@
                 0 0 50px rgba(200, 170, 109, 0.3);
             filter: drop-shadow(0 0 10px rgba(200, 170, 109, 0.3));
             animation: discordFloat 3s ease-in-out infinite;
-            transform-style: preserve-3d;
         }
 
         @keyframes discordFloat {
-            0%, 100% { transform: translateY(0) rotate(0) translateZ(0); }
-            50% { transform: translateY(-10px) rotate(5deg) translateZ(15px); }
+            0%, 100% { transform: translateY(0) rotate(0); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
 
-        /* References Section - ACTUALIZADO */
+        /* References Section */
         .references-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1071,8 +1036,6 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .video-references:before, .user-references:before {
@@ -1095,102 +1058,6 @@
             margin-top: 25px;
         }
 
-        /* NUEVO: Estilos para videos */
-        .video-player-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(12, 28, 44, 0.98);
-            z-index: 3000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-            animation: videoFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes videoFadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        .video-player {
-            width: 90%;
-            max-width: 1000px;
-            background: var(--panel);
-            border-radius: 15px;
-            overflow: hidden;
-            border: 4px solid var(--wow-gold);
-            box-shadow: 
-                0 30px 70px rgba(0, 0, 0, 0.9),
-                0 0 50px rgba(200, 170, 109, 0.3);
-            position: relative;
-            transform-style: preserve-3d;
-            transform: translateZ(50px);
-        }
-
-        .video-player-header {
-            background: var(--panel-light);
-            padding: 20px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid var(--wow-gold-dark);
-        }
-
-        .video-player-title {
-            color: var(--wow-gold);
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .close-video-btn {
-            background: rgba(200, 170, 109, 0.1);
-            border: 2px solid var(--wow-gold-dark);
-            color: var(--text-gray);
-            font-size: 1.8rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
-        }
-
-        .close-video-btn:hover {
-            color: var(--wow-gold);
-            background: rgba(200, 170, 109, 0.2);
-            transform: rotate(90deg) scale(1.1) translateZ(20px);
-            box-shadow: 0 0 20px rgba(200, 170, 109, 0.3);
-        }
-
-        .video-embed-container {
-            position: relative;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
-            height: 0;
-            overflow: hidden;
-        }
-
-        .video-embed {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         .video-card {
             background: var(--panel-light);
             border-radius: 10px;
@@ -1198,13 +1065,10 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             border: 2px solid transparent;
             position: relative;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .video-card:hover {
-            transform: translateY(-10px) scale(1.03) translateZ(20px);
+            transform: translateY(-10px) scale(1.03);
             box-shadow: 
                 0 15px 35px rgba(0, 0, 0, 0.5),
                 0 0 20px rgba(200, 170, 109, 0.2);
@@ -1214,19 +1078,19 @@
         .video-thumbnail {
             width: 100%;
             height: 180px;
+            background: linear-gradient(135deg, var(--wow-blue-dark), var(--wow-blue-medium));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--wow-gold);
+            cursor: pointer;
             position: relative;
             overflow: hidden;
             transition: transform 0.5s;
         }
 
-        .video-thumbnail img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s;
-        }
-
-        .video-card:hover .video-thumbnail img {
+        .video-card:hover .video-thumbnail {
             transform: scale(1.05);
         }
 
@@ -1245,34 +1109,6 @@
         @keyframes thumbnailShine {
             0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
             100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .video-thumbnail-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-        }
-
-        .video-card:hover .video-thumbnail-overlay {
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        .video-play-icon {
-            font-size: 3.5rem;
-            color: var(--wow-gold);
-            text-shadow: 0 0 20px rgba(200, 170, 109, 0.5);
-            transition: transform 0.3s;
-        }
-
-        .video-card:hover .video-play-icon {
-            transform: scale(1.2);
         }
 
         .video-info {
@@ -1325,12 +1161,10 @@
             transition: all 0.3s;
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .reference-item:hover {
-            transform: translateX(10px) translateZ(10px);
+            transform: translateX(10px);
             background: linear-gradient(90deg, rgba(139, 107, 41, 0.15), transparent);
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
         }
@@ -1362,7 +1196,6 @@
             box-shadow: 
                 0 5px 15px rgba(139, 107, 41, 0.5),
                 inset 0 2px 0 rgba(255,255,255,0.3);
-            transform: translateZ(15px);
         }
 
         .reference-rating {
@@ -1400,8 +1233,6 @@
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .contact-info:before, .contact-discord:before {
@@ -1437,13 +1268,11 @@
             color: var(--text);
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .contact-method:hover {
             border-color: var(--wow-gold);
-            transform: translateX(15px) translateZ(15px);
+            transform: translateX(15px);
             background: linear-gradient(90deg, rgba(139, 107, 41, 0.15), transparent);
             box-shadow: 
                 0 15px 30px rgba(0, 0, 0, 0.4),
@@ -1478,12 +1307,10 @@
             border: 2px solid var(--wow-gold-dark);
             flex-shrink: 0;
             transition: all 0.3s;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .contact-method:hover .contact-icon {
-            transform: scale(1.1) rotate(10deg) translateZ(15px);
+            transform: scale(1.1) rotate(10deg);
             background: rgba(200, 170, 109, 0.2);
             box-shadow: 0 0 20px rgba(200, 170, 109, 0.3);
         }
@@ -1525,8 +1352,6 @@
             box-shadow: 
                 0 20px 50px rgba(0, 0, 0, 0.8),
                 0 0 30px rgba(200, 170, 109, 0.2);
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .admin-container:before {
@@ -1564,15 +1389,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .admin-tab:hover, .admin-tab.active {
             background: linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold));
             color: var(--wow-blue-dark);
             border-color: var(--wow-gold);
-            transform: translateY(-3px) translateZ(10px);
+            transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(200, 170, 109, 0.4);
         }
 
@@ -1629,8 +1452,6 @@
             font-size: 1.05rem;
             transition: all 0.3s;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         input:focus, select:focus, textarea:focus {
@@ -1640,7 +1461,6 @@
                 0 0 0 4px rgba(200, 170, 109, 0.2),
                 0 0 20px rgba(200, 170, 109, 0.2);
             background: rgba(10, 25, 41, 0.8);
-            transform: translateZ(10px);
         }
 
         textarea {
@@ -1664,13 +1484,11 @@
             position: relative;
             overflow: hidden;
             letter-spacing: 0.5px;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .btn-primary:hover {
             background: linear-gradient(135deg, var(--wow-gold), var(--wow-gold-light));
-            transform: translateY(-3px) scale(1.05) translateZ(20px);
+            transform: translateY(-3px) scale(1.05);
             box-shadow: 
                 0 12px 30px rgba(200, 170, 109, 0.6),
                 0 0 25px rgba(200, 170, 109, 0.3);
@@ -1704,15 +1522,13 @@
             align-items: center;
             gap: 12px;
             font-size: 1.1rem;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .btn-secondary:hover {
             background: var(--panel-light);
             border-color: var(--wow-gold);
             color: var(--wow-gold);
-            transform: translateY(-3px) translateZ(10px);
+            transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(200, 170, 109, 0.3);
         }
 
@@ -1725,13 +1541,11 @@
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 700;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .btn-danger:hover {
             background: linear-gradient(135deg, #c82333, #e33445);
-            transform: scale(1.05) translateZ(15px);
+            transform: scale(1.05);
             box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
         }
 
@@ -1860,6 +1674,57 @@
                 inset 0 0 20px rgba(200, 170, 109, 0.1);
         }
 
+        /* Logo en el Footer */
+        .footer-logo-container {
+            position: relative;
+            perspective: 1000px;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo {
+            max-width: 200px;
+            filter: 
+                drop-shadow(0 5px 10px rgba(0, 0, 0, 0.7))
+                drop-shadow(0 15px 25px rgba(200, 170, 109, 0.3))
+                drop-shadow(0 0 20px rgba(200, 170, 109, 0.4));
+            transform-style: preserve-3d;
+            animation: footerLogoFloat 6s ease-in-out infinite;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes footerLogoFloat {
+            0%, 100% { 
+                transform: 
+                    translateZ(0px)
+                    rotateX(0deg)
+                    rotateY(0deg)
+                    scale(1); 
+            }
+            50% { 
+                transform: 
+                    translateZ(10px)
+                    rotateX(1deg)
+                    rotateY(2deg)
+                    scale(1.02); 
+            }
+        }
+
+        .footer-logo-container:hover .footer-logo {
+            transform: 
+                translateZ(15px)
+                scale(1.05)
+                rotateX(2deg)
+                rotateY(2deg);
+            filter: 
+                drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8))
+                drop-shadow(0 25px 40px rgba(200, 170, 109, 0.5))
+                drop-shadow(0 0 30px rgba(200, 170, 109, 0.6))
+                brightness(1.1);
+        }
+
         .copyright {
             text-align: center;
             padding-top: 35px;
@@ -1900,18 +1765,16 @@
                 0 30px 70px rgba(0, 0, 0, 0.9),
                 0 0 40px rgba(200, 170, 109, 0.2);
             animation: modalAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            transform: translateZ(50px);
         }
 
         @keyframes modalAppear {
             from {
                 opacity: 0;
-                transform: translateY(30px) scale(0.95) translateZ(0);
+                transform: translateY(30px) scale(0.95);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1) translateZ(50px);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -1932,14 +1795,12 @@
             align-items: center;
             justify-content: center;
             z-index: 10;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .close-modal:hover {
             color: var(--wow-gold);
             background: rgba(200, 170, 109, 0.2);
-            transform: rotate(90deg) scale(1.1) translateZ(20px);
+            transform: rotate(90deg) scale(1.1);
             box-shadow: 0 0 20px rgba(200, 170, 109, 0.3);
         }
 
@@ -1978,14 +1839,12 @@
             background: var(--panel-light);
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .image-upload-container:hover {
             border-color: var(--wow-gold);
             background: rgba(200, 170, 109, 0.05);
-            transform: translateY(-5px) translateZ(10px);
+            transform: translateY(-5px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
         }
 
@@ -2101,15 +1960,13 @@
             gap: 10px;
             font-weight: 700;
             font-size: 1.05rem;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         .filter-btn:hover, .filter-btn.active {
             background: linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold));
             color: var(--wow-blue-dark);
             border-color: var(--wow-gold);
-            transform: translateY(-3px) translateZ(10px);
+            transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(200, 170, 109, 0.4);
         }
 
@@ -2161,8 +2018,6 @@
             z-index: 1000;
             pointer-events: none;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            transform-style: preserve-3d;
-            transform: translateZ(50px);
         }
 
         [data-tooltip]:after {
@@ -2214,8 +2069,6 @@
             font-size: 0.9rem;
             color: var(--wow-gold);
             font-weight: 600;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
         }
 
         /* Price highlight */
@@ -2415,6 +2268,10 @@
                 padding: 60px 15px;
             }
             
+            .hero-logo-container {
+                max-width: 300px;
+            }
+            
             .hero-title {
                 font-size: 2.5rem;
             }
@@ -2466,6 +2323,10 @@
             .hero {
                 padding: 40px 15px;
                 margin-bottom: 30px;
+            }
+            
+            .hero-logo-container {
+                max-width: 250px;
             }
             
             .hero-title {
@@ -2542,7 +2403,7 @@
             .btn-buy,
             .btn-primary,
             .btn-secondary,
-            #acceso-btn,
+            #admin-btn,
             footer .footer-social,
             .modal,
             .close-modal {
@@ -2601,11 +2462,17 @@
                 transform: none !important;
             }
             
-            .logo-image {
+            .logo-image,
+            .hero-logo,
+            .footer-logo,
+            .discord-icon-large {
                 animation: none !important;
             }
             
             .logo-image-container:before,
+            .logo-image-container:after,
+            .hero-logo-container:before,
+            .hero-logo-container:after,
             .logo-image-container:after {
                 animation: none !important;
                 display: none;
@@ -2617,39 +2484,38 @@
             /* Our theme is already dark, so no changes needed */
         }
 
-        /* Light mode support - DESHABILITADO */
+        /* Light mode support */
         @media (prefers-color-scheme: light) {
-            /* Forzar siempre oscuro */
             :root {
-                --dark: #0c1c2c;
-                --panel: rgba(10, 25, 41, 0.95);
-                --panel-light: rgba(26, 58, 95, 0.85);
-                --text: #e8d8a6;
-                --text-gray: #a89c7d;
+                --dark: #e6f2ff;
+                --panel: rgba(255, 255, 255, 0.95);
+                --panel-light: rgba(240, 248, 255, 0.9);
+                --text: #1a365d;
+                --text-gray: #4a5568;
             }
             
             body {
-                background: linear-gradient(135deg, #0c1c2c 0%, #1a365d 50%, #0c1c2c 100%) !important;
+                background: linear-gradient(135deg, #e6f2ff 0%, #c6d9ff 50%, #e6f2ff 100%);
             }
             
             .wow-bg {
                 background-image: 
-                    radial-gradient(circle at 20% 80%, rgba(200, 170, 109, 0.03) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(200, 170, 109, 0.03) 0%, transparent 50%),
-                    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,50 L100,50 M50,0 L50,100" stroke="%238b6b29" stroke-width="0.5" opacity="0.1"/><circle cx="50" cy="50" r="40" stroke="%23c8aa6d" stroke-width="0.5" fill="none" opacity="0.05"/></svg>') !important;
+                    radial-gradient(circle at 20% 80%, rgba(139, 107, 41, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(139, 107, 41, 0.05) 0%, transparent 50%),
+                    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,50 L100,50 M50,0 L50,100" stroke="%238b6b29" stroke-width="0.3" opacity="0.2"/><circle cx="50" cy="50" r="40" stroke="%23c8aa6d" stroke-width="0.3" fill="none" opacity="0.1"/></svg>');
             }
             
             header {
-                background: linear-gradient(to right, #0c1c2c 0%, #1a365d 50%, #0c1c2c 100%) !important;
-                border-bottom: 3px solid var(--wow-gold) !important;
+                background: linear-gradient(to right, #e6f2ff 0%, #c6d9ff 50%, #e6f2ff 100%);
+                border-bottom: 3px solid var(--wow-gold);
             }
             
             .modal {
-                background: rgba(12, 28, 44, 0.97) !important;
+                background: rgba(255, 255, 255, 0.97);
             }
             
             footer {
-                background: linear-gradient(to bottom, #0c1c2c 0%, #050505 100%) !important;
+                background: linear-gradient(to bottom, #e6f2ff 0%, #c6d9ff 100%);
             }
         }
     </style>
@@ -2661,7 +2527,7 @@
 
 <!-- Header -->
 <header>
-    <div class="logo">
+    <a href="#" class="logo">
         <div class="logo-image-container">
             <img src="https://i.imgur.com/ynvAS9B.png" alt="EPIC LEVEL UP" class="logo-image">
         </div>
@@ -2669,7 +2535,7 @@
             <div class="logo-text">EPIC LEVEL UP</div>
             <div class="logo-subtitle">Tienda Premium de Oro y Cuentas World of Warcraft</div>
         </div>
-    </div>
+    </a>
     
     <div class="nav-container">
         <a href="#products" class="nav-btn active">
@@ -2687,8 +2553,8 @@
         <a href="#contact" class="nav-btn">
             <i class="fas fa-headset"></i> CONTACTO
         </a>
-        <button class="nav-btn" id="acceso-btn" onclick="showAdmin()">
-            <i class="fas fa-key"></i> ACCESO
+        <button class="nav-btn" id="admin-btn" onclick="showAdmin()">
+            <i class="fas fa-user-shield"></i> ADMIN
         </button>
         
         <div class="social-links">
@@ -2708,6 +2574,9 @@
 <!-- Hero Section -->
 <div class="container">
     <div class="hero">
+        <div class="hero-logo-container">
+            <img src="https://i.imgur.com/ynvAS9B.png" alt="EPIC LEVEL UP" class="hero-logo">
+        </div>
         <h1 class="hero-title">COMPRA Y VENDE ORO DE WORLD OF WARCRAFT</h1>
         <p class="hero-subtitle">
             Marketplace especializado en World of Warcraft Classic, Turtle WoW y versiones retail. 
@@ -2738,37 +2607,19 @@
             <h2 class="section-title">Cuentas World of Warcraft</h2>
             <div style="color: var(--text-gray); display: flex; align-items: center; gap: 15px;">
                 <i class="fas fa-filter"></i> 
-                <div class="filter-dropdown">
-                    <button class="filter-dropdown-btn" id="filter-dropdown-btn">
-                        <span>Todas las Categorías</span>
-                        <i class="fas fa-chevron-down"></i>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterProducts('all')">
+                        <i class="fas fa-layer-group"></i> Todas
                     </button>
-                    <div class="filter-dropdown-content" id="filter-dropdown-content">
-                        <div class="filter-dropdown-item active" onclick="selectFilter('all')">
-                            <i class="fas fa-layer-group"></i>
-                            <span>Todas las Categorías</span>
-                        </div>
-                        <div class="filter-dropdown-item" onclick="selectFilter('Turtle WoW')">
-                            <i class="fas fa-dragon"></i>
-                            <span>Turtle WoW</span>
-                        </div>
-                        <div class="filter-dropdown-item" onclick="selectFilter('World of Warcraft')">
-                            <i class="fab fa-wow"></i>
-                            <span>WoW Retail</span>
-                        </div>
-                        <div class="filter-dropdown-item" onclick="selectFilter('Albion')">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>Albion Online</span>
-                        </div>
-                        <div class="filter-dropdown-item" onclick="selectFilter('Runescape')">
-                            <i class="fas fa-gamepad"></i>
-                            <span>Runescape</span>
-                        </div>
-                        <div class="filter-dropdown-item" onclick="selectFilter('Otro')">
-                            <i class="fas fa-plus"></i>
-                            <span>Otros Juegos</span>
-                        </div>
-                    </div>
+                    <button class="filter-btn" onclick="filterProducts('Turtle WoW')">
+                        <i class="fas fa-dragon"></i> Turtle WoW
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('World of Warcraft')">
+                        <i class="fab fa-wow"></i> WoW Retail
+                    </button>
+                    <button class="filter-btn" onclick="filterProducts('Albion')">
+                        <i class="fas fa-shield-alt"></i> Albion
+                    </button>
                 </div>
             </div>
         </div>
@@ -2938,19 +2789,6 @@
     </div>
 </div>
 
-<!-- NUEVO: Video Player Overlay -->
-<div class="video-player-container" id="video-player-container">
-    <div class="video-player">
-        <div class="video-player-header">
-            <h3 class="video-player-title" id="video-player-title">Video Tutorial</h3>
-            <button class="close-video-btn" onclick="closeVideoPlayer()">&times;</button>
-        </div>
-        <div class="video-embed-container">
-            <iframe class="video-embed" id="video-embed" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-    </div>
-</div>
-
 <!-- Contact Section -->
 <div class="container" id="contact">
     <div class="section">
@@ -3075,7 +2913,9 @@
 <footer>
     <div class="footer-content">
         <div class="footer-section">
-            <h3>EPIC LEVEL UP</h3>
+            <div class="footer-logo-container">
+                <img src="https://i.imgur.com/ynvAS9B.png" alt="EPIC LEVEL UP" class="footer-logo">
+            </div>
             <p>
                 Tu tienda confiable para la compra y venta de oro y cuentas de gaming. 
                 Garantizamos transacciones seguras y entrega rápida con soporte 24/7.
@@ -3143,12 +2983,12 @@
         <div class="login-form">
             <div class="form-group">
                 <label class="form-label">Usuario</label>
-                <input type="text" id="admin-username" placeholder="Ingresa tu usuario" maxlength="50" autocomplete="off">
+                <input type="text" id="admin-username" placeholder="Ingresa tu usuario" maxlength="50">
             </div>
             
             <div class="form-group">
                 <label class="form-label">Contraseña</label>
-                <input type="password" id="admin-password" placeholder="Ingresa tu contraseña" maxlength="50" autocomplete="off">
+                <input type="password" id="admin-password" placeholder="Ingresa tu contraseña" maxlength="50">
             </div>
             
             <button class="btn-primary" style="width: 100%; margin-top: 30px; padding: 20px;" onclick="loginAdmin()">
@@ -3176,7 +3016,7 @@
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">Nombre de la Cuenta</label>
-                <input type="text" id="account-name" placeholder="Ej: Cuenta Nivel 60 Guerrero" maxlength="100" autocomplete="off">
+                <input type="text" id="account-name" placeholder="Ej: Cuenta Nivel 60 Guerrero" maxlength="100">
             </div>
             
             <div class="form-group">
@@ -3192,24 +3032,24 @@
             
             <div class="form-group">
                 <label class="form-label">Servidor</label>
-                <input type="text" id="account-server" placeholder="Ej: Nordanaar, Americas, etc." maxlength="50" autocomplete="off">
+                <input type="text" id="account-server" placeholder="Ej: Nordanaar, Americas, etc." maxlength="50">
             </div>
             
             <div class="form-group">
                 <label class="form-label">Precio (USD)</label>
-                <input type="text" id="account-price" placeholder="Ej: $89.99" maxlength="20" autocomplete="off">
+                <input type="text" id="account-price" placeholder="Ej: $89.99" maxlength="20">
             </div>
         </div>
         
         <div class="form-group">
             <label class="form-label">Descripción</label>
-            <textarea id="account-description" placeholder="Describe las características de la cuenta, equipo, profesiones, monturas, etc..." maxlength="500" autocomplete="off"></textarea>
+            <textarea id="account-description" placeholder="Describe las características de la cuenta, equipo, profesiones, monturas, etc..." maxlength="500"></textarea>
         </div>
         
         <div class="form-grid">
             <div class="form-group">
                 <label class="form-label">Stock Disponible</label>
-                <input type="number" id="account-stock" placeholder="0" min="0" value="1" autocomplete="off">
+                <input type="number" id="account-stock" placeholder="0" min="0" value="1">
             </div>
             
             <div class="form-group">
@@ -3239,7 +3079,7 @@
         
         <div class="form-group" id="account-image-url-group">
             <label class="form-label">O URL de la Imagen</label>
-            <input type="text" id="account-image-url" placeholder="https://ejemplo.com/imagen.jpg" oninput="previewAccountImageFromUrl()" autocomplete="off">
+            <input type="text" id="account-image-url" placeholder="https://ejemplo.com/imagen.jpg" oninput="previewAccountImageFromUrl()">
         </div>
         
         <div style="display: flex; gap: 20px; margin-top: 40px;">
@@ -3262,12 +3102,12 @@
         
         <div class="form-group">
             <label class="form-label">Tu Nombre</label>
-            <input type="text" id="reference-name" placeholder="Cómo quieres que te llamemos" maxlength="30" autocomplete="off">
+            <input type="text" id="reference-name" placeholder="Cómo quieres que te llamemos" maxlength="30">
         </div>
         
         <div class="form-group">
             <label class="form-label">Tu Referencia</label>
-            <textarea id="reference-text" placeholder="Comparte tu experiencia con nuestros servicios, qué compraste/vendiste, cómo fue el proceso, etc..." maxlength="500" autocomplete="off"></textarea>
+            <textarea id="reference-text" placeholder="Comparte tu experiencia con nuestros servicios, qué compraste/vendiste, cómo fue el proceso, etc..." maxlength="500"></textarea>
         </div>
         
         <div class="form-group">
@@ -3304,11 +3144,11 @@
     let currentRating = 0;
     let editingAccountId = null;
     let currentImageData = null;
-    let currentFilter = 'all';
     
     // URLs actualizadas
     const DISCORD_LINK = "https://discord.gg/AYJkmeZn";
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
+    const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     
     // Datos de ejemplo - Cuentas
     const sampleAccounts = [
@@ -3610,6 +3450,9 @@
         // Actualizar todos los enlaces de Discord y TikTok
         updateSocialLinks();
         
+        // Actualizar logo en todas las ubicaciones
+        updateLogo();
+        
         // Calcular rating promedio
         updateAverageRating();
         
@@ -3619,96 +3462,17 @@
         // Configurar eventos
         setupEventListeners();
         
-        // Configurar dropdown de filtros
-        setupFilterDropdown();
-        
         // Mostrar mensaje de bienvenida
         setTimeout(() => {
             showMessage('¡Bienvenido a EPIC LEVEL UP! 🎮✨', 'info');
         }, 1000);
     }
     
-    function setupFilterDropdown() {
-        const filterBtn = document.getElementById('filter-dropdown-btn');
-        const filterContent = document.getElementById('filter-dropdown-content');
-        
-        // Toggle dropdown
-        filterBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            filterContent.classList.toggle('show');
-            this.classList.toggle('active');
+    function updateLogo() {
+        // Actualizar todas las instancias del logo
+        document.querySelectorAll('.logo-image, .hero-logo, .footer-logo').forEach(img => {
+            img.src = LOGO_URL;
         });
-        
-        // Cerrar dropdown al hacer click fuera
-        document.addEventListener('click', function() {
-            filterContent.classList.remove('show');
-            filterBtn.classList.remove('active');
-        });
-        
-        // Prevenir que el dropdown se cierre al hacer click dentro
-        filterContent.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-    }
-    
-    function selectFilter(category) {
-        currentFilter = category;
-        renderAccounts(category);
-        
-        // Actualizar texto del botón
-        const filterBtn = document.getElementById('filter-dropdown-btn');
-        const filterItems = document.querySelectorAll('.filter-dropdown-item');
-        
-        filterItems.forEach(item => {
-            item.classList.remove('active');
-        });
-        
-        let filterText = 'Todas las Categorías';
-        let filterIcon = 'fas fa-layer-group';
-        
-        switch(category) {
-            case 'Turtle WoW':
-                filterText = 'Turtle WoW';
-                filterIcon = 'fas fa-dragon';
-                document.querySelector('.filter-dropdown-item:nth-child(2)').classList.add('active');
-                break;
-            case 'World of Warcraft':
-                filterText = 'WoW Retail';
-                filterIcon = 'fab fa-wow';
-                document.querySelector('.filter-dropdown-item:nth-child(3)').classList.add('active');
-                break;
-            case 'Albion':
-                filterText = 'Albion Online';
-                filterIcon = 'fas fa-shield-alt';
-                document.querySelector('.filter-dropdown-item:nth-child(4)').classList.add('active');
-                break;
-            case 'Runescape':
-                filterText = 'Runescape';
-                filterIcon = 'fas fa-gamepad';
-                document.querySelector('.filter-dropdown-item:nth-child(5)').classList.add('active');
-                break;
-            case 'Otro':
-                filterText = 'Otros Juegos';
-                filterIcon = 'fas fa-plus';
-                document.querySelector('.filter-dropdown-item:nth-child(6)').classList.add('active');
-                break;
-            default:
-                filterText = 'Todas las Categorías';
-                filterIcon = 'fas fa-layer-group';
-                document.querySelector('.filter-dropdown-item:nth-child(1)').classList.add('active');
-        }
-        
-        filterBtn.innerHTML = `
-            <span>${filterText}</span>
-            <i class="fas fa-chevron-down"></i>
-        `;
-        
-        // Cerrar dropdown
-        document.getElementById('filter-dropdown-content').classList.remove('show');
-        filterBtn.classList.remove('active');
-        
-        // Scroll suave a la sección
-        document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     function loadData() {
@@ -3851,10 +3615,7 @@
             if (e.key === 'Enter') {
                 // Login modal
                 if (document.getElementById('login-modal').style.display === 'flex') {
-                    const activeElement = document.activeElement;
-                    if (activeElement.id === 'admin-username' || activeElement.id === 'admin-password') {
-                        loginAdmin();
-                    }
+                    loginAdmin();
                 }
                 // Account modal
                 if (document.getElementById('account-modal').style.display === 'flex') {
@@ -3871,7 +3632,6 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeModal();
-                closeVideoPlayer();
             }
         });
         
@@ -3880,11 +3640,6 @@
             if (e.target.classList.contains('modal')) {
                 closeModal();
             }
-        });
-        
-        // Prevenir autocompletado problemático
-        document.querySelectorAll('input, textarea').forEach(input => {
-            input.setAttribute('autocomplete', 'off');
         });
     }
     
@@ -3960,8 +3715,6 @@
     
     function renderGold() {
         const container = document.getElementById('gold-packages');
-        
-        // Agrupar por juego
         const games = [...new Set(gold.map(item => item.game))];
         
         let html = '';
@@ -4076,7 +3829,6 @@
             return;
         }
         
-        // Ordenar por fecha más reciente
         const sortedReferences = [...references].sort((a, b) => {
             return new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-'));
         });
@@ -4108,7 +3860,7 @@
     }
     
     // ============================================
-    // FUNCIONES DE VIDEOS (NUEVAS)
+    // FUNCIONES DE VIDEOS
     // ============================================
     
     function playVideo(url, title) {
@@ -4119,8 +3871,6 @@
         videoTitle.textContent = title || 'Video Tutorial';
         videoEmbed.src = url;
         videoContainer.style.display = 'flex';
-        
-        // Bloquear scroll del body
         document.body.style.overflow = 'hidden';
     }
     
@@ -4130,8 +3880,6 @@
         
         videoEmbed.src = '';
         videoContainer.style.display = 'none';
-        
-        // Restaurar scroll del body
         document.body.style.overflow = 'auto';
     }
     
@@ -4143,25 +3891,17 @@
         currentRating = 0;
         updateStars();
         
-        // Limpiar formulario
         document.getElementById('reference-name').value = '';
         document.getElementById('reference-text').value = '';
         
-        // Mostrar modal
-        closeModal();
-        document.getElementById('reference-modal').style.display = 'flex';
-        
-        // Enfocar el primer campo
-        setTimeout(() => {
-            document.getElementById('reference-name').focus();
-        }, 300);
+        showModal('reference-modal');
+        focusFirstField('reference-modal');
     }
     
     function setRating(rating) {
         currentRating = rating;
         updateStars();
         
-        // Pequeña animación
         const star = document.getElementById(`star-${rating}`);
         star.style.transform = 'scale(1.3)';
         setTimeout(() => {
@@ -4194,7 +3934,6 @@
             message.className = 'message error';
             message.style.display = 'block';
             
-            // Animación de shake
             message.style.animation = 'none';
             setTimeout(() => {
                 message.style.animation = 'messageAppear 0.3s ease-out';
@@ -4210,7 +3949,6 @@
             return;
         }
         
-        // Formatear fecha
         const now = new Date();
         const day = now.getDate().toString().padStart(2, '0');
         const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -4226,44 +3964,15 @@
             date: formattedDate
         };
         
-        // Agregar con animación visual
-        const tempRef = document.createElement('div');
-        tempRef.innerHTML = `
-            <div class="reference-item" style="opacity: 0; transform: translateY(20px);">
-                <div class="reference-header">
-                    <div class="reference-user">
-                        <div class="user-avatar">${newReference.userInitial}</div>
-                        <div>
-                            <strong style="color: var(--text); font-size: 1.1rem;">${newReference.userName}</strong>
-                            <div class="reference-rating">
-                                ${'★'.repeat(newReference.rating)}${'☆'.repeat(5 - newReference.rating)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="reference-content">"${newReference.text}"</div>
-                <div class="reference-date">
-                    <i class="far fa-calendar"></i> ${newReference.date}
-                </div>
-            </div>
-        `;
-        
         references.unshift(newReference);
         localStorage.setItem('epic_references', JSON.stringify(references));
         
-        // Renderizar referencias actualizadas
         renderReferences();
-        
-        // Actualizar rating promedio
         updateAverageRating();
-        
-        // Cerrar modal
         closeModal();
         
-        // Mostrar mensaje de éxito con animación
         showMessage('¡Gracias por tu referencia! ✨ Ha sido publicada exitosamente.', 'success');
         
-        // Scroll a las referencias
         setTimeout(() => {
             document.getElementById('references').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 500);
@@ -4274,8 +3983,7 @@
         
         const index = references.findIndex(ref => ref.id === id);
         if (index !== -1) {
-            // Animación de eliminación
-            const refElement = document.querySelector(`[onclick="deleteReference(${id})"]`).closest('.reference-item');
+            const refElement = document.querySelector(`[onclick="deleteReference(${id})"]`)?.closest('.reference-item');
             if (refElement) {
                 refElement.style.opacity = '0';
                 refElement.style.transform = 'translateX(-100px)';
@@ -4304,34 +4012,25 @@
     
     function showAdmin() {
         if (isAdmin) {
-            // Si ya es admin, mostrar la sección
             document.getElementById('admin-section').style.display = 'block';
             window.scrollTo({
                 top: document.getElementById('admin-section').offsetTop - 120,
                 behavior: 'smooth'
             });
             switchAdminTab('accounts');
-            // Actualizar botón de acceso
             document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-user-shield"></i> PANEL ADMIN';
         } else {
-            // Si no es admin, mostrar login
             showLoginModal();
         }
     }
     
     function showLoginModal() {
-        closeModal();
-        document.getElementById('login-modal').style.display = 'flex';
-        
-        // Limpiar campos
         document.getElementById('admin-username').value = '';
         document.getElementById('admin-password').value = '';
         document.getElementById('login-message').style.display = 'none';
         
-        // Enfocar el campo de usuario
-        setTimeout(() => {
-            document.getElementById('admin-username').focus();
-        }, 300);
+        showModal('login-modal');
+        focusFirstField('login-modal');
     }
     
     function loginAdmin() {
@@ -4339,10 +4038,8 @@
         const password = document.getElementById('admin-password').value.trim();
         const message = document.getElementById('login-message');
         
-        // Limpiar mensaje anterior
         message.style.display = 'none';
         
-        // Validar campos vacíos
         if (!username || !password) {
             message.textContent = 'Por favor completa todos los campos';
             message.className = 'message error';
@@ -4350,17 +4047,14 @@
             return;
         }
         
-        // Credenciales por defecto
         if (username === 'admin' && password === 'admin123') {
             isAdmin = true;
             sessionStorage.setItem('isAdmin', 'true');
             
-            // Animación de éxito
             message.textContent = '✓ Acceso concedido. Redirigiendo...';
             message.className = 'message success';
             message.style.display = 'block';
             
-            // Deshabilitar botón durante la redirección
             const loginBtn = document.querySelector('#login-modal .btn-primary');
             const originalText = loginBtn.innerHTML;
             loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INGRESANDO...';
@@ -4371,7 +4065,6 @@
                 showAdmin();
                 showMessage('✅ Sesión de administrador iniciada', 'success');
                 
-                // Restaurar botón
                 loginBtn.innerHTML = originalText;
                 loginBtn.disabled = false;
             }, 800);
@@ -4380,13 +4073,11 @@
             message.className = 'message error';
             message.style.display = 'block';
             
-            // Animación de shake
             message.style.animation = 'none';
             setTimeout(() => {
                 message.style.animation = 'messageAppear 0.3s ease-out';
             }, 10);
             
-            // Limpiar campo de contraseña
             document.getElementById('admin-password').value = '';
             document.getElementById('admin-password').focus();
         }
@@ -4399,13 +4090,10 @@
         sessionStorage.removeItem('isAdmin');
         
         document.getElementById('admin-section').style.display = 'none';
-        
-        // Restaurar botón acceso
         document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-key"></i> ACCESO';
         
         showMessage('👋 Sesión de administrador cerrada', 'info');
         
-        // Regresar a la sección de productos
         setTimeout(() => {
             window.scrollTo({
                 top: 0,
@@ -4423,13 +4111,20 @@
     }
     
     function switchAdminTab(tab) {
-        // Actualizar pestañas activas
         document.querySelectorAll('.admin-tab').forEach(t => {
             t.classList.remove('active');
         });
-        event.target.classList.add('active');
         
-        // Mostrar contenido
+        if (event && event.target) {
+            event.target.classList.add('active');
+        } else {
+            const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(btn => 
+                btn.textContent.includes(tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase()) ||
+                btn.onclick?.toString().includes(`'${tab}'`)
+            );
+            if (tabBtn) tabBtn.classList.add('active');
+        }
+        
         const content = document.getElementById('admin-content');
         
         switch(tab) {
@@ -4450,8 +4145,31 @@
                 break;
         }
         
-        // Scroll al top del contenido
         content.scrollTop = 0;
+        
+        setTimeout(() => {
+            reapplyEventListenersToAdminFields();
+        }, 100);
+    }
+    
+    function reapplyEventListenersToAdminFields() {
+        document.querySelectorAll('#admin-content input, #admin-content textarea, #admin-content select').forEach(input => {
+            input.setAttribute('autocomplete', 'off');
+            
+            input.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            input.addEventListener('mousedown', function(e) {
+                e.stopPropagation();
+            });
+        });
+        
+        document.querySelectorAll('#admin-content button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                // Permitir clic normal
+            });
+        });
     }
     
     function renderAdminAccounts() {
@@ -4827,15 +4545,12 @@
     // ============================================
     
     function showAddAccountModal() {
-        // Resetear valores
         editingAccountId = null;
         currentImageData = null;
         
-        // Configurar modal para nueva cuenta
         document.getElementById('account-modal-title').textContent = 'NUEVA CUENTA';
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> GUARDAR CUENTA';
         
-        // Limpiar formulario
         document.getElementById('account-name').value = '';
         document.getElementById('account-category').value = 'Turtle WoW';
         document.getElementById('account-server').value = '';
@@ -4845,22 +4560,14 @@
         document.getElementById('account-featured').value = 'false';
         document.getElementById('account-image-url').value = '';
         
-        // Limpiar vista previa de imagen
         const preview = document.getElementById('account-image-preview');
         preview.src = '';
         preview.classList.remove('visible');
         
-        // Limpiar mensajes
         document.getElementById('account-message').style.display = 'none';
         
-        // Mostrar modal
-        closeModal();
-        document.getElementById('account-modal').style.display = 'flex';
-        
-        // Enfocar el primer campo
-        setTimeout(() => {
-            document.getElementById('account-name').focus();
-        }, 300);
+        showModal('account-modal');
+        focusFirstField('account-modal');
     }
     
     function editAccount(id) {
@@ -4870,11 +4577,9 @@
         editingAccountId = id;
         currentImageData = null;
         
-        // Configurar modal para edición
         document.getElementById('account-modal-title').textContent = 'EDITAR CUENTA';
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR CUENTA';
         
-        // Llenar formulario con datos existentes
         document.getElementById('account-name').value = account.name;
         document.getElementById('account-category').value = account.category;
         document.getElementById('account-server').value = account.server || '';
@@ -4884,22 +4589,14 @@
         document.getElementById('account-featured').value = account.featured ? 'true' : 'false';
         document.getElementById('account-image-url').value = account.image;
         
-        // Mostrar vista previa de imagen
         const preview = document.getElementById('account-image-preview');
         preview.src = account.image;
         preview.classList.add('visible');
         
-        // Limpiar mensajes
         document.getElementById('account-message').style.display = 'none';
         
-        // Mostrar modal
-        closeModal();
-        document.getElementById('account-modal').style.display = 'flex';
-        
-        // Enfocar el primer campo
-        setTimeout(() => {
-            document.getElementById('account-name').focus();
-        }, 300);
+        showModal('account-modal');
+        focusFirstField('account-modal');
     }
     
     function previewAccountImage(event) {
@@ -4910,7 +4607,6 @@
         if (input.files && input.files[0]) {
             const file = input.files[0];
             
-            // Validar tamaño (5MB máximo)
             if (file.size > 5 * 1024 * 1024) {
                 message.textContent = 'La imagen es demasiado grande (máximo 5MB)';
                 message.className = 'message error';
@@ -4919,7 +4615,6 @@
                 return;
             }
             
-            // Validar tipo
             if (!file.type.match('image.*')) {
                 message.textContent = 'Por favor selecciona una imagen válida (JPG, PNG, GIF)';
                 message.className = 'message error';
@@ -4935,10 +4630,7 @@
                 preview.classList.add('visible');
                 currentImageData = e.target.result;
                 
-                // Limpiar URL si hay imagen subida
                 document.getElementById('account-image-url').value = '';
-                
-                // Ocultar mensaje de error si existe
                 message.style.display = 'none';
             }
             
@@ -4951,7 +4643,6 @@
         const preview = document.getElementById('account-image-preview');
         
         if (url) {
-            // Validar URL
             if (!url.match(/^https?:\/\/.+/)) {
                 showMessage('Por favor ingresa una URL válida (comenzando con http:// o https://)', 'error');
                 return;
@@ -4959,12 +4650,11 @@
             
             preview.src = url;
             preview.classList.add('visible');
-            currentImageData = null; // Resetear datos de imagen subida
+            currentImageData = null;
         }
     }
     
     function saveAccount() {
-        // Obtener valores del formulario
         const name = document.getElementById('account-name').value.trim();
         const category = document.getElementById('account-category').value;
         const server = document.getElementById('account-server').value.trim();
@@ -4975,7 +4665,6 @@
         const imageUrl = document.getElementById('account-image-url').value.trim();
         const message = document.getElementById('account-message');
         
-        // Validar campos requeridos
         if (!name) {
             message.textContent = 'El nombre de la cuenta es obligatorio';
             message.className = 'message error';
@@ -5000,7 +4689,6 @@
             return;
         }
         
-        // Validar formato de precio
         if (!price.match(/^\$?\d+(\.\d{2})?$/)) {
             message.textContent = 'Formato de precio inválido. Usa: $99.99 o 99.99';
             message.className = 'message error';
@@ -5009,23 +4697,18 @@
             return;
         }
         
-        // Formatear precio con símbolo $
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
         
-        // Determinar la imagen a usar
         let image = imageUrl;
         if (currentImageData) {
             image = currentImageData;
         } else if (!imageUrl) {
-            // Usar imagen por defecto si no hay URL ni imagen subida
             image = `https://via.placeholder.com/350x250/1a365d/c8aa6d?text=${encodeURIComponent(name.substring(0, 30))}`;
         }
         
-        // Generar tags automáticos basados en la descripción
         const tags = generateTags(description, category, name);
         
         if (editingAccountId) {
-            // Actualizar cuenta existente
             const index = accounts.findIndex(a => a.id === editingAccountId);
             if (index !== -1) {
                 accounts[index] = {
@@ -5044,7 +4727,6 @@
                 showMessage('✅ Cuenta actualizada exitosamente', 'success');
             }
         } else {
-            // Crear nueva cuenta
             const newAccount = {
                 id: Date.now(),
                 type: 'account',
@@ -5063,21 +4745,14 @@
             showMessage('✅ Cuenta agregada exitosamente', 'success');
         }
         
-        // Guardar en localStorage
         localStorage.setItem('epic_accounts', JSON.stringify(accounts));
-        
-        // Renderizar cuentas actualizadas
         renderAccounts(currentFilter);
-        
-        // Cerrar modal
         closeModal();
         
-        // Actualizar panel de admin
         if (isAdmin) {
             switchAdminTab('accounts');
         }
         
-        // Scroll a las cuentas
         setTimeout(() => {
             document.getElementById('products').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 500);
@@ -5086,16 +4761,13 @@
     function generateTags(description, category, name) {
         const tags = [];
         
-        // Tags basados en categoría
         if (category.includes('Turtle')) tags.push('Turtle WoW');
         if (category.includes('WoW')) tags.push('World of Warcraft');
         if (category.includes('Albion')) tags.push('Albion Online');
         
-        // Tags basados en nivel
         const levelMatch = name.match(/nivel\s*(\d+)/i) || description.match(/nivel\s*(\d+)/i);
         if (levelMatch) tags.push(`Nivel ${levelMatch[1]}`);
         
-        // Tags basados en clase
         const classes = ['Guerrero', 'Mago', 'Sacerdote', 'Pícaro', 'Cazador', 'Chamán', 'Paladín', 'Brujo', 'Druida'];
         classes.forEach(cls => {
             if (name.toLowerCase().includes(cls.toLowerCase()) || description.toLowerCase().includes(cls.toLowerCase())) {
@@ -5103,14 +4775,12 @@
             }
         });
         
-        // Tags basados en características
         if (description.toLowerCase().includes('épic') || description.toLowerCase().includes('legendari')) tags.push('Equipo Épico');
         if (description.toLowerCase().includes('montur')) tags.push('Monturas');
         if (description.toLowerCase().includes('profesion')) tags.push('Profesiones');
         if (description.toLowerCase().includes('reputación')) tags.push('Reputación');
         if (description.toLowerCase().includes('oro') || description.toLowerCase().includes('gold')) tags.push('Con Oro');
         
-        // Limitar a 5 tags únicos
         return [...new Set(tags)].slice(0, 5);
     }
     
@@ -5119,7 +4789,6 @@
         
         const index = accounts.findIndex(a => a.id === id);
         if (index !== -1) {
-            // Animación de eliminación
             const accountCard = document.querySelector(`[onclick="editAccount(${id})"]`)?.closest('.product-card') || 
                                document.querySelector(`[onclick="deleteAccount(${id})"]`)?.closest('div[style*="background: var(--panel)"]');
             
@@ -5146,13 +4815,11 @@
     }
     
     function saveSettings() {
-        // Obtener valores
         const discord = document.getElementById('setting-discord').value.trim();
         const whatsapp = document.getElementById('setting-whatsapp').value.trim();
         const tiktok = document.getElementById('setting-tiktok').value.trim();
         const email = document.getElementById('setting-email').value.trim();
         
-        // Validaciones básicas
         if (!discord) {
             showMessage('El enlace de Discord es obligatorio', 'error');
             document.getElementById('setting-discord').focus();
@@ -5169,17 +4836,12 @@
         settings.tiktok = tiktok || TIKTOK_LINK;
         settings.email = email || 'soporte@epiclevelup.com';
         
-        // Guardar en localStorage
         localStorage.setItem('epic_settings', JSON.stringify(settings));
-        
-        // Actualizar enlaces
         updateContactLinks();
         updateSocialLinks();
         
-        // Mostrar mensaje de éxito
         showMessage('✅ Configuración guardada exitosamente', 'success');
         
-        // Pequeña animación
         const saveBtn = document.querySelector('[onclick="saveSettings()"]');
         saveBtn.innerHTML = '<i class="fas fa-check"></i> GUARDADO';
         saveBtn.style.background = 'linear-gradient(135deg, var(--success), #20c997)';
@@ -5190,9 +4852,7 @@
         }, 2000);
     }
     
-    // Funciones CRUD para oro
     function showAddGoldModal() {
-        // Crear un modal simple para añadir oro
         const newGold = {
             id: Date.now(),
             game: 'Turtle WoW',
@@ -5220,7 +4880,6 @@
         const newStock = parseInt(document.getElementById(`stock-${id}`).value);
         const newStatus = document.getElementById(`status-${id}`).value;
         
-        // Validar precio
         if (!newPrice.match(/^\$?\d+(\.\d{2})?$/)) {
             showMessage('Formato de precio inválido. Usa: $99.99', 'error');
             return;
@@ -5305,14 +4964,19 @@
         document.getElementById('account-modal').style.display = 'none';
         document.getElementById('reference-modal').style.display = 'none';
         
-        // Limpiar mensajes
+        document.body.style.overflow = 'auto';
+        
+        const wowBg = document.querySelector('.wow-bg');
+        if (wowBg) {
+            wowBg.style.pointerEvents = '';
+        }
+        
         document.querySelectorAll('.message').forEach(msg => {
             msg.style.display = 'none';
         });
     }
     
     function showMessage(text, type) {
-        // Crear mensaje temporal
         const message = document.createElement('div');
         message.className = `message ${type}`;
         message.textContent = text;
@@ -5330,7 +4994,6 @@
             padding: 20px 25px;
         `;
         
-        // Agregar animación
         const style = document.createElement('style');
         style.textContent = `
             @keyframes slideIn {
@@ -5348,7 +5011,6 @@
         
         document.body.appendChild(message);
         
-        // Auto-eliminar después de 4 segundos
         setTimeout(() => {
             message.style.opacity = '0';
             message.style.transform = 'translateX(100%)';
@@ -5363,7 +5025,6 @@
             }, 500);
         }, 4000);
         
-        // Cerrar al hacer click
         message.addEventListener('click', function() {
             this.style.opacity = '0';
             this.style.transform = 'translateX(100%)';
@@ -5420,7 +5081,6 @@
                 try {
                     const importedData = JSON.parse(e.target.result);
                     
-                    // Validar estructura básica
                     if (!importedData.accounts || !importedData.gold || !importedData.references) {
                         throw new Error('Formato de archivo inválido');
                     }
@@ -5438,7 +5098,6 @@
                         localStorage.setItem('epic_references', JSON.stringify(references));
                         localStorage.setItem('epic_settings', JSON.stringify(settings));
                         
-                        // Recargar la interfaz
                         renderAccounts(currentFilter);
                         renderGold();
                         renderVideos();
@@ -5470,21 +5129,18 @@
             return;
         }
         
-        // Restaurar datos de ejemplo
         accounts = [...sampleAccounts];
         gold = [...sampleGold];
         videos = [...sampleVideos];
         references = [...sampleReferences];
         settings = { ...contactInfo };
         
-        // Guardar en localStorage
         localStorage.setItem('epic_accounts', JSON.stringify(accounts));
         localStorage.setItem('epic_gold', JSON.stringify(gold));
         localStorage.setItem('epic_videos', JSON.stringify(videos));
         localStorage.setItem('epic_references', JSON.stringify(references));
         localStorage.setItem('epic_settings', JSON.stringify(settings));
         
-        // Recargar la interfaz
         renderAccounts(currentFilter);
         renderGold();
         renderVideos();
@@ -5502,12 +5158,23 @@
     // INICIALIZACIÓN
     // ============================================
     
-    // Iniciar cuando se carga la página
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function() {
+        init();
+        
+        setTimeout(() => {
+            document.querySelectorAll('input, textarea, select').forEach(input => {
+                input.addEventListener('focus', function(e) {
+                    this.style.zIndex = '1000';
+                });
+                
+                input.addEventListener('blur', function(e) {
+                    this.style.zIndex = '';
+                });
+            });
+        }, 500);
+    });
     
-    // Manejar recarga suave
     window.addEventListener('beforeunload', function() {
-        // Guardar datos si es necesario
         localStorage.setItem('epic_accounts', JSON.stringify(accounts));
         localStorage.setItem('epic_gold', JSON.stringify(gold));
         localStorage.setItem('epic_videos', JSON.stringify(videos));
