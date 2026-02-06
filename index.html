@@ -3059,427 +3059,6 @@
             }
         }
 
-        /* ========== GOLD SERVER & ORDER CONFIGURATOR ========== */
-        .gold-server-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .gold-server-card {
-            background: var(--panel);
-            border-radius: 12px;
-            padding: 25px 20px;
-            border: 2px solid var(--wow-gold-dark);
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gold-server-card:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 15px rgba(200,170,109,0.2);
-        }
-
-        .gold-server-card.selected {
-            border-color: var(--wow-gold);
-            background: rgba(200,170,109,0.1);
-            box-shadow: 0 0 20px rgba(200,170,109,0.3);
-        }
-
-        .gold-server-card.selected::after {
-            content: '\f00c';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: var(--wow-gold);
-            font-size: 1rem;
-        }
-
-        .gold-server-card i {
-            font-size: 2rem;
-            color: var(--wow-gold);
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .gold-server-card h4 {
-            color: var(--text);
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-        }
-
-        .gold-server-card p {
-            color: var(--text-gray);
-            font-size: 0.9rem;
-        }
-
-        /* Gold Configurator Panel */
-        .gold-configurator {
-            background: var(--panel);
-            border-radius: 15px;
-            padding: 40px;
-            border: 2px solid var(--wow-gold-dark);
-            margin-top: 30px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .gold-configurator::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--wow-gold-dark), var(--wow-gold), var(--wow-gold-dark));
-        }
-
-        .gold-config-section {
-            margin-bottom: 30px;
-        }
-
-        .gold-config-section h3 {
-            color: var(--wow-gold);
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gold-config-section h3 i {
-            font-size: 1.1rem;
-        }
-
-        /* Gold Amount Selector */
-        .gold-amount-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
-        }
-
-        .gold-amount-option {
-            background: rgba(10, 25, 41, 0.8);
-            border: 2px solid var(--wow-gold-dark);
-            border-radius: 12px;
-            padding: 20px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .gold-amount-option:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-        }
-
-        .gold-amount-option.selected {
-            border-color: var(--wow-gold);
-            background: rgba(200,170,109,0.15);
-            box-shadow: 0 0 15px rgba(200,170,109,0.2);
-        }
-
-        .gold-amount-option .amount {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--wow-gold);
-            margin-bottom: 8px;
-        }
-
-        .gold-amount-option .price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-
-        .gold-amount-option .delivery-info {
-            font-size: 0.85rem;
-            color: var(--text-gray);
-            margin-top: 6px;
-        }
-
-        .gold-amount-option .stock-info {
-            font-size: 0.8rem;
-            margin-top: 8px;
-            padding: 3px 10px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        /* Faction Selector */
-        .faction-selector {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .faction-option {
-            flex: 1;
-            min-width: 150px;
-            background: rgba(10, 25, 41, 0.8);
-            border: 2px solid var(--wow-gold-dark);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .faction-option:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-3px);
-        }
-
-        .faction-option.selected {
-            border-color: var(--wow-gold);
-            background: rgba(200,170,109,0.15);
-            box-shadow: 0 0 15px rgba(200,170,109,0.2);
-        }
-
-        .faction-option.horda.selected {
-            border-color: #a52a2a;
-            background: rgba(165, 42, 42, 0.2);
-            box-shadow: 0 0 15px rgba(165, 42, 42, 0.3);
-        }
-
-        .faction-option.alianza.selected {
-            border-color: var(--wow-blue-light);
-            background: rgba(42, 90, 159, 0.2);
-            box-shadow: 0 0 15px rgba(42, 90, 159, 0.3);
-        }
-
-        .faction-option i {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .faction-option.horda i { color: #c0392b; }
-        .faction-option.alianza i { color: #3498db; }
-
-        .faction-option h4 {
-            color: var(--text);
-            font-size: 1.1rem;
-        }
-
-        /* Trade Type Selector */
-        .trade-type-selector {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .trade-type-option {
-            flex: 1;
-            min-width: 120px;
-            background: rgba(10, 25, 41, 0.8);
-            border: 2px solid var(--wow-gold-dark);
-            border-radius: 12px;
-            padding: 18px 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .trade-type-option:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-3px);
-        }
-
-        .trade-type-option.selected {
-            border-color: var(--wow-gold);
-            background: rgba(200,170,109,0.15);
-            box-shadow: 0 0 15px rgba(200,170,109,0.2);
-        }
-
-        .trade-type-option i {
-            font-size: 1.8rem;
-            color: var(--wow-gold);
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .trade-type-option h4 {
-            color: var(--text);
-            font-size: 1rem;
-        }
-
-        .trade-type-option p {
-            color: var(--text-gray);
-            font-size: 0.8rem;
-            margin-top: 4px;
-        }
-
-        /* Order Summary */
-        .order-summary {
-            background: rgba(200, 170, 109, 0.08);
-            border: 2px solid var(--wow-gold);
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .order-summary h3 {
-            color: var(--wow-gold);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .order-summary-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .order-detail-item {
-            background: var(--panel);
-            border-radius: 10px;
-            padding: 12px 20px;
-            border: 1px solid var(--wow-gold-dark);
-        }
-
-        .order-detail-item .label {
-            font-size: 0.8rem;
-            color: var(--text-gray);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .order-detail-item .value {
-            font-size: 1.1rem;
-            color: var(--wow-gold);
-            font-weight: 700;
-            margin-top: 4px;
-        }
-
-        .btn-discord-order {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
-            color: white;
-            padding: 18px 45px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-discord-order:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.4);
-        }
-
-        .btn-discord-order i {
-            font-size: 1.4rem;
-        }
-
-        /* Step indicators */
-        .config-steps {
-            display: flex;
-            justify-content: center;
-            gap: 5px;
-            margin-bottom: 30px;
-        }
-
-        .config-step {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--text-gray);
-            background: rgba(10, 25, 41, 0.5);
-            border: 1px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .config-step.active {
-            color: var(--wow-gold);
-            border-color: var(--wow-gold-dark);
-            background: rgba(200,170,109,0.1);
-        }
-
-        .config-step.completed {
-            color: var(--success);
-            border-color: var(--success);
-            background: rgba(40, 167, 69, 0.1);
-        }
-
-        .config-step .step-num {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 700;
-            background: var(--panel);
-            border: 2px solid var(--wow-gold-dark);
-        }
-
-        .config-step.active .step-num {
-            border-color: var(--wow-gold);
-            color: var(--wow-gold);
-        }
-
-        .config-step.completed .step-num {
-            border-color: var(--success);
-            background: var(--success);
-            color: white;
-        }
-
-        @media (max-width: 768px) {
-            .gold-server-list {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            .gold-amount-grid {
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            }
-            .faction-selector,
-            .trade-type-selector {
-                flex-direction: column;
-            }
-            .faction-option,
-            .trade-type-option {
-                min-width: 100%;
-            }
-            .gold-configurator {
-                padding: 25px 20px;
-            }
-            .config-steps {
-                flex-wrap: wrap;
-            }
-            .order-summary-details {
-                flex-direction: column;
-                align-items: center;
-            }
-            .btn-discord-order {
-                width: 100%;
-                justify-content: center;
-                padding: 16px 30px;
-                font-size: 1.1rem;
-            }
-        }
-
         /* High contrast mode */
         @media (prefers-contrast: high) {
             :root {
@@ -5462,32 +5041,22 @@
             return;
         }
         
-        // Agrupar categorias por juego para mostrar una tarjeta por juego
-        const gameGroups = {};
-        goldCategories.forEach(category => {
-            if (!gameGroups[category.game]) {
-                gameGroups[category.game] = { id: category.id, game: category.game, servers: [] };
-            }
-            if (!gameGroups[category.game].servers.includes(category.server)) {
-                gameGroups[category.game].servers.push(category.server);
-            }
-        });
-        
-        const uniqueGames = Object.values(gameGroups);
-        
-        container.innerHTML = uniqueGames.map(gameGroup => {
-            const totalPackages = gold.filter(item => item.game === gameGroup.game).length;
-            const serverCount = gameGroup.servers.length;
-            const gameImage = getGameImage(gameGroup.game);
+        container.innerHTML = goldCategories.map(category => {
+            // Contar cuántos paquetes de oro hay en esta categoría
+            const packageCount = gold.filter(item => 
+                item.game === category.game && item.server === category.server
+            ).length;
+            
+            const gameImage = getGameImage(category.game);
             
             return `
-                <div class="gold-category-card" onclick="showGoldCategory(${gameGroup.id})">
+                <div class="gold-category-card" onclick="showGoldCategory(${category.id})">
                     <div class="gold-category-icon">
-                        <img src="${gameImage}" alt="${gameGroup.game}">
+                        <img src="${gameImage}" alt="${category.game}">
                     </div>
                     <div class="gold-category-title">
-                        <h3>${gameGroup.game}</h3>
-                        <p>${serverCount} ${serverCount === 1 ? 'servidor' : 'servidores'} - ${totalPackages} ${totalPackages === 1 ? 'paquete' : 'paquetes'}</p>
+                        <h3>${category.game}</h3>
+                        <p>${packageCount} ${packageCount === 1 ? 'paquete' : 'paquetes'} disponible</p>
                     </div>
                 </div>
             `;
@@ -5505,299 +5074,97 @@
         return iconMap[game] || iconMap.default;
     }
     
-    // Estado del configurador de oro
-    let goldOrderState = {
-        game: null,
-        server: null,
-        goldItem: null,
-        faction: null,
-        tradeType: null
-    };
-
     function showGoldCategory(categoryId) {
         const category = goldCategories.find(c => c.id === categoryId);
         if (!category) return;
-
-        // Obtener servidores unicos para este juego
-        const gameCategories = goldCategories.filter(c => c.game === category.game);
-        const servers = [...new Set(gameCategories.map(c => c.server))];
-
-        goldOrderState = { game: category.game, server: null, goldItem: null, faction: null, tradeType: null };
-
+        
+        // Mostrar paquetes de oro de esta categoría
+        const categoryGold = gold.filter(item => 
+            item.game === category.game && item.server === category.server
+        );
+        
         const container = document.getElementById('gold-packages-container');
         const categoriesContainer = document.getElementById('gold-categories-container');
-
+        
         categoriesContainer.style.display = 'none';
         container.style.display = 'block';
-
-        // Si solo hay un servidor, seleccionarlo automaticamente
-        if (servers.length === 1) {
-            goldOrderState.server = servers[0];
-            renderGoldConfigurator(container, category.game);
-        } else {
-            renderServerSelection(container, category.game, servers);
-        }
-
-        setTimeout(() => {
-            document.getElementById('gold').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-    }
-
-    function renderServerSelection(container, game, servers) {
-        const gameImage = getGameImage(game);
+        
         container.innerHTML = `
-            <div style="margin-bottom: 30px;">
+            <div style="margin-bottom: 40px;">
                 <button class="btn-secondary" onclick="hideGoldCategory()" style="margin-bottom: 20px;">
                     <i class="fas fa-arrow-left"></i> VOLVER A JUEGOS
                 </button>
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <img src="${gameImage}" alt="${game}" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--wow-gold); object-fit: cover; margin-bottom: 15px;">
-                    <h2 style="color: var(--wow-gold); font-size: 2rem; margin-bottom: 10px;">${game}</h2>
-                    <p style="color: var(--text-gray); font-size: 1.1rem;">Selecciona el servidor donde deseas comprar oro</p>
-                </div>
-            </div>
-
-            <div class="gold-server-list">
-                ${servers.map(server => {
-                    const serverGold = gold.filter(item => item.game === game && item.server === server);
-                    const packageCount = serverGold.length;
-                    return `
-                        <div class="gold-server-card" onclick="selectGoldServer('${server}', '${game}')">
-                            <i class="fas fa-server"></i>
-                            <h4>${server}</h4>
-                            <p>${packageCount} ${packageCount === 1 ? 'paquete' : 'paquetes'}</p>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
-
-    function selectGoldServer(server, game) {
-        goldOrderState.server = server;
-        goldOrderState.goldItem = null;
-        goldOrderState.faction = null;
-        goldOrderState.tradeType = null;
-
-        const container = document.getElementById('gold-packages-container');
-        renderGoldConfigurator(container, game);
-    }
-
-    function renderGoldConfigurator(container, game) {
-        const server = goldOrderState.server;
-        const serverGold = gold.filter(item => item.game === game && item.server === server);
-        const gameImage = getGameImage(game);
-
-        // Determinar si el juego necesita seleccion de faccion (solo WoW)
-        const needsFaction = game.toLowerCase().includes('warcraft') || game.toLowerCase().includes('wow') || game.toLowerCase().includes('turtle');
-
-        container.innerHTML = `
-            <div style="margin-bottom: 30px;">
-                <button class="btn-secondary" onclick="goBackFromConfigurator('${game}')" style="margin-bottom: 20px;">
-                    <i class="fas fa-arrow-left"></i> VOLVER
-                </button>
-                <div style="text-align: center; margin-bottom: 10px;">
-                    <img src="${gameImage}" alt="${game}" style="width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--wow-gold); object-fit: cover; margin-bottom: 12px;">
-                    <h2 style="color: var(--wow-gold); font-size: 1.8rem; margin-bottom: 5px;">${game}</h2>
-                    <p style="color: var(--text-gray); font-size: 1.05rem;">
-                        <i class="fas fa-server"></i> Servidor: <span style="color: var(--wow-gold); font-weight: 600;">${server}</span>
-                    </p>
-                </div>
-
-                <div class="config-steps">
-                    <div class="config-step ${goldOrderState.goldItem ? 'completed' : 'active'}" id="step-gold">
-                        <span class="step-num">${goldOrderState.goldItem ? '<i class="fas fa-check" style="font-size:0.6rem"></i>' : '1'}</span>
-                        Oro
-                    </div>
-                    ${needsFaction ? `
-                    <div class="config-step ${goldOrderState.faction ? 'completed' : goldOrderState.goldItem ? 'active' : ''}" id="step-faction">
-                        <span class="step-num">${goldOrderState.faction ? '<i class="fas fa-check" style="font-size:0.6rem"></i>' : '2'}</span>
-                        Faccion
-                    </div>` : ''}
-                    <div class="config-step ${goldOrderState.tradeType ? 'completed' : (needsFaction ? goldOrderState.faction : goldOrderState.goldItem) ? 'active' : ''}" id="step-trade">
-                        <span class="step-num">${goldOrderState.tradeType ? '<i class="fas fa-check" style="font-size:0.6rem"></i>' : needsFaction ? '3' : '2'}</span>
-                        Entrega
-                    </div>
-                    <div class="config-step ${goldOrderState.tradeType ? 'active' : ''}" id="step-order">
-                        <span class="step-num">${needsFaction ? '4' : '3'}</span>
-                        Pedir
-                    </div>
-                </div>
-            </div>
-
-            <div class="gold-configurator">
-                <!-- Paso 1: Seleccionar cantidad de oro -->
-                <div class="gold-config-section">
-                    <h3><i class="fas fa-coins"></i> Selecciona la cantidad de oro</h3>
-                    ${serverGold.length === 0 ? `
-                        <div style="text-align: center; padding: 40px; color: var(--text-gray);">
-                            <i class="fas fa-coins" style="font-size: 3rem; margin-bottom: 15px; color: var(--wow-gold); opacity: 0.5;"></i>
-                            <p style="font-size: 1.1rem;">No hay paquetes disponibles para este servidor.</p>
-                            <p style="font-size: 0.95rem; margin-top: 8px;">Contactanos en Discord para solicitar oro personalizado.</p>
-                        </div>
-                    ` : `
-                    <div class="gold-amount-grid">
-                        ${serverGold.map(item => `
-                            <div class="gold-amount-option ${goldOrderState.goldItem && goldOrderState.goldItem.id === item.id ? 'selected' : ''}" 
-                                 onclick="selectGoldAmount(${item.id})">
-                                <div class="amount"><i class="fas fa-coins" style="font-size: 1rem; margin-right: 5px;"></i> ${item.amount}</div>
-                                <div class="price">${item.price}</div>
-                                <div class="delivery-info"><i class="fas fa-clock"></i> ${item.delivery}</div>
-                                <div class="stock-info" style="background: ${item.status === 'available' ? 'rgba(40,167,69,0.2); color: var(--success)' : item.status === 'limited' ? 'rgba(200,170,109,0.2); color: var(--wow-gold)' : 'rgba(220,53,69,0.2); color: var(--danger)'};">
-                                    ${item.status === 'available' ? 'Disponible' : item.status === 'limited' ? 'Limitado' : 'Agotado'}
-                                    ${item.stock ? ' (' + item.stock + ')' : ''}
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                    `}
-                </div>
-
-                <!-- Paso 2: Faccion (solo para WoW) -->
-                ${needsFaction ? `
-                <div class="gold-config-section" id="faction-section" style="display: ${goldOrderState.goldItem ? 'block' : 'none'}; opacity: ${goldOrderState.goldItem ? '1' : '0.4'}; transition: opacity 0.3s;">
-                    <h3><i class="fas fa-flag"></i> Selecciona tu faccion</h3>
-                    <div class="faction-selector">
-                        <div class="faction-option horda ${goldOrderState.faction === 'Horda' ? 'selected' : ''}" onclick="selectFaction('Horda')">
-                            <i class="fas fa-skull-crossbones"></i>
-                            <h4>Horda</h4>
-                        </div>
-                        <div class="faction-option alianza ${goldOrderState.faction === 'Alianza' ? 'selected' : ''}" onclick="selectFaction('Alianza')">
-                            <i class="fas fa-shield-alt"></i>
-                            <h4>Alianza</h4>
-                        </div>
-                    </div>
-                </div>
-                ` : ''}
-
-                <!-- Paso 3: Tipo de trade -->
-                <div class="gold-config-section" id="trade-section" style="display: ${(needsFaction ? goldOrderState.faction : goldOrderState.goldItem) ? 'block' : 'none'}; opacity: ${(needsFaction ? goldOrderState.faction : goldOrderState.goldItem) ? '1' : '0.4'}; transition: opacity 0.3s;">
-                    <h3><i class="fas fa-exchange-alt"></i> Tipo de entrega</h3>
-                    <div class="trade-type-selector">
-                        <div class="trade-type-option ${goldOrderState.tradeType === 'Correo' ? 'selected' : ''}" onclick="selectTradeType('Correo')">
-                            <i class="fas fa-envelope"></i>
-                            <h4>Correo</h4>
-                            <p>Correo del juego</p>
-                        </div>
-                        <div class="trade-type-option ${goldOrderState.tradeType === 'Subasta' ? 'selected' : ''}" onclick="selectTradeType('Subasta')">
-                            <i class="fas fa-gavel"></i>
-                            <h4>Subasta</h4>
-                            <p>Casa de Subastas</p>
-                        </div>
-                        <div class="trade-type-option ${goldOrderState.tradeType === 'Trade' ? 'selected' : ''}" onclick="selectTradeType('Trade')">
-                            <i class="fas fa-handshake"></i>
-                            <h4>Trade</h4>
-                            <p>Intercambio directo</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resumen del pedido -->
-                <div id="order-summary-section" style="display: ${goldOrderState.tradeType ? 'block' : 'none'};">
-                    ${renderOrderSummary()}
-                </div>
-            </div>
-        `;
-    }
-
-    function selectGoldAmount(goldId) {
-        const item = gold.find(g => g.id === goldId);
-        if (!item || item.status === 'sold_out') return;
-        goldOrderState.goldItem = item;
-        // Reset downstream selections
-        goldOrderState.faction = null;
-        goldOrderState.tradeType = null;
-        const container = document.getElementById('gold-packages-container');
-        renderGoldConfigurator(container, goldOrderState.game);
-    }
-
-    function selectFaction(faction) {
-        if (!goldOrderState.goldItem) return;
-        goldOrderState.faction = faction;
-        goldOrderState.tradeType = null;
-        const container = document.getElementById('gold-packages-container');
-        renderGoldConfigurator(container, goldOrderState.game);
-    }
-
-    function selectTradeType(tradeType) {
-        const needsFaction = goldOrderState.game.toLowerCase().includes('warcraft') || goldOrderState.game.toLowerCase().includes('wow') || goldOrderState.game.toLowerCase().includes('turtle');
-        if (!goldOrderState.goldItem) return;
-        if (needsFaction && !goldOrderState.faction) return;
-        goldOrderState.tradeType = tradeType;
-        const container = document.getElementById('gold-packages-container');
-        renderGoldConfigurator(container, goldOrderState.game);
-    }
-
-    function renderOrderSummary() {
-        if (!goldOrderState.tradeType || !goldOrderState.goldItem) return '';
-        const item = goldOrderState.goldItem;
-        const needsFaction = goldOrderState.game.toLowerCase().includes('warcraft') || goldOrderState.game.toLowerCase().includes('wow') || goldOrderState.game.toLowerCase().includes('turtle');
-        
-        return `
-            <div class="order-summary">
-                <h3><i class="fas fa-receipt"></i> Resumen de tu Pedido</h3>
-                <div class="order-summary-details">
-                    <div class="order-detail-item">
-                        <div class="label">Juego</div>
-                        <div class="value">${goldOrderState.game}</div>
-                    </div>
-                    <div class="order-detail-item">
-                        <div class="label">Servidor</div>
-                        <div class="value">${goldOrderState.server}</div>
-                    </div>
-                    <div class="order-detail-item">
-                        <div class="label">Cantidad</div>
-                        <div class="value">${item.amount} Gold</div>
-                    </div>
-                    <div class="order-detail-item">
-                        <div class="label">Precio</div>
-                        <div class="value">${item.price}</div>
-                    </div>
-                    ${needsFaction ? `
-                    <div class="order-detail-item">
-                        <div class="label">Faccion</div>
-                        <div class="value">${goldOrderState.faction}</div>
-                    </div>
-                    ` : ''}
-                    <div class="order-detail-item">
-                        <div class="label">Entrega</div>
-                        <div class="value">${goldOrderState.tradeType}</div>
-                    </div>
-                </div>
-                <a href="${DISCORD_LINK}" target="_blank" class="btn-discord-order">
-                    <i class="fab fa-discord"></i> COMPRAR EN DISCORD
-                </a>
-                <p style="color: var(--text-gray); font-size: 0.9rem; margin-top: 15px;">
-                    <i class="fas fa-info-circle"></i> Seras redirigido a nuestro Discord para completar la compra
+                <h2 style="color: var(--wow-gold); font-size: 2rem; margin-bottom: 10px; text-align: center;">
+                    ${category.game}
+                </h2>
+                <p style="color: var(--text-gray); font-size: 1.1rem; margin-bottom: 30px; text-align: center;">
+                    Paquetes de oro disponibles para ${category.game}
                 </p>
             </div>
+            
+            ${categoryGold.length === 0 ? `
+            <div style="text-align: center; padding: 60px 40px; color: var(--text-gray); background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold-dark);">
+                <i class="fas fa-coins" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
+                <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">No hay paquetes disponibles</h3>
+                <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">
+                    Actualmente no hay paquetes de oro disponibles para ${category.game}. 
+                    Pronto agregaremos stock. Mientras tanto, puedes contactarnos en Discord para consultas personalizadas.
+                </p>
+            </div>
+            ` : `
+            <div class="gold-packages">
+                ${categoryGold.map(item => `
+                    <div class="gold-card">
+                        <div class="gold-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="gold-amount">${item.amount}</div>
+                        <div class="gold-game">${item.game}</div>
+                        <div class="gold-server">
+                            <i class="fas fa-server"></i> ${item.server}
+                        </div>
+                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--text); margin: 25px 0; position: relative;">
+                            ${item.price}
+                            <div style="font-size: 1rem; color: var(--text-gray); margin-top: 5px;">
+                                <i class="fas fa-clock"></i> Entrega: ${item.delivery}
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                            <span class="status-badge" style="background: ${item.status === 'available' ? 'var(--success)' : item.status === 'limited' ? 'var(--wow-gold)' : 'var(--danger)'}; color: ${item.status === 'available' || item.status === 'limited' ? 'var(--wow-blue-dark)' : 'white'}; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
+                                ${item.status === 'available' ? 'Disponible' : item.status === 'limited' ? 'Stock Limitado' : 'Agotado'}
+                            </span>
+                            ${item.stock ? `
+                            <span style="font-size: 0.9rem; color: var(--text-gray);">
+                                (${item.stock} disponibles)
+                            </span>
+                            ` : ''}
+                        </div>
+                        
+                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" data-tooltip="Comprar ahora en Discord">
+                            <i class="fas fa-shopping-cart"></i> COMPRAR ORO
+                        </a>
+                    </div>
+                `).join('')}
+            </div>
+            `}
         `;
+        
+        // Scroll suave a la sección de oro
+        setTimeout(() => {
+            document.getElementById('gold').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }, 100);
     }
-
-    function goBackFromConfigurator(game) {
-        const gameCategories = goldCategories.filter(c => c.game === game);
-        const servers = [...new Set(gameCategories.map(c => c.server))];
-
-        if (servers.length > 1 && goldOrderState.server) {
-            // Volver a seleccion de servidor
-            goldOrderState.server = null;
-            goldOrderState.goldItem = null;
-            goldOrderState.faction = null;
-            goldOrderState.tradeType = null;
-            const container = document.getElementById('gold-packages-container');
-            renderServerSelection(container, game, servers);
-        } else {
-            hideGoldCategory();
-        }
-    }
-
+    
     function hideGoldCategory() {
         const container = document.getElementById('gold-packages-container');
         const categoriesContainer = document.getElementById('gold-categories-container');
         
         container.style.display = 'none';
         categoriesContainer.style.display = 'grid';
-        goldOrderState = { game: null, server: null, goldItem: null, faction: null, tradeType: null };
     }
     
     function renderGold() {
