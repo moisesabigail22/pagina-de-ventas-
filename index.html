@@ -3479,6 +3479,9 @@
                 <button class="admin-tab" onclick="switchAdminTab('gold-categories')">
                     <i class="fas fa-tags"></i> Categorías de Juegos (Oro)
                 </button>
+                <button class="admin-tab" onclick="switchAdminTab('servers')">
+                    <i class="fas fa-server"></i> Servidores (Juegos)
+                </button>
                 <button class="admin-tab" onclick="switchAdminTab('references')">
                     <i class="fas fa-star"></i> Referencias
                 </button>
@@ -3776,7 +3779,10 @@
             
             <div class="form-group">
                 <label class="form-label">Servidor</label>
-                <input type="text" id="gold-server" placeholder="Ej: Nordanaar, Americas, etc." maxlength="50">
+                <select id="gold-server-select">
+                    <option value="">Selecciona un servidor</option>
+                </select>
+                <input type="text" id="gold-server-custom" placeholder="Otro servidor..." maxlength="50" style="display: none; margin-top: 10px;">
             </div>
             
             <div class="form-group">
@@ -4216,6 +4222,15 @@
         'Elder Scrolls Online',
         'Guild Wars 2'
     ];
+
+    const SERVER_TYPES = [
+        'PVE',
+        'PVP',
+        'RP',
+        'Hardcore',
+        'Mixto',
+        'Sin definir'
+    ];
     
     // Configuración de contactos
     const contactInfo = {
@@ -4227,6 +4242,39 @@
     };
     
     // Cargar datos del localStorage
+    function buildDefaultGameServers() {
+        const serverMap = new Map();
+
+        const addServer = (game, name) => {
+            if (!game || !name) return;
+            const key = `${game}::${name}`.toLowerCase();
+            if (!serverMap.has(key)) {
+                serverMap.set(key, {
+                    id: Date.now() + serverMap.size,
+                    game,
+                    name,
+                    type: 'Sin definir'
+                });
+            }
+        };
+
+        goldCategories.forEach(category => addServer(category.game, category.server));
+        gold.forEach(item => addServer(item.game, item.server));
+        accounts.forEach(account => addServer(account.category, account.server));
+
+        return Array.from(serverMap.values());
+    }
+
+    function normalizeGameServers(servers) {
+        if (!Array.isArray(servers)) return [];
+        return servers.map((server, index) => ({
+            id: server.id || Date.now() + index,
+            game: server.game || 'Sin juego',
+            name: server.name || server.server || 'Sin servidor',
+            type: server.type || 'Sin definir'
+        }));
+    }
+
     let accounts = JSON.parse(localStorage.getItem('epicgoldshop_accounts')) || sampleAccounts;
     let gold = JSON.parse(localStorage.getItem('epicgoldshop_gold')) || sampleGold;
     let goldCategories = JSON.parse(localStorage.getItem('epicgoldshop_gold_categories')) || sampleGoldCategories;
@@ -4234,6 +4282,11 @@
     let references = JSON.parse(localStorage.getItem('epicgoldshop_references')) || sampleReferences;
     let settings = JSON.parse(localStorage.getItem('epicgoldshop_settings')) || contactInfo;
     let categories = JSON.parse(localStorage.getItem('epicgoldshop_categories')) || defaultCategories;
+    let gameServers = normalizeGameServers(JSON.parse(localStorage.getItem('epicgoldshop_game_servers'))) || [];
+
+    if (gameServers.length === 0) {
+        gameServers = buildDefaultGameServers();
+    }
     
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
@@ -4599,6 +4652,7 @@
         const savedReferences = localStorage.getItem('epicgoldshop_references');
         const savedSettings = localStorage.getItem('epicgoldshop_settings');
         const savedCategories = localStorage.getItem('epicgoldshop_categories');
+        const savedGameServers = localStorage.getItem('epicgoldshop_game_servers');
         
         if (savedAccounts) accounts = JSON.parse(savedAccounts);
         if (savedGold) gold = JSON.parse(savedGold);
@@ -4607,6 +4661,11 @@
         if (savedReferences) references = JSON.parse(savedReferences);
         if (savedSettings) settings = JSON.parse(savedSettings);
         if (savedCategories) categories = JSON.parse(savedCategories);
+        if (savedGameServers) {
+            gameServers = normalizeGameServers(JSON.parse(savedGameServers));
+        } else if (!gameServers || gameServers.length === 0) {
+            gameServers = buildDefaultGameServers();
+        }
         
         // Asegurar que los enlaces estén actualizados
         if (!settings.discord || settings.discord !== DISCORD_LINK) {
@@ -4623,6 +4682,7 @@
         localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
         
         // Actualizar enlaces de contacto
         updateContactLinks();
@@ -4697,6 +4757,66 @@
                 `<option value="${cat}" ${cat === currentValue ? 'selected' : ''}>${cat}</option>`
             ).join('');
         });
+
+        if (document.getElementById('gold-modal')?.style.display === 'flex') {
+            updateGoldServerOptions();
+        }
+    }
+
+    function updateGoldServerOptions() {
+        const categorySelect = document.getElementById('gold-category');
+        const serverSelect = document.getElementById('gold-server-select');
+        const customInput = document.getElementById('gold-server-custom');
+
+        if (!categorySelect || !serverSelect) return;
+
+        const selectedGame = categorySelect.value;
+        const serversForGame = gameServers
+            .filter(server => server.game === selectedGame)
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        serverSelect.innerHTML = `
+            <option value="">Selecciona un servidor</option>
+            ${serversForGame.map(server => `
+                <option value="${server.name}">${server.name} (${server.type})</option>
+            `).join('')}
+            <option value="custom">Otro...</option>
+        `;
+
+        if (customInput) {
+            customInput.value = '';
+            customInput.style.display = serversForGame.length === 0 ? 'block' : 'none';
+        }
+
+        if (serversForGame.length === 0) {
+            serverSelect.value = 'custom';
+            if (customInput) customInput.focus();
+        }
+    }
+
+    function toggleGoldServerCustom() {
+        const serverSelect = document.getElementById('gold-server-select');
+        const customInput = document.getElementById('gold-server-custom');
+        if (!serverSelect || !customInput) return;
+
+        if (serverSelect.value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            customInput.value = '';
+        }
+    }
+
+    function getSelectedGoldServer() {
+        const serverSelect = document.getElementById('gold-server-select');
+        const customInput = document.getElementById('gold-server-custom');
+
+        if (!serverSelect) return '';
+        if (serverSelect.value === 'custom') {
+            return customInput ? customInput.value.trim() : '';
+        }
+        return serverSelect.value.trim();
     }
     
     function setupSmoothNavigation() {
@@ -4778,6 +4898,20 @@
                 closeModal();
             }
         });
+
+        const goldCategorySelect = document.getElementById('gold-category');
+        if (goldCategorySelect) {
+            goldCategorySelect.addEventListener('change', function() {
+                updateGoldServerOptions();
+            });
+        }
+
+        const goldServerSelect = document.getElementById('gold-server-select');
+        if (goldServerSelect) {
+            goldServerSelect.addEventListener('change', function() {
+                toggleGoldServerCustom();
+            });
+        }
     }
     
     // ============================================
@@ -5517,6 +5651,9 @@
             case 'gold-categories':
                 content.innerHTML = renderAdminGoldCategories();
                 break;
+            case 'servers':
+                content.innerHTML = renderAdminServers();
+                break;
             case 'references':
                 content.innerHTML = renderAdminReferences();
                 break;
@@ -5797,6 +5934,166 @@
                 ` : ''}
             </div>
         `;
+    }
+
+    function renderAdminServers() {
+        const games = Array.from(new Set([
+            ...categories,
+            ...gameServers.map(server => server.game)
+        ])).sort();
+        const totalServers = gameServers.length;
+        const serversByGame = gameServers.reduce((acc, server) => {
+            if (!acc[server.game]) acc[server.game] = [];
+            acc[server.game].push(server);
+            return acc;
+        }, {});
+
+        return `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
+                <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.8rem;">
+                    Servidores por Juego
+                </h3>
+                <div style="display: flex; gap: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${games.length}</div>
+                        <div style="color: var(--text-gray); font-size: 0.9rem;">Juegos</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalServers}</div>
+                        <div style="color: var(--text-gray); font-size: 0.9rem;">Servidores</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
+                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;">
+                    <i class="fas fa-plus"></i> Agregar servidor a un juego
+                </h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Juego</label>
+                        <select id="server-game">
+                            ${games.map(game => `<option value="${game}">${game}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Servidor</label>
+                        <input type="text" id="server-name" placeholder="Ej: Nordanaar" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tipo</label>
+                        <select id="server-type">
+                            ${SERVER_TYPES.map(type => `<option value="${type}">${type}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-primary" onclick="addGameServer()" style="margin-top: 15px;">
+                    <i class="fas fa-save"></i> Guardar servidor
+                </button>
+                <div class="message" id="server-message"></div>
+            </div>
+
+            <div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">
+                ${games.map(game => {
+                    const servers = (serversByGame[game] || []).sort((a, b) => a.name.localeCompare(b.name));
+                    return `
+                    <div style="background: var(--panel); padding: 25px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid var(--wow-gold);">
+                        <div style="display: flex; justify-content: space-between; align-items: start; gap: 20px;">
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">
+                                    <i class="fas fa-gamepad"></i> ${game}
+                                </h4>
+                                <div style="color: var(--text-gray); font-size: 0.95rem; margin-bottom: 15px;">
+                                    <i class="fas fa-server"></i> ${servers.length} ${servers.length === 1 ? 'servidor' : 'servidores'}
+                                </div>
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                    ${servers.map(server => `
+                                        <span style="background: rgba(200, 170, 109, 0.12); color: var(--wow-gold-light); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem;">
+                                            ${server.name} (${server.type})
+                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer(${server.id})" data-tooltip="Eliminar servidor">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('')}
+
+                ${games.length === 0 ? `
+                <div style="text-align: center; padding: 60px 40px; color: var(--text-gray); background: var(--panel); border-radius: 10px; border: 2px dashed var(--wow-gold-dark);">
+                    <i class="fas fa-server" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
+                    <h4 style="color: var(--wow-gold); margin-bottom: 15px;">No hay categorías registradas</h4>
+                    <p style="font-size: 1.05rem; margin-bottom: 0;">Agrega una categoría en Configuración para poder asignar servidores.</p>
+                </div>
+                ` : ''}
+            </div>
+        `;
+    }
+
+    function addGameServer() {
+        const gameSelect = document.getElementById('server-game');
+        const nameInput = document.getElementById('server-name');
+        const typeSelect = document.getElementById('server-type');
+        const message = document.getElementById('server-message');
+
+        if (!gameSelect || !nameInput || !typeSelect) return;
+
+        const game = gameSelect.value;
+        const name = nameInput.value.trim();
+        const type = typeSelect.value;
+
+        if (!game) {
+            showMessage('Selecciona un juego válido', 'error');
+            gameSelect.focus();
+            return;
+        }
+
+        if (!name) {
+            showMessage('El nombre del servidor es obligatorio', 'error');
+            nameInput.focus();
+            return;
+        }
+
+        const exists = gameServers.some(server =>
+            server.game === game && server.name.toLowerCase() === name.toLowerCase()
+        );
+
+        if (exists) {
+            showMessage('Este servidor ya existe para ese juego', 'error');
+            nameInput.focus();
+            return;
+        }
+
+        gameServers.push({
+            id: Date.now(),
+            game,
+            name,
+            type
+        });
+
+        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
+        nameInput.value = '';
+        if (message) message.style.display = 'none';
+
+        updateGoldServerOptions();
+        switchAdminTab('servers');
+        showMessage('✅ Servidor agregado correctamente', 'success');
+    }
+
+    function deleteGameServer(id) {
+        const serverIndex = gameServers.findIndex(server => server.id === id);
+        if (serverIndex === -1) return;
+
+        if (!confirm('¿Eliminar este servidor?')) return;
+
+        gameServers.splice(serverIndex, 1);
+        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
+        updateGoldServerOptions();
+        switchAdminTab('servers');
+        showMessage('✅ Servidor eliminado', 'success');
     }
     
     function renderAdminReferences() {
@@ -6526,7 +6823,9 @@
         document.getElementById('gold-modal-title').textContent = 'NUEVO ORO';
         document.getElementById('save-gold-btn').innerHTML = '<i class="fas fa-save"></i> GUARDAR ORO';
         
-        document.getElementById('gold-server').value = '';
+        document.getElementById('gold-server-select').value = '';
+        document.getElementById('gold-server-custom').value = '';
+        document.getElementById('gold-server-custom').style.display = 'none';
         document.getElementById('gold-amount').value = '';
         document.getElementById('gold-price').value = '';
         document.getElementById('gold-delivery').value = '5-15 minutos';
@@ -6536,6 +6835,7 @@
         // Actualizar select de categorías
         updateCategorySelects();
         document.getElementById('gold-category').value = categories[0] || '';
+        updateGoldServerOptions();
         
         document.getElementById('gold-message').style.display = 'none';
         
@@ -6545,7 +6845,7 @@
     
     function saveGold() {
         const game = document.getElementById('gold-category').value;
-        const server = document.getElementById('gold-server').value.trim();
+        const server = getSelectedGoldServer();
         const amount = document.getElementById('gold-amount').value.trim();
         const price = document.getElementById('gold-price').value.trim();
         const delivery = document.getElementById('gold-delivery').value.trim();
@@ -6565,7 +6865,13 @@
             message.textContent = 'El servidor es obligatorio';
             message.className = 'message error';
             message.style.display = 'block';
-            document.getElementById('gold-server').focus();
+            const serverSelect = document.getElementById('gold-server-select');
+            const serverCustom = document.getElementById('gold-server-custom');
+            if (serverSelect && serverSelect.value === 'custom' && serverCustom) {
+                serverCustom.focus();
+            } else if (serverSelect) {
+                serverSelect.focus();
+            }
             return;
         }
         
@@ -6837,6 +7143,7 @@
         localStorage.setItem('epicgoldshop_references', JSON.stringify(references));
         localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
+        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
     });
 </script>
 </body>
