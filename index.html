@@ -3658,14 +3658,6 @@
         </div>
 
         <div class="gold-order-step" id="gold-order-step-server" style="display: none;">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Tipo de servidor</label>
-                    <select id="gold-order-server-type">
-                        <option value="">Selecciona un tipo</option>
-                    </select>
-                </div>
-            </div>
             <div class="gold-order-options" id="gold-order-server-list"></div>
             <div style="display: flex; justify-content: flex-start; margin-top: 20px;">
                 <button class="btn-secondary" type="button" id="gold-order-back-btn">
@@ -3681,6 +3673,11 @@
                     <select id="gold-order-amount" disabled>
                         <option value="">Selecciona una cantidad</option>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de servidor</label>
+                    <input type="text" id="gold-order-server-type" placeholder="Selecciona un servidor" readonly>
                 </div>
 
                 <div class="form-group">
@@ -4678,22 +4675,15 @@
         return Array.from(new Set(games)).sort();
     }
 
-    function getGoldOrderServerTypes(game) {
+    function getGoldOrderServers(game) {
         if (!game) return [];
-        const types = gameServers
-            .filter(server => server.game === game)
-            .map(server => server.type || 'Sin definir');
-        return Array.from(new Set(types)).sort();
-    }
-
-    function getGoldOrderServers(game, type) {
-        if (!game) return [];
-        const serverType = type || '';
         const servers = gameServers
             .filter(server => server.game === game)
-            .filter(server => !serverType || server.type === serverType)
-            .map(server => server.name);
-        return Array.from(new Set(servers)).sort();
+            .map(server => ({
+                name: server.name,
+                type: server.type || 'Sin definir'
+            }));
+        return servers.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     function showGoldOrderStep(step) {
@@ -4722,7 +4712,6 @@
                 goldOrderState.game = btn.dataset.game || '';
                 goldOrderState.serverType = '';
                 goldOrderState.server = '';
-                updateGoldOrderServerTypeOptions();
                 renderGoldOrderServerList();
                 document.getElementById('gold-order-modal-title').textContent = 'Selecciona un servidor';
                 showGoldOrderStep('server');
@@ -4730,37 +4719,23 @@
         });
     }
 
-    function updateGoldOrderServerTypeOptions() {
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
-        if (!serverTypeSelect) return;
-        const types = getGoldOrderServerTypes(goldOrderState.game);
-        serverTypeSelect.innerHTML = `
-            <option value="">Selecciona un tipo</option>
-            ${types.map(type => `<option value="${type}">${type}</option>`).join('')}
-        `;
-    }
-
     function renderGoldOrderServerList() {
         const list = document.getElementById('gold-order-server-list');
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
-        if (!list || !serverTypeSelect) return;
-        const selectedType = serverTypeSelect.value;
-        goldOrderState.serverType = selectedType;
-        if (!selectedType) {
-            list.innerHTML = '<p style="color: var(--text-gray);">Selecciona primero el tipo de servidor.</p>';
-            return;
-        }
-        const servers = getGoldOrderServers(goldOrderState.game, selectedType);
+        if (!list) return;
+        const servers = getGoldOrderServers(goldOrderState.game);
         if (servers.length === 0) {
             list.innerHTML = '<p style="color: var(--text-gray);">No hay servidores disponibles.</p>';
             return;
         }
         list.innerHTML = servers.map(server => `
-            <button class="gold-order-option" type="button" data-server="${server}">${server}</button>
+            <button class="gold-order-option" type="button" data-server="${server.name}" data-type="${server.type}">
+                ${server.name}
+            </button>
         `).join('');
         list.querySelectorAll('[data-server]').forEach(btn => {
             btn.addEventListener('click', () => {
                 goldOrderState.server = btn.dataset.server || '';
+                goldOrderState.serverType = btn.dataset.type || 'Sin definir';
                 updateGoldOrderAmountOptions();
                 document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
                 showGoldOrderStep('details');
@@ -4771,6 +4746,7 @@
     function updateGoldOrderAmountOptions() {
         const detailContainer = document.getElementById('gold-order-step-details');
         const amountSelect = document.getElementById('gold-order-amount');
+        const serverTypeInput = document.getElementById('gold-order-server-type');
         if (!amountSelect) return;
 
         const selectedGame = goldOrderState.game;
@@ -4780,6 +4756,9 @@
             amountSelect.innerHTML = '<option value="">Selecciona una cantidad</option>';
             amountSelect.value = '';
             amountSelect.disabled = true;
+            if (serverTypeInput) {
+                serverTypeInput.value = '';
+            }
             if (detailContainer) {
                 detailContainer.style.display = 'none';
             }
@@ -4792,6 +4771,9 @@
             amountSelect.innerHTML = '<option value="">Sin paquetes disponibles</option>';
             amountSelect.value = '';
             amountSelect.disabled = true;
+            if (serverTypeInput) {
+                serverTypeInput.value = goldOrderState.serverType || 'Sin definir';
+            }
             if (detailContainer) {
                 detailContainer.style.display = 'none';
             }
@@ -4800,6 +4782,9 @@
         }
 
         amountSelect.disabled = false;
+        if (serverTypeInput) {
+            serverTypeInput.value = goldOrderState.serverType || 'Sin definir';
+        }
         if (detailContainer) {
             detailContainer.style.display = 'block';
         }
@@ -4860,7 +4845,6 @@
         const modal = document.getElementById('gold-order-modal');
         if (modal && modal.style.display === 'flex') {
             renderGoldOrderGameList();
-            updateGoldOrderServerTypeOptions();
             renderGoldOrderServerList();
             updateGoldOrderAmountOptions();
             updateGoldOrderSummary();
@@ -4874,20 +4858,19 @@
             server: ''
         };
 
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
         const amountSelect = document.getElementById('gold-order-amount');
-        if (serverTypeSelect) {
-            serverTypeSelect.value = '';
-        }
+        const serverTypeInput = document.getElementById('gold-order-server-type');
         if (amountSelect) {
             amountSelect.value = '';
             amountSelect.disabled = true;
+        }
+        if (serverTypeInput) {
+            serverTypeInput.value = '';
         }
 
         document.getElementById('gold-order-modal-title').textContent = 'Selecciona un juego';
         showGoldOrderStep('game');
         renderGoldOrderGameList();
-        updateGoldOrderServerTypeOptions();
         renderGoldOrderServerList();
         updateGoldOrderSummary();
     }
@@ -5240,13 +5223,6 @@
         if (goldOrderBackBtn) {
             goldOrderBackBtn.addEventListener('click', function() {
                 resetGoldOrderFlow();
-            });
-        }
-
-        const goldOrderServerTypeSelect = document.getElementById('gold-order-server-type');
-        if (goldOrderServerTypeSelect) {
-            goldOrderServerTypeSelect.addEventListener('change', function() {
-                renderGoldOrderServerList();
             });
         }
 
