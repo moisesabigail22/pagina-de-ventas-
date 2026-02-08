@@ -3206,14 +3206,6 @@
             </button>
         </div>
         
-        <div class="gold-categories-container" id="gold-categories-container">
-            <!-- Las categorías de oro se cargan aquí dinámicamente -->
-        </div>
-        
-        <div id="gold-packages-container" style="display: none;">
-            <!-- Los paquetes de oro por categoría se cargan aquí dinámicamente -->
-        </div>
-        
         <div style="margin-top: 50px; padding: 35px; background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold); position: relative; overflow: hidden;">
             <div class="feature-highlight">
                 <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.5rem;">
@@ -5636,6 +5628,7 @@
     
     function renderGoldCategories() {
         const container = document.getElementById('gold-categories-container');
+        if (!container) return;
         
         if (goldCategories.length === 0) {
             container.innerHTML = `
@@ -5693,7 +5686,8 @@
         
         const container = document.getElementById('gold-packages-container');
         const categoriesContainer = document.getElementById('gold-categories-container');
-        
+        if (!container || !categoriesContainer) return;
+
         categoriesContainer.style.display = 'none';
         container.style.display = 'block';
         
@@ -5770,7 +5764,8 @@
     function hideGoldCategory() {
         const container = document.getElementById('gold-packages-container');
         const categoriesContainer = document.getElementById('gold-categories-container');
-        
+        if (!container || !categoriesContainer) return;
+
         container.style.display = 'none';
         categoriesContainer.style.display = 'grid';
     }
