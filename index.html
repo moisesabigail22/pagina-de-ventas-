@@ -4602,9 +4602,6 @@
             updateGoldServerOptions();
         }
 
-        if (document.getElementById('gold-category-modal')?.style.display === 'flex') {
-            updateGoldCategoryServerOptions();
-        }
     }
 
     function updateGoldServerOptions() {
@@ -4928,13 +4925,10 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const serversFromAdmin = gameServers
+            const servers = gameServers
                 .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const serversFromGold = gold
-                .filter(item => item.game === selectedGame)
-                .map(item => item.server);
-            const servers = Array.from(new Set([...serversFromAdmin, ...serversFromGold])).sort();
+                .map(server => server.name)
+                .sort();
 
             if (servers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
@@ -4984,13 +4978,10 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const serversFromAdmin = gameServers
+            const uniqueServers = gameServers
                 .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const serversFromGold = gold
-                .filter(item => item.game === selectedGame)
-                .map(item => item.server);
-            const uniqueServers = Array.from(new Set([...serversFromAdmin, ...serversFromGold])).sort();
+                .map(server => server.name)
+                .sort();
             if (uniqueServers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores</option>';
                 serverSelect.disabled = true;
@@ -6248,7 +6239,6 @@
         if (message) message.style.display = 'none';
 
         updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
         switchAdminTab('servers');
         showMessage('✅ Servidor agregado correctamente', 'success');
     }
@@ -6262,7 +6252,6 @@
         gameServers.splice(serverIndex, 1);
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
         updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
         switchAdminTab('servers');
         showMessage('✅ Servidor eliminado', 'success');
     }
