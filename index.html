@@ -4747,15 +4747,11 @@
     function getGoldOrderServers(game, type) {
         if (!game) return [];
         const serverType = type || '';
-        const serversFromConfig = gameServers
+        const servers = gameServers
             .filter(server => server.game === game)
             .filter(server => !serverType || server.type === serverType)
             .map(server => server.name);
-        const serversFromGold = gold
-            .filter(item => item.game === game)
-            .map(item => item.server);
-        const servers = Array.from(new Set([...serversFromConfig, ...serversFromGold]));
-        return servers.sort();
+        return Array.from(new Set(servers)).sort();
     }
 
     function showGoldOrderStep(step) {
@@ -5029,8 +5025,11 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const servers = Array.from(new Set(gold.filter(item => item.game === selectedGame).map(item => item.server))).sort();
-            if (servers.length === 0) {
+            const servers = gameServers
+                .filter(server => server.game === selectedGame)
+                .map(server => server.name);
+            const uniqueServers = Array.from(new Set(servers)).sort();
+            if (uniqueServers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores</option>';
                 serverSelect.disabled = true;
                 packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
@@ -5041,7 +5040,7 @@
                 return;
             }
             serverSelect.disabled = false;
-            serverSelect.innerHTML = servers.map(server => `<option value="${server}">${server}</option>`).join('');
+            serverSelect.innerHTML = uniqueServers.map(server => `<option value="${server}">${server}</option>`).join('');
             updatePackages();
         };
 
