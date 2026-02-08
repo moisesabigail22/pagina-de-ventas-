@@ -3240,9 +3240,10 @@
 </div>
 
 <!-- Admin Section -->
-<div class="container" id="admin-section">
-    <div class="section">
-        <div class="section-header">
+<div class="modal" id="admin-section">
+    <div class="modal-content" style="max-width: 1400px; width: 95%; max-height: 90vh; overflow: hidden;">
+        <button class="close-modal" onclick="logoutAdmin()">&times;</button>
+        <div class="section-header" style="margin-bottom: 25px;">
             <h2 class="section-title">Panel de Administración</h2>
             <button class="btn-primary" onclick="logoutAdmin()">
                 <i class="fas fa-sign-out-alt"></i> CERRAR SESIÓN
@@ -5586,11 +5587,7 @@
     
     function showAdmin() {
         if (isAdmin) {
-            document.getElementById('admin-section').style.display = 'block';
-            window.scrollTo({
-                top: document.getElementById('admin-section').offsetTop - 120,
-                behavior: 'smooth'
-            });
+            showModal('admin-section');
             switchAdminTab('accounts');
             document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-user-shield"></i> PANEL ADMIN';
         } else {
