@@ -3169,14 +3169,23 @@
         <div class="gold-order-panel">
             <div class="gold-order-header">
                 <h3><i class="fas fa-coins"></i> Configura tu compra de oro</h3>
-                <p>Selecciona el juego, servidor y cantidad para ver el precio disponible.</p>
+                <p>Selecciona el juego, el tipo de servidor y el servidor para continuar con tu compra.</p>
             </div>
 
-            <div class="form-grid">
+            <div class="form-grid" id="gold-order-step-game">
                 <div class="form-group">
                     <label class="form-label">Juego</label>
                     <select id="gold-order-game">
                         <option value="">Selecciona un juego</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid" id="gold-order-step-server">
+                <div class="form-group">
+                    <label class="form-label">Tipo de servidor</label>
+                    <select id="gold-order-server-type" disabled>
+                        <option value="">Selecciona un tipo</option>
                     </select>
                 </div>
 
@@ -3187,54 +3196,64 @@
                     </select>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Cantidad de Oro</label>
-                    <select id="gold-order-amount" disabled>
-                        <option value="">Selecciona una cantidad</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Facción</label>
-                    <select id="gold-order-faction">
-                        <option value="">Selecciona una facción</option>
-                        <option value="Horda">Horda</option>
-                        <option value="Alianza">Alianza</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Nombre del personaje</label>
-                    <input type="text" id="gold-order-character" placeholder="Ej: Arthas, Sylvanas" maxlength="30">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Tipo de trade</label>
-                    <select id="gold-order-trade">
-                        <option value="">Selecciona un método</option>
-                        <option value="Buzón">Buzón</option>
-                        <option value="Trade">Trade</option>
-                        <option value="Subasta">Subasta</option>
-                    </select>
+                <div class="form-group" style="display: flex; align-items: flex-end;">
+                    <button class="btn-secondary" type="button" id="gold-order-back-btn">
+                        <i class="fas fa-arrow-left"></i> VOLVER ATRÁS
+                    </button>
                 </div>
             </div>
 
-            <div class="gold-order-summary">
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Precio</div>
-                    <div class="gold-order-summary-value" id="gold-order-price">-</div>
+            <div id="gold-order-details" style="display: none;">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Cantidad de Oro</label>
+                        <select id="gold-order-amount" disabled>
+                            <option value="">Selecciona una cantidad</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Facción</label>
+                        <select id="gold-order-faction">
+                            <option value="">Selecciona una facción</option>
+                            <option value="Horda">Horda</option>
+                            <option value="Alianza">Alianza</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nombre del personaje</label>
+                        <input type="text" id="gold-order-character" placeholder="Ej: Arthas, Sylvanas" maxlength="30">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tipo de trade</label>
+                        <select id="gold-order-trade">
+                            <option value="">Selecciona un método</option>
+                            <option value="Buzón">Buzón</option>
+                            <option value="Trade">Trade</option>
+                            <option value="Subasta">Subasta</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Entrega</div>
-                    <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
+
+                <div class="gold-order-summary">
+                    <div class="gold-order-summary-item">
+                        <div class="gold-order-summary-label">Precio</div>
+                        <div class="gold-order-summary-value" id="gold-order-price">-</div>
+                    </div>
+                    <div class="gold-order-summary-item">
+                        <div class="gold-order-summary-label">Entrega</div>
+                        <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
+                    </div>
+                    <div class="gold-order-summary-item">
+                        <div class="gold-order-summary-label">Disponibilidad</div>
+                        <div class="gold-order-summary-value" id="gold-order-stock">-</div>
+                    </div>
+                    <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
+                        <i class="fas fa-shopping-cart"></i> COMPRAR ORO
+                    </a>
                 </div>
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Disponibilidad</div>
-                    <div class="gold-order-summary-value" id="gold-order-stock">-</div>
-                </div>
-                <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
-                    <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                </a>
             </div>
         </div>
         
@@ -4870,10 +4889,26 @@
         return Array.from(new Set(games)).sort();
     }
 
-    function getGoldOrderServers(game) {
+    function getGoldOrderServerTypes(game) {
         if (!game) return [];
-        const servers = gold.filter(item => item.game === game).map(item => item.server);
-        return Array.from(new Set(servers)).sort();
+        const types = gameServers
+            .filter(server => server.game === game)
+            .map(server => server.type || 'Sin definir');
+        return Array.from(new Set(types)).sort();
+    }
+
+    function getGoldOrderServers(game, type) {
+        if (!game) return [];
+        const serverType = type || '';
+        const serversFromConfig = gameServers
+            .filter(server => server.game === game)
+            .filter(server => !serverType || server.type === serverType)
+            .map(server => server.name);
+        const serversFromGold = gold
+            .filter(item => item.game === game)
+            .map(item => item.server);
+        const servers = Array.from(new Set([...serversFromConfig, ...serversFromGold]));
+        return servers.sort();
     }
 
     function updateGoldOrderGameOptions() {
@@ -4904,14 +4939,44 @@
 
     function updateGoldOrderServerOptions() {
         const gameSelect = document.getElementById('gold-order-game');
+        const serverTypeSelect = document.getElementById('gold-order-server-type');
         const serverSelect = document.getElementById('gold-order-server');
-        if (!gameSelect || !serverSelect) return;
+        if (!gameSelect || !serverSelect || !serverTypeSelect) return;
 
         const selectedGame = gameSelect.value;
-        const servers = getGoldOrderServers(selectedGame);
-        const current = serverSelect.value;
+        const selectedType = serverTypeSelect.value;
+        const serverTypes = getGoldOrderServerTypes(selectedGame);
 
         if (!selectedGame) {
+            serverTypeSelect.innerHTML = '<option value="">Selecciona un tipo</option>';
+            serverTypeSelect.value = '';
+            serverTypeSelect.disabled = true;
+            serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
+            serverSelect.value = '';
+            serverSelect.disabled = true;
+            updateGoldOrderAmountOptions();
+            return;
+        }
+
+        if (serverTypes.length === 0) {
+            serverTypeSelect.innerHTML = '<option value="Sin definir">Sin definir</option>';
+            serverTypeSelect.value = 'Sin definir';
+            serverTypeSelect.disabled = true;
+        } else {
+            serverTypeSelect.disabled = false;
+            serverTypeSelect.innerHTML = `
+                <option value="">Selecciona un tipo</option>
+                ${serverTypes.map(type => `<option value="${type}" ${type === selectedType ? 'selected' : ''}>${type}</option>`).join('')}
+            `;
+            if (selectedType && serverTypes.includes(selectedType)) {
+                serverTypeSelect.value = selectedType;
+            }
+        }
+
+        const servers = getGoldOrderServers(selectedGame, serverTypeSelect.value || '');
+        const current = serverSelect.value;
+
+        if (!serverTypeSelect.value) {
             serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -4943,6 +5008,7 @@
     function updateGoldOrderAmountOptions() {
         const gameSelect = document.getElementById('gold-order-game');
         const serverSelect = document.getElementById('gold-order-server');
+        const detailContainer = document.getElementById('gold-order-details');
         const amountSelect = document.getElementById('gold-order-amount');
         if (!gameSelect || !serverSelect || !amountSelect) return;
 
@@ -4953,6 +5019,9 @@
             amountSelect.innerHTML = '<option value="">Selecciona una cantidad</option>';
             amountSelect.value = '';
             amountSelect.disabled = true;
+            if (detailContainer) {
+                detailContainer.style.display = 'none';
+            }
             updateGoldOrderSummary();
             return;
         }
@@ -4962,11 +5031,17 @@
             amountSelect.innerHTML = '<option value="">Sin paquetes disponibles</option>';
             amountSelect.value = '';
             amountSelect.disabled = true;
+            if (detailContainer) {
+                detailContainer.style.display = 'none';
+            }
             updateGoldOrderSummary();
             return;
         }
 
         amountSelect.disabled = false;
+        if (detailContainer) {
+            detailContainer.style.display = 'block';
+        }
         const current = amountSelect.value;
         amountSelect.innerHTML = `
             <option value="">Selecciona una cantidad</option>
@@ -5024,6 +5099,36 @@
         updateGoldOrderGameOptions();
         updateGoldOrderServerOptions();
         updateGoldOrderAmountOptions();
+        updateGoldOrderSummary();
+    }
+
+    function resetGoldOrderFlow() {
+        const gameSelect = document.getElementById('gold-order-game');
+        const serverTypeSelect = document.getElementById('gold-order-server-type');
+        const serverSelect = document.getElementById('gold-order-server');
+        const amountSelect = document.getElementById('gold-order-amount');
+        const detailContainer = document.getElementById('gold-order-details');
+
+        if (gameSelect) {
+            gameSelect.value = '';
+        }
+        if (serverTypeSelect) {
+            serverTypeSelect.value = '';
+            serverTypeSelect.disabled = true;
+        }
+        if (serverSelect) {
+            serverSelect.value = '';
+            serverSelect.disabled = true;
+        }
+        if (amountSelect) {
+            amountSelect.value = '';
+            amountSelect.disabled = true;
+        }
+        if (detailContainer) {
+            detailContainer.style.display = 'none';
+        }
+
+        updateGoldOrderServerOptions();
         updateGoldOrderSummary();
     }
 
@@ -5251,6 +5356,13 @@
             });
         }
 
+        const goldOrderServerTypeSelect = document.getElementById('gold-order-server-type');
+        if (goldOrderServerTypeSelect) {
+            goldOrderServerTypeSelect.addEventListener('change', function() {
+                updateGoldOrderServerOptions();
+            });
+        }
+
         const goldOrderServerSelect = document.getElementById('gold-order-server');
         if (goldOrderServerSelect) {
             goldOrderServerSelect.addEventListener('change', function() {
@@ -5262,6 +5374,13 @@
         if (goldOrderAmountSelect) {
             goldOrderAmountSelect.addEventListener('change', function() {
                 updateGoldOrderSummary();
+            });
+        }
+
+        const goldOrderBackBtn = document.getElementById('gold-order-back-btn');
+        if (goldOrderBackBtn) {
+            goldOrderBackBtn.addEventListener('click', function() {
+                resetGoldOrderFlow();
             });
         }
     }
