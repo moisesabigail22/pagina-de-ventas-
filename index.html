@@ -5014,6 +5014,122 @@
         }
     }
 
+    function setupAdminGoldEditForm() {
+        const gameSelect = document.getElementById('admin-gold-edit-game');
+        const serverSelect = document.getElementById('admin-gold-edit-server');
+        const packageSelect = document.getElementById('admin-gold-edit-package');
+        const priceInput = document.getElementById('admin-gold-edit-price');
+        const stockInput = document.getElementById('admin-gold-edit-stock');
+        const statusSelect = document.getElementById('admin-gold-edit-status');
+
+        if (!gameSelect || !serverSelect || !packageSelect) return;
+
+        const games = getAdminGoldGames();
+        gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
+
+        const updateServers = () => {
+            const selectedGame = gameSelect.value;
+            const servers = Array.from(new Set(gold.filter(item => item.game === selectedGame).map(item => item.server))).sort();
+            if (servers.length === 0) {
+                serverSelect.innerHTML = '<option value="">Sin servidores</option>';
+                serverSelect.disabled = true;
+                packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
+                packageSelect.disabled = true;
+                if (priceInput) priceInput.value = '';
+                if (stockInput) stockInput.value = 0;
+                if (statusSelect) statusSelect.value = 'available';
+                return;
+            }
+            serverSelect.disabled = false;
+            serverSelect.innerHTML = servers.map(server => `<option value="${server}">${server}</option>`).join('');
+            updatePackages();
+        };
+
+        const updatePackages = () => {
+            const selectedGame = gameSelect.value;
+            const selectedServer = serverSelect.value;
+            const packages = gold.filter(item => item.game === selectedGame && item.server === selectedServer);
+            if (packages.length === 0) {
+                packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
+                packageSelect.disabled = true;
+                if (priceInput) priceInput.value = '';
+                if (stockInput) stockInput.value = 0;
+                if (statusSelect) statusSelect.value = 'available';
+                return;
+            }
+            packageSelect.disabled = false;
+            packageSelect.innerHTML = packages.map(item => `
+                <option value="${item.id}">${item.amount} • ${item.price}</option>
+            `).join('');
+            updateEditFields();
+        };
+
+        const updateEditFields = () => {
+            const selectedId = parseInt(packageSelect.value, 10);
+            const item = gold.find(entry => entry.id === selectedId);
+            if (!item) return;
+            if (priceInput) priceInput.value = item.price;
+            if (stockInput) stockInput.value = item.stock ?? 0;
+            if (statusSelect) statusSelect.value = item.status;
+        };
+
+        gameSelect.addEventListener('change', updateServers);
+        serverSelect.addEventListener('change', updatePackages);
+        packageSelect.addEventListener('change', updateEditFields);
+
+        updateServers();
+    }
+
+    function saveAdminGoldEdit() {
+        const packageSelect = document.getElementById('admin-gold-edit-package');
+        const priceInput = document.getElementById('admin-gold-edit-price');
+        const stockInput = document.getElementById('admin-gold-edit-stock');
+        const statusSelect = document.getElementById('admin-gold-edit-status');
+
+        if (!packageSelect || !packageSelect.value) {
+            showMessage('Selecciona un paquete válido', 'error');
+            return;
+        }
+
+        const selectedId = parseInt(packageSelect.value, 10);
+        const item = gold.find(entry => entry.id === selectedId);
+        if (!item) return;
+
+        const newPrice = priceInput?.value.trim() || '';
+        if (!newPrice.match(/^\$?\d+(\.\d{2})?$/)) {
+            showMessage('Formato de precio inválido. Usa: $99.99', 'error');
+            return;
+        }
+
+        item.price = newPrice.startsWith('$') ? newPrice : `$${newPrice}`;
+        item.stock = parseInt(stockInput?.value, 10) || 0;
+        item.status = statusSelect?.value || 'available';
+
+        localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
+        updateGoldOrderForm();
+        showMessage('✅ Precio actualizado correctamente', 'success');
+        setupAdminGoldEditForm();
+    }
+
+    function deleteAdminGoldEdit() {
+        const packageSelect = document.getElementById('admin-gold-edit-package');
+        if (!packageSelect || !packageSelect.value) {
+            showMessage('Selecciona un paquete válido', 'error');
+            return;
+        }
+        const selectedId = parseInt(packageSelect.value, 10);
+        const index = gold.findIndex(entry => entry.id === selectedId);
+        if (index === -1) return;
+
+        if (!confirm('¿Eliminar este paquete de oro?')) return;
+
+        gold.splice(index, 1);
+        localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
+        updateGoldOrderForm();
+        showMessage('✅ Paquete eliminado', 'success');
+        setupAdminGoldEditForm();
+    }
+
     function addGoldPriceFromAdmin() {
         const game = document.getElementById('admin-gold-price-game')?.value;
         const server = document.getElementById('admin-gold-price-server')?.value;
@@ -5705,6 +5821,7 @@
             case 'gold':
                 content.innerHTML = renderAdminGold();
                 setupAdminGoldPriceForm();
+                setupAdminGoldEditForm();
                 break;
             case 'gold-categories':
                 content.innerHTML = renderAdminGoldCategories();
@@ -5892,49 +6009,53 @@
                     </button>
                 </div>
             </div>
-            
-            <div class="form-grid">
-                ${gold.map(item => `
-                    <div style="background: var(--panel); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark);">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
-                            <div>
-                                <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem;">${item.amount} - ${item.game}</h4>
-                                <div style="color: var(--text-gray); font-size: 0.95rem;">
-                                    <i class="fas fa-server"></i> ${item.server} • 
-                                    <i class="fas fa-clock"></i> ${item.delivery}
-                                </div>
-                            </div>
-                            <div style="font-size: 1.8rem; font-weight: 900; color: var(--wow-gold);">
-                                ${item.price}
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
-                            <div style="flex: 1;">
-                                <label style="display: block; margin-bottom: 8px; color: var(--wow-gold); font-weight: 600;">Precio</label>
-                                <input type="text" value="${item.price}" style="width: 100%; font-size: 1rem;" id="price-${item.id}" autocomplete="off">
-                            </div>
-                            <div style="width: 120px;">
-                                <label style="display: block; margin-bottom: 8px; color: var(--wow-gold); font-weight: 600;">Stock</label>
-                                <input type="number" value="${item.stock}" style="width: 100%; font-size: 1rem;" id="stock-${item.id}" min="0" autocomplete="off">
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <select style="flex: 1;" id="status-${item.id}">
-                                <option value="available" ${item.status === 'available' ? 'selected' : ''}>Disponible</option>
-                                <option value="limited" ${item.status === 'limited' ? 'selected' : ''}>Stock Limitado</option>
-                                <option value="soldout" ${item.status === 'soldout' ? 'selected' : ''}>Agotado</option>
-                            </select>
-                            <button class="btn-primary" onclick="updateGold(${item.id})" data-tooltip="Guardar cambios">
-                                <i class="fas fa-save"></i>
-                            </button>
-                            <button class="btn-danger" onclick="deleteGold(${item.id})" data-tooltip="Eliminar paquete">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
+
+            <div style="background: var(--panel); padding: 25px; border-radius: 12px; border: 2px solid var(--wow-gold-dark);">
+                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.3rem;">
+                    <i class="fas fa-coins"></i> Editar precios existentes
+                </h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Juego</label>
+                        <select id="admin-gold-edit-game"></select>
                     </div>
-                `).join('')}
+                    <div class="form-group">
+                        <label class="form-label">Servidor</label>
+                        <select id="admin-gold-edit-server"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Oro / Precio</label>
+                        <select id="admin-gold-edit-package"></select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Precio (USD)</label>
+                        <input type="text" id="admin-gold-edit-price" placeholder="Ej: $24.99">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock</label>
+                        <input type="number" id="admin-gold-edit-stock" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="admin-gold-edit-status">
+                            <option value="available">Disponible</option>
+                            <option value="limited">Stock Limitado</option>
+                            <option value="soldout">Agotado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px;">
+                    <button class="btn-primary" onclick="saveAdminGoldEdit()">
+                        <i class="fas fa-save"></i> GUARDAR CAMBIOS
+                    </button>
+                    <button class="btn-danger" onclick="deleteAdminGoldEdit()">
+                        <i class="fas fa-trash"></i> ELIMINAR
+                    </button>
+                </div>
             </div>
         `;
     }
