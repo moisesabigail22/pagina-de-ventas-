@@ -996,83 +996,6 @@
             left: 100%;
         }
 
-        /* Gold Section */
-        .gold-packages {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-            margin-top: 40px;
-        }
-
-        .gold-card {
-            background: var(--panel);
-            border-radius: 15px;
-            padding: 35px;
-            text-align: center;
-            border: 2px solid var(--wow-gold-dark);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-        }
-
-        .gold-card:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.7),
-                0 0 25px rgba(200, 170, 109, 0.3);
-        }
-
-        .gold-card:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, 
-                var(--wow-gold-dark) 0%, 
-                var(--wow-gold) 50%, 
-                var(--wow-gold-dark) 100%);
-        }
-
-        .gold-icon {
-            font-size: 3.5rem;
-            color: var(--wow-gold);
-            margin-bottom: 25px;
-            text-shadow: 0 0 20px rgba(200, 170, 109, 0.5);
-            filter: drop-shadow(0 0 5px rgba(200, 170, 109, 0.3));
-        }
-
-        .gold-amount {
-            font-size: 2.8rem;
-            font-weight: 900;
-            color: var(--wow-gold);
-            margin-bottom: 15px;
-            text-shadow: 
-                0 0 20px rgba(200, 170, 109, 0.5),
-                0 0 30px rgba(200, 170, 109, 0.3);
-            position: relative;
-        }
-
-        .gold-game {
-            color: var(--text);
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .gold-server {
-            color: var(--text-gray);
-            font-size: 1rem;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
         .gold-order-panel {
             background: var(--panel);
             border-radius: 18px;
@@ -1158,89 +1081,6 @@
 
         .gold-order-step {
             margin-top: 20px;
-        }
-
-        /* Gold Categories - ESTILOS MODIFICADOS */
-        .gold-categories-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
-        }
-
-        .gold-category-card {
-            background: var(--panel);
-            border-radius: 15px;
-            padding: 30px;
-            border: 2px solid var(--wow-gold-dark);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .gold-category-card:hover {
-            border-color: var(--wow-gold);
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.7),
-                0 0 25px rgba(200, 170, 109, 0.3);
-        }
-
-        .gold-category-card:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            background: linear-gradient(90deg, 
-                var(--wow-gold-dark) 0%, 
-                var(--wow-gold) 50%, 
-                var(--wow-gold-dark) 100%);
-        }
-
-        .gold-category-icon {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 25px;
-            border-radius: 50%;
-            border: 3px solid var(--wow-gold);
-            overflow: hidden;
-            background: var(--panel-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .gold-category-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .gold-category-card:hover .gold-category-icon {
-            border-color: var(--wow-gold-light);
-            transform: scale(1.05);
-        }
-
-        .gold-category-card:hover .gold-category-icon img {
-            transform: scale(1.1);
-        }
-
-        .gold-category-title h3 {
-            color: var(--wow-gold);
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .gold-category-title p {
-            color: var(--text-gray);
-            font-size: 1rem;
         }
 
         /* Sell Section */
@@ -2870,14 +2710,6 @@
                 transform: translate(-50%, -50%) scale(1);
             }
             
-            .gold-categories-container {
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            }
-            
-            .gold-category-icon {
-                width: 90px;
-                height: 90px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -2914,18 +2746,6 @@
                 padding: 20px;
             }
             
-            .gold-categories-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .gold-category-icon {
-                width: 80px;
-                height: 80px;
-            }
-            
-            .gold-category-title h3 {
-                font-size: 1.5rem;
-            }
         }
 
         /* Optimización para pantallas retina */
@@ -4598,7 +4418,6 @@
         
         // Renderizar contenido inicial
         renderAccounts();
-        renderGoldCategories();
         renderGold();
         renderReferences();
         updateGoldOrderForm();
@@ -5242,7 +5061,6 @@
         });
 
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-        renderGoldCategories();
         updateGoldOrderForm();
         switchAdminTab('gold');
         showMessage('✅ Precio de oro agregado exitosamente', 'success');
@@ -5621,158 +5439,8 @@
         });
     }
     
-    // Función para obtener imagen del juego
-    function getGameImage(game) {
-        return GAME_IMAGES[game] || GAME_IMAGES.default;
-    }
-    
-    function renderGoldCategories() {
-        const container = document.getElementById('gold-categories-container');
-        if (!container) return;
-        
-        if (goldCategories.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 80px 40px; color: var(--text-gray); background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold-dark);">
-                    <i class="fas fa-coins" style="font-size: 5rem; margin-bottom: 25px; color: var(--wow-gold); opacity: 0.5;"></i>
-                    <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">No hay juegos disponibles</h3>
-                    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">Los juegos se cargarán pronto. Mientras tanto, puedes contactarnos directamente en Discord para consultas sobre oro.</p>
-                </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = goldCategories.map(category => {
-            // Contar cuántos paquetes de oro hay en esta categoría
-            const packageCount = gold.filter(item => 
-                item.game === category.game && item.server === category.server
-            ).length;
-            
-            const gameImage = getGameImage(category.game);
-            
-            return `
-                <div class="gold-category-card" onclick="showGoldCategory(${category.id})">
-                    <div class="gold-category-icon">
-                        <img src="${gameImage}" alt="${category.game}">
-                    </div>
-                    <div class="gold-category-title">
-                        <h3>${category.game}</h3>
-                        <p>${category.server}</p>
-                        <p>${packageCount} ${packageCount === 1 ? 'paquete' : 'paquetes'} disponible</p>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    }
-    
-    function getGameIcon(game) {
-        const iconMap = {
-            'Turtle WoW': 'fas fa-dragon',
-            'World of Warcraft': 'fab fa-wow',
-            'Albion Online': 'fas fa-shield-alt',
-            'Runescape': 'fas fa-helmet-battle',
-            'default': 'fas fa-coins'
-        };
-        return iconMap[game] || iconMap.default;
-    }
-    
-    function showGoldCategory(categoryId) {
-        const category = goldCategories.find(c => c.id === categoryId);
-        if (!category) return;
-        
-        // Mostrar paquetes de oro de esta categoría
-        const categoryGold = gold.filter(item => 
-            item.game === category.game && item.server === category.server
-        );
-        
-        const container = document.getElementById('gold-packages-container');
-        const categoriesContainer = document.getElementById('gold-categories-container');
-        if (!container || !categoriesContainer) return;
-
-        categoriesContainer.style.display = 'none';
-        container.style.display = 'block';
-        
-        container.innerHTML = `
-            <div style="margin-bottom: 40px;">
-                <button class="btn-secondary" onclick="hideGoldCategory()" style="margin-bottom: 20px;">
-                    <i class="fas fa-arrow-left"></i> VOLVER A JUEGOS
-                </button>
-                <h2 style="color: var(--wow-gold); font-size: 2rem; margin-bottom: 10px; text-align: center;">
-                    ${category.game} • ${category.server}
-                </h2>
-                <p style="color: var(--text-gray); font-size: 1.1rem; margin-bottom: 30px; text-align: center;">
-                    Paquetes de oro disponibles para ${category.game} en ${category.server}
-                </p>
-            </div>
-            
-            ${categoryGold.length === 0 ? `
-            <div style="text-align: center; padding: 60px 40px; color: var(--text-gray); background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold-dark);">
-                <i class="fas fa-coins" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
-                <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">No hay paquetes disponibles</h3>
-                <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">
-                    Actualmente no hay paquetes de oro disponibles para ${category.game}. 
-                    Pronto agregaremos stock. Mientras tanto, puedes contactarnos en Discord para consultas personalizadas.
-                </p>
-            </div>
-            ` : `
-            <div class="gold-packages">
-                ${categoryGold.map(item => `
-                    <div class="gold-card">
-                        <div class="gold-icon">
-                            <i class="fas fa-coins"></i>
-                        </div>
-                        <div class="gold-amount">${item.amount}</div>
-                        <div class="gold-game">${item.game}</div>
-                        <div class="gold-server">
-                            <i class="fas fa-server"></i> ${item.server}
-                        </div>
-                        <div style="font-size: 2.5rem; font-weight: 900; color: var(--text); margin: 25px 0; position: relative;">
-                            ${item.price}
-                            <div style="font-size: 1rem; color: var(--text-gray); margin-top: 5px;">
-                                <i class="fas fa-clock"></i> Entrega: ${item.delivery}
-                            </div>
-                        </div>
-                        
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                            <span class="status-badge" style="background: ${item.status === 'available' ? 'var(--success)' : item.status === 'limited' ? 'var(--wow-gold)' : 'var(--danger)'}; color: ${item.status === 'available' || item.status === 'limited' ? 'var(--wow-blue-dark)' : 'white'}; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: 600;">
-                                ${item.status === 'available' ? 'Disponible' : item.status === 'limited' ? 'Stock Limitado' : 'Agotado'}
-                            </span>
-                            ${item.stock ? `
-                            <span style="font-size: 0.9rem; color: var(--text-gray);">
-                                (${item.stock} disponibles)
-                            </span>
-                            ` : ''}
-                        </div>
-                        
-                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" data-tooltip="Comprar ahora en Discord">
-                            <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                        </a>
-                    </div>
-                `).join('')}
-            </div>
-            `}
-        `;
-        
-        // Scroll suave a la sección de oro
-        setTimeout(() => {
-            document.getElementById('gold').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-        }, 100);
-    }
-    
-    function hideGoldCategory() {
-        const container = document.getElementById('gold-packages-container');
-        const categoriesContainer = document.getElementById('gold-categories-container');
-        if (!container || !categoriesContainer) return;
-
-        container.style.display = 'none';
-        categoriesContainer.style.display = 'grid';
-    }
-    
     function renderGold() {
         // Esta función ahora solo se usa para el panel de administración
-        // La visualización pública usa renderGoldCategories() y showGoldCategory()
     }
     
     function renderReferences() {
@@ -6958,7 +6626,6 @@
         }
         
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        renderGoldCategories();
         closeModal();
         
         if (isAdmin) {
@@ -6977,7 +6644,6 @@
         if (index !== -1) {
             goldCategories.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-            renderGoldCategories();
             if (isAdmin) switchAdminTab('gold-categories');
             showMessage('✅ Categoría de oro eliminada exitosamente', 'success');
         }
@@ -7362,7 +7028,6 @@
         }
         
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-        renderGoldCategories(); // Actualizar categorías de oro
         updateGoldOrderForm();
         closeModal();
         
@@ -7395,7 +7060,6 @@
         item.status = newStatus;
         
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-        renderGoldCategories(); // Actualizar categorías de oro
         updateGoldOrderForm();
         showMessage('✅ Oro actualizado exitosamente', 'success');
     }
@@ -7407,7 +7071,6 @@
         if (index !== -1) {
             gold.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-            renderGoldCategories(); // Actualizar categorías de oro
             updateGoldOrderForm();
             if (isAdmin) switchAdminTab('gold');
             showMessage('✅ Oro eliminado exitosamente', 'success');
