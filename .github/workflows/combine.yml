@@ -1,0 +1,67 @@
+name: Combinar Branches Automáticamente
+
+on:
+  push:
+    branches: [ "**" ]  # Se activa en cualquier push
+
+jobs:
+  combine-branches:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout todo el repositorio
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Trae todas las branches
+    
+    - name: Combinar todos los index.html
+      run: |
+        echo "🧩 Iniciando combinación automática..."
+        
+        # Crear archivo combinado
+        cat > index-combinado.html << 'EOF'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Combinado Automático - GitHub</title>
+            <style>
+                .branch-section {
+                    border: 2px solid #007acc;
+                    margin: 20px;
+                    padding: 15px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>🌿 Código de Todas las Branches</h1>
+        EOF
+        
+        # Obtener todas las branches remotas
+        for branch in $(git branch -r | grep -v HEAD | sed 's/origin\///'); do
+          echo "Procesando: $branch"
+          git checkout $branch 2>/dev/null || continue
+          
+          if [ -f "index.html" ]; then
+            echo "  - Añadiendo $branch" >> index-combinado.html
+            echo "  <div class='branch-section'>" >> index-combinado.html
+            echo "  <h3>Branch: $branch</h3>" >> index-combinado.html
+            cat index.html >> index-combinado.html
+            echo "  </div>" >> index-combinado.html
+          fi
+        done
+        
+        echo "</body></html>" >> index-combinado.html
+        
+        # Mostrar resultado
+        echo "✅ Archivo combinado creado!"
+        ls -la index-combinado.html
+    
+    - name: Subir archivo combinado
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
+        
+        git checkout main
+        git add index-combinado.html
+        git commit -m "🤖 Combinación automática de todas las branches"
+        git push
