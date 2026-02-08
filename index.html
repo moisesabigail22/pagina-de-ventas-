@@ -114,7 +114,6 @@
             .gold-card,
             .sell-info,
             .discord-join-container,
-            .video-references,
             .user-references,
             .contact-info,
             .contact-discord,
@@ -1074,6 +1073,63 @@
             gap: 8px;
         }
 
+        .gold-order-panel {
+            background: var(--panel);
+            border-radius: 18px;
+            padding: 35px;
+            border: 2px solid var(--wow-gold-dark);
+            box-shadow: var(--shadow);
+            margin-top: 35px;
+        }
+
+        .gold-order-header {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .gold-order-header h3 {
+            color: var(--wow-gold);
+            font-size: 1.7rem;
+            margin-bottom: 10px;
+        }
+
+        .gold-order-header p {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+        }
+
+        .gold-order-summary {
+            margin-top: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--panel-light);
+            border: 2px solid var(--wow-gold-dark);
+            padding: 20px 25px;
+            border-radius: 12px;
+        }
+
+        .gold-order-summary-item {
+            min-width: 160px;
+        }
+
+        .gold-order-summary-label {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        .gold-order-summary-value {
+            color: var(--wow-gold);
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .gold-order-cta {
+            margin-left: auto;
+        }
+
         /* Gold Categories - ESTILOS MODIFICADOS */
         .gold-categories-container {
             display: grid;
@@ -1282,11 +1338,11 @@
         /* References Section */
         .references-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 40px;
         }
 
-        .video-references, .user-references {
+        .user-references {
             background: var(--panel);
             border-radius: 15px;
             padding: 35px;
@@ -1296,7 +1352,7 @@
             backdrop-filter: blur(10px);
         }
 
-        .video-references:before, .user-references:before {
+        .user-references:before {
             content: '';
             position: absolute;
             top: 0;
@@ -1307,124 +1363,6 @@
                 var(--wow-gold-dark) 0%, 
                 var(--wow-gold) 50%, 
                 var(--wow-gold-dark) 100%);
-        }
-
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-top: 25px;
-        }
-
-        .video-card {
-            background: var(--panel-light);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            position: relative;
-        }
-
-        .video-card:hover {
-            transform: translateY(-10px) scale(1.03);
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                0 0 20px rgba(200, 170, 109, 0.2);
-            border-color: var(--wow-gold);
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, var(--wow-blue-dark), var(--wow-blue-medium));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            color: var(--wow-gold);
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.5s;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .video-card:hover .video-thumbnail {
-            transform: scale(1.05);
-        }
-
-        .video-thumbnail:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent 30%, rgba(200, 170, 109, 0.15) 50%, transparent 70%);
-            pointer-events: none;
-            animation: thumbnailShine 6s infinite linear;
-        }
-
-        @keyframes thumbnailShine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .video-thumbnail .play-button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.7);
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--wow-gold);
-            font-size: 2rem;
-            transition: all 0.3s;
-            z-index: 2;
-        }
-
-        .video-card:hover .video-thumbnail .play-button {
-            background: rgba(200, 170, 109, 0.8);
-            color: var(--wow-blue-dark);
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
-        .video-thumbnail .duration {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            z-index: 2;
-        }
-
-        .video-info {
-            padding: 25px;
-        }
-
-        .video-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--wow-gold);
-            line-height: 1.4;
-            min-height: 56px;
-        }
-
-        .video-description {
-            color: var(--text-gray);
-            font-size: 1rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
         }
 
         .references-list {
@@ -3227,6 +3165,78 @@
                 </div>
             </div>
         </div>
+
+        <div class="gold-order-panel">
+            <div class="gold-order-header">
+                <h3><i class="fas fa-coins"></i> Configura tu compra de oro</h3>
+                <p>Selecciona el juego, servidor y cantidad para ver el precio disponible.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Juego</label>
+                    <select id="gold-order-game">
+                        <option value="">Selecciona un juego</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Servidor</label>
+                    <select id="gold-order-server" disabled>
+                        <option value="">Selecciona un servidor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Cantidad de Oro</label>
+                    <select id="gold-order-amount" disabled>
+                        <option value="">Selecciona una cantidad</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Facción</label>
+                    <select id="gold-order-faction">
+                        <option value="">Selecciona una facción</option>
+                        <option value="Horda">Horda</option>
+                        <option value="Alianza">Alianza</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Nombre del personaje</label>
+                    <input type="text" id="gold-order-character" placeholder="Ej: Arthas, Sylvanas" maxlength="30">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tipo de trade</label>
+                    <select id="gold-order-trade">
+                        <option value="">Selecciona un método</option>
+                        <option value="Buzón">Buzón</option>
+                        <option value="Trade">Trade</option>
+                        <option value="Subasta">Subasta</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="gold-order-summary">
+                <div class="gold-order-summary-item">
+                    <div class="gold-order-summary-label">Precio</div>
+                    <div class="gold-order-summary-value" id="gold-order-price">-</div>
+                </div>
+                <div class="gold-order-summary-item">
+                    <div class="gold-order-summary-label">Entrega</div>
+                    <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
+                </div>
+                <div class="gold-order-summary-item">
+                    <div class="gold-order-summary-label">Disponibilidad</div>
+                    <div class="gold-order-summary-value" id="gold-order-stock">-</div>
+                </div>
+                <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
+                    <i class="fas fa-shopping-cart"></i> COMPRAR ORO
+                </a>
+            </div>
+        </div>
         
         <div class="gold-categories-container" id="gold-categories-container">
             <!-- Las categorías de oro se cargan aquí dinámicamente -->
@@ -3353,15 +3363,6 @@
         </div>
         
         <div class="references-container">
-            <div class="video-references">
-                <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.5rem;">
-                    <i class="fas fa-video"></i> Videos de Referencia
-                </h3>
-                <div class="video-grid" id="videos-grid">
-                    <!-- Los videos se cargan aquí dinámicamente -->
-                </div>
-            </div>
-            
             <div class="user-references">
                 <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.5rem;">
                     <i class="fas fa-comments"></i> Testimonios de Usuarios
@@ -3484,9 +3485,6 @@
                 </button>
                 <button class="admin-tab" onclick="switchAdminTab('references')">
                     <i class="fas fa-star"></i> Referencias
-                </button>
-                <button class="admin-tab" onclick="switchAdminTab('videos')">
-                    <i class="fas fa-video"></i> Videos
                 </button>
                 <button class="admin-tab" onclick="switchAdminTab('settings')">
                     <i class="fas fa-cog"></i> Configuración
@@ -4145,38 +4143,6 @@
         }
     ];
     
-    // Videos con URLs reales de YouTube
-    const sampleVideos = [
-        {
-            id: 1,
-            title: 'Tutorial: Cómo Comprar Oro Seguro en World of Warcraft',
-            description: 'Guía completa paso a paso para realizar compras seguras de oro en WoW Classic y Retail. Aprende cómo evitar estafas.',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            duration: '15:30'
-        },
-        {
-            id: 2,
-            title: 'Testimonio: Vendedor Exitoso de Oro en Turtle WoW',
-            description: 'Historia real de un vendedor que ha generado ingresos consistentes vendiendo oro en nuestra plataforma.',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            duration: '22:15'
-        },
-        {
-            id: 3,
-            title: 'Guía: Vender Oro de Forma Segura - Paso a Paso',
-            description: 'Aprende el proceso completo para vender tu excedente de oro de manera segura y obtener el mejor precio.',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            duration: '18:45'
-        },
-        {
-            id: 4,
-            title: 'Review: Cuentas Premium Disponibles en Epic Gold Shop',
-            description: 'Tour por nuestras cuentas premium más populares y análisis de sus características exclusivas.',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            duration: '25:10'
-        }
-    ];
-    
     const sampleReferences = [
         {
             id: 1,
@@ -4295,7 +4261,6 @@
     let accounts = JSON.parse(localStorage.getItem('epicgoldshop_accounts')) || sampleAccounts;
     let gold = JSON.parse(localStorage.getItem('epicgoldshop_gold')) || sampleGold;
     let goldCategories = JSON.parse(localStorage.getItem('epicgoldshop_gold_categories')) || sampleGoldCategories;
-    let videos = JSON.parse(localStorage.getItem('epicgoldshop_videos')) || sampleVideos;
     let references = JSON.parse(localStorage.getItem('epicgoldshop_references')) || sampleReferences;
     let settings = JSON.parse(localStorage.getItem('epicgoldshop_settings')) || contactInfo;
     let categories = JSON.parse(localStorage.getItem('epicgoldshop_categories')) || defaultCategories;
@@ -4589,8 +4554,8 @@
         renderAccounts();
         renderGoldCategories();
         renderGold();
-        renderVideos();
         renderReferences();
+        updateGoldOrderForm();
         
         // Configurar navegación suave
         setupSmoothNavigation();
@@ -4665,7 +4630,6 @@
         const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
         const savedGold = localStorage.getItem('epicgoldshop_gold');
         const savedGoldCategories = localStorage.getItem('epicgoldshop_gold_categories');
-        const savedVideos = localStorage.getItem('epicgoldshop_videos');
         const savedReferences = localStorage.getItem('epicgoldshop_references');
         const savedSettings = localStorage.getItem('epicgoldshop_settings');
         const savedCategories = localStorage.getItem('epicgoldshop_categories');
@@ -4674,7 +4638,6 @@
         if (savedAccounts) accounts = JSON.parse(savedAccounts);
         if (savedGold) gold = JSON.parse(savedGold);
         if (savedGoldCategories) goldCategories = JSON.parse(savedGoldCategories);
-        if (savedVideos) videos = JSON.parse(savedVideos);
         if (savedReferences) references = JSON.parse(savedReferences);
         if (savedSettings) settings = JSON.parse(savedSettings);
         if (savedCategories) categories = JSON.parse(savedCategories);
@@ -4901,6 +4864,277 @@
         }
         return serverSelect.value.trim();
     }
+
+    function getGoldOrderGames() {
+        const games = gold.map(item => item.game).filter(Boolean);
+        return Array.from(new Set(games)).sort();
+    }
+
+    function getGoldOrderServers(game) {
+        if (!game) return [];
+        const servers = gold.filter(item => item.game === game).map(item => item.server);
+        return Array.from(new Set(servers)).sort();
+    }
+
+    function updateGoldOrderGameOptions() {
+        const gameSelect = document.getElementById('gold-order-game');
+        if (!gameSelect) return;
+
+        const games = getGoldOrderGames();
+        const current = gameSelect.value;
+
+        if (games.length === 0) {
+            gameSelect.innerHTML = '<option value="">No hay juegos disponibles</option>';
+            gameSelect.value = '';
+            updateGoldOrderServerOptions();
+            return;
+        }
+
+        gameSelect.innerHTML = `
+            <option value="">Selecciona un juego</option>
+            ${games.map(game => `<option value="${game}" ${game === current ? 'selected' : ''}>${game}</option>`).join('')}
+        `;
+
+        if (current && games.includes(current)) {
+            gameSelect.value = current;
+        }
+
+        updateGoldOrderServerOptions();
+    }
+
+    function updateGoldOrderServerOptions() {
+        const gameSelect = document.getElementById('gold-order-game');
+        const serverSelect = document.getElementById('gold-order-server');
+        if (!gameSelect || !serverSelect) return;
+
+        const selectedGame = gameSelect.value;
+        const servers = getGoldOrderServers(selectedGame);
+        const current = serverSelect.value;
+
+        if (!selectedGame) {
+            serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
+            serverSelect.value = '';
+            serverSelect.disabled = true;
+            updateGoldOrderAmountOptions();
+            return;
+        }
+
+        if (servers.length === 0) {
+            serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
+            serverSelect.value = '';
+            serverSelect.disabled = true;
+            updateGoldOrderAmountOptions();
+            return;
+        }
+
+        serverSelect.disabled = false;
+        serverSelect.innerHTML = `
+            <option value="">Selecciona un servidor</option>
+            ${servers.map(server => `<option value="${server}" ${server === current ? 'selected' : ''}>${server}</option>`).join('')}
+        `;
+
+        if (current && servers.includes(current)) {
+            serverSelect.value = current;
+        }
+
+        updateGoldOrderAmountOptions();
+    }
+
+    function updateGoldOrderAmountOptions() {
+        const gameSelect = document.getElementById('gold-order-game');
+        const serverSelect = document.getElementById('gold-order-server');
+        const amountSelect = document.getElementById('gold-order-amount');
+        if (!gameSelect || !serverSelect || !amountSelect) return;
+
+        const selectedGame = gameSelect.value;
+        const selectedServer = serverSelect.value;
+
+        if (!selectedGame || !selectedServer) {
+            amountSelect.innerHTML = '<option value="">Selecciona una cantidad</option>';
+            amountSelect.value = '';
+            amountSelect.disabled = true;
+            updateGoldOrderSummary();
+            return;
+        }
+
+        const packages = gold.filter(item => item.game === selectedGame && item.server === selectedServer);
+        if (packages.length === 0) {
+            amountSelect.innerHTML = '<option value="">Sin paquetes disponibles</option>';
+            amountSelect.value = '';
+            amountSelect.disabled = true;
+            updateGoldOrderSummary();
+            return;
+        }
+
+        amountSelect.disabled = false;
+        const current = amountSelect.value;
+        amountSelect.innerHTML = `
+            <option value="">Selecciona una cantidad</option>
+            ${packages.map(item => `
+                <option value="${item.id}" ${String(item.id) === current ? 'selected' : ''}>
+                    ${item.amount} • ${item.price}
+                </option>
+            `).join('')}
+        `;
+
+        if (current && packages.some(item => String(item.id) === current)) {
+            amountSelect.value = current;
+        }
+
+        updateGoldOrderSummary();
+    }
+
+    function updateGoldOrderSummary() {
+        const amountSelect = document.getElementById('gold-order-amount');
+        const priceEl = document.getElementById('gold-order-price');
+        const deliveryEl = document.getElementById('gold-order-delivery');
+        const stockEl = document.getElementById('gold-order-stock');
+        const cta = document.getElementById('gold-order-cta');
+
+        if (!amountSelect || !priceEl || !deliveryEl || !stockEl) return;
+
+        const selectedId = parseInt(amountSelect.value, 10);
+        const item = gold.find(entry => entry.id === selectedId);
+
+        if (!item) {
+            priceEl.textContent = '-';
+            deliveryEl.textContent = '-';
+            stockEl.textContent = '-';
+            if (cta) {
+                cta.setAttribute('aria-disabled', 'true');
+                cta.style.pointerEvents = 'none';
+                cta.style.opacity = '0.6';
+                cta.href = settings?.discord || DISCORD_LINK;
+            }
+            return;
+        }
+
+        priceEl.textContent = item.price;
+        deliveryEl.textContent = item.delivery || 'Por confirmar';
+        stockEl.textContent = item.stock ? `${item.stock} disponibles` : 'Consultar stock';
+        if (cta) {
+            cta.setAttribute('aria-disabled', 'false');
+            cta.style.pointerEvents = 'auto';
+            cta.style.opacity = '1';
+            cta.href = settings?.discord || DISCORD_LINK;
+        }
+    }
+
+    function updateGoldOrderForm() {
+        updateGoldOrderGameOptions();
+        updateGoldOrderServerOptions();
+        updateGoldOrderAmountOptions();
+        updateGoldOrderSummary();
+    }
+
+    function getAdminGoldGames() {
+        const gameSet = new Set([
+            ...categories,
+            ...gold.map(item => item.game),
+            ...goldCategories.map(item => item.game)
+        ].filter(Boolean));
+        return Array.from(gameSet).sort();
+    }
+
+    function setupAdminGoldPriceForm() {
+        const gameSelect = document.getElementById('admin-gold-price-game');
+        const serverSelect = document.getElementById('admin-gold-price-server');
+        const deliveryInput = document.getElementById('admin-gold-price-delivery');
+
+        if (!gameSelect || !serverSelect) return;
+
+        const games = getAdminGoldGames();
+        if (games.length === 0) {
+            gameSelect.innerHTML = '<option value="">Sin juegos disponibles</option>';
+            serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
+            serverSelect.disabled = true;
+            return;
+        }
+
+        gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
+
+        const updateServers = () => {
+            const selectedGame = gameSelect.value;
+            const serversFromAdmin = gameServers
+                .filter(server => server.game === selectedGame)
+                .map(server => server.name);
+            const serversFromGold = gold
+                .filter(item => item.game === selectedGame)
+                .map(item => item.server);
+            const servers = Array.from(new Set([...serversFromAdmin, ...serversFromGold])).sort();
+
+            if (servers.length === 0) {
+                serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
+                serverSelect.value = '';
+                serverSelect.disabled = true;
+                return;
+            }
+
+            serverSelect.disabled = false;
+            serverSelect.innerHTML = servers.map(server => `<option value="${server}">${server}</option>`).join('');
+        };
+
+        gameSelect.addEventListener('change', updateServers);
+        updateServers();
+
+        if (deliveryInput && !deliveryInput.value) {
+            deliveryInput.value = '5-15 minutos';
+        }
+    }
+
+    function addGoldPriceFromAdmin() {
+        const game = document.getElementById('admin-gold-price-game')?.value;
+        const server = document.getElementById('admin-gold-price-server')?.value;
+        const amount = document.getElementById('admin-gold-price-amount')?.value.trim();
+        const price = document.getElementById('admin-gold-price-price')?.value.trim();
+        const delivery = document.getElementById('admin-gold-price-delivery')?.value.trim() || 'Por confirmar';
+        const stock = parseInt(document.getElementById('admin-gold-price-stock')?.value, 10) || 0;
+        const status = document.getElementById('admin-gold-price-status')?.value || 'available';
+
+        if (!game) {
+            showMessage('Selecciona un juego válido', 'error');
+            return;
+        }
+
+        if (!server) {
+            showMessage('Selecciona un servidor válido', 'error');
+            return;
+        }
+
+        if (!amount) {
+            showMessage('La cantidad de oro es obligatoria', 'error');
+            return;
+        }
+
+        if (!price) {
+            showMessage('El precio es obligatorio', 'error');
+            return;
+        }
+
+        if (!price.match(/^\$?\d+(\.\d{2})?$/)) {
+            showMessage('Formato de precio inválido. Usa: $99.99', 'error');
+            return;
+        }
+
+        const formattedPrice = price.startsWith('$') ? price : `$${price}`;
+
+        gold.push({
+            id: Date.now(),
+            game,
+            server,
+            amount,
+            price: formattedPrice,
+            delivery,
+            stock,
+            status
+        });
+
+        localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
+        renderGoldCategories();
+        updateGoldOrderForm();
+        switchAdminTab('gold');
+        showMessage('✅ Precio de oro agregado exitosamente', 'success');
+    }
     
     function setupSmoothNavigation() {
         // Navegación suave para enlaces internos
@@ -5007,6 +5241,27 @@
         if (goldCategoryServerSelect) {
             goldCategoryServerSelect.addEventListener('change', function() {
                 toggleGoldCategoryServerCustom();
+            });
+        }
+
+        const goldOrderGameSelect = document.getElementById('gold-order-game');
+        if (goldOrderGameSelect) {
+            goldOrderGameSelect.addEventListener('change', function() {
+                updateGoldOrderServerOptions();
+            });
+        }
+
+        const goldOrderServerSelect = document.getElementById('gold-order-server');
+        if (goldOrderServerSelect) {
+            goldOrderServerSelect.addEventListener('change', function() {
+                updateGoldOrderAmountOptions();
+            });
+        }
+
+        const goldOrderAmountSelect = document.getElementById('gold-order-amount');
+        if (goldOrderAmountSelect) {
+            goldOrderAmountSelect.addEventListener('change', function() {
+                updateGoldOrderSummary();
             });
         }
     }
@@ -5281,6 +5536,7 @@
                     </div>
                     <div class="gold-category-title">
                         <h3>${category.game}</h3>
+                        <p>${category.server}</p>
                         <p>${packageCount} ${packageCount === 1 ? 'paquete' : 'paquetes'} disponible</p>
                     </div>
                 </div>
@@ -5320,10 +5576,10 @@
                     <i class="fas fa-arrow-left"></i> VOLVER A JUEGOS
                 </button>
                 <h2 style="color: var(--wow-gold); font-size: 2rem; margin-bottom: 10px; text-align: center;">
-                    ${category.game}
+                    ${category.game} • ${category.server}
                 </h2>
                 <p style="color: var(--text-gray); font-size: 1.1rem; margin-bottom: 30px; text-align: center;">
-                    Paquetes de oro disponibles para ${category.game}
+                    Paquetes de oro disponibles para ${category.game} en ${category.server}
                 </p>
             </div>
             
@@ -5397,52 +5653,6 @@
         // La visualización pública usa renderGoldCategories() y showGoldCategory()
     }
     
-    function renderVideos() {
-        const container = document.getElementById('videos-grid');
-        
-        if (videos.length === 0) {
-            container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: var(--text-gray); background: var(--panel-light); border-radius: 10px; border: 2px dashed var(--wow-gold-dark);">
-                    <i class="fas fa-video-slash" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
-                    <p style="font-size: 1.1rem;">No hay videos disponibles por el momento</p>
-                    <p style="font-size: 0.95rem; margin-top: 10px; color: var(--text-gray);">Pronto subiremos contenido nuevo</p>
-                </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = videos.map(video => `
-            <div class="video-card" data-video-id="${video.id}" onclick="playVideo('${convertToEmbedUrl(video.url)}', '${video.title}')">
-                <div class="video-thumbnail" style="background-image: linear-gradient(135deg, var(--wow-blue-dark), var(--wow-blue-medium));">
-                    <div class="play-button">
-                        <i class="fas fa-play"></i>
-                    </div>
-                    ${video.duration ? `<div class="duration">${video.duration}</div>` : ''}
-                </div>
-                <div class="video-info">
-                    <h4 class="video-title">${video.title}</h4>
-                    <p class="video-description">${video.description}</p>
-                    <button class="btn-primary" onclick="event.stopPropagation(); playVideo('${convertToEmbedUrl(video.url)}', '${video.title}')" style="margin-top: 20px; width: 100%;" data-tooltip="Ver video completo">
-                        <i class="fas fa-play"></i> VER VIDEO COMPLETO
-                    </button>
-                </div>
-            </div>
-        `).join('');
-    }
-    
-    function convertToEmbedUrl(url) {
-        // Convertir URL de YouTube a formato embed
-        if (url.includes('youtube.com/watch?v=')) {
-            const videoId = url.split('v=')[1];
-            const ampersandPosition = videoId.indexOf('&');
-            if (ampersandPosition !== -1) {
-                return `https://www.youtube.com/embed/${videoId.substring(0, ampersandPosition)}`;
-            }
-            return `https://www.youtube.com/embed/${videoId}`;
-        }
-        return url;
-    }
-    
     function renderReferences() {
         const container = document.getElementById('references-list');
         
@@ -5483,43 +5693,6 @@
                 </div>
             </div>
         `).join('');
-    }
-    
-    // ============================================
-    // FUNCIONES DE VIDEOS
-    // ============================================
-    
-    function playVideo(url, title) {
-        // Crear modal de video dinámicamente
-        const videoModal = document.createElement('div');
-        videoModal.className = 'modal';
-        videoModal.style.display = 'flex';
-        videoModal.innerHTML = `
-            <div class="modal-content">
-                <button class="close-modal" onclick="closeVideoModal()">&times;</button>
-                <h2 class="modal-title">${title}</h2>
-                <div style="position: relative; padding-bottom: 56.25%; height: 0; margin: 30px 0;">
-                    <iframe 
-                        src="${url}" 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 10px; border: 2px solid var(--wow-gold);"
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(videoModal);
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeVideoModal() {
-        const videoModal = document.querySelector('.modal:last-child');
-        if (videoModal) {
-            document.body.removeChild(videoModal);
-        }
-        document.body.style.overflow = 'auto';
     }
     
     // ============================================
@@ -5744,6 +5917,7 @@
                 break;
             case 'gold':
                 content.innerHTML = renderAdminGold();
+                setupAdminGoldPriceForm();
                 break;
             case 'gold-categories':
                 content.innerHTML = renderAdminGoldCategories();
@@ -5753,9 +5927,6 @@
                 break;
             case 'references':
                 content.innerHTML = renderAdminReferences();
-                break;
-            case 'videos':
-                content.innerHTML = renderAdminVideos();
                 break;
             case 'settings':
                 content.innerHTML = renderAdminSettings();
@@ -5888,6 +6059,51 @@
                 <button class="btn-primary" onclick="showAddGoldModal()">
                     <i class="fas fa-plus"></i> NUEVO PAQUETE DE ORO
                 </button>
+            </div>
+
+            <div style="background: var(--panel-light); padding: 25px; border-radius: 12px; border: 2px solid var(--wow-gold-dark); margin-bottom: 30px;">
+                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.3rem;">
+                    <i class="fas fa-tags"></i> Precio por juego y servidor (menú desplegable para usuarios)
+                </h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Juego</label>
+                        <select id="admin-gold-price-game"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Servidor</label>
+                        <select id="admin-gold-price-server"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Cantidad de Oro</label>
+                        <input type="text" id="admin-gold-price-amount" placeholder="Ej: 1,000, 10M, 100K" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio (USD)</label>
+                        <input type="text" id="admin-gold-price-price" placeholder="Ej: $24.99" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Entrega</label>
+                        <input type="text" id="admin-gold-price-delivery" placeholder="Ej: 5-15 minutos" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock</label>
+                        <input type="number" id="admin-gold-price-stock" placeholder="0" min="0" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="admin-gold-price-status">
+                            <option value="available">Disponible</option>
+                            <option value="limited">Stock Limitado</option>
+                            <option value="soldout">Agotado</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 15px;">
+                    <button class="btn-primary" onclick="addGoldPriceFromAdmin()">
+                        <i class="fas fa-save"></i> GUARDAR PRECIO
+                    </button>
+                </div>
             </div>
             
             <div class="form-grid">
@@ -6258,65 +6474,6 @@
                     <i class="fas fa-comments" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
                     <h4 style="color: var(--wow-gold); margin-bottom: 15px;">No hay referencias aún</h4>
                     <p style="font-size: 1.05rem;">Los usuarios pueden agregar referencias desde la sección principal</p>
-                </div>
-                ` : ''}
-            </div>
-        `;
-    }
-    
-    function renderAdminVideos() {
-        return `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
-                <h3 style="color: var(--wow-gold); font-size: 1.8rem;">Gestión de Videos</h3>
-                <div style="display: flex; gap: 20px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${videos.length}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Videos</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
-                <button class="btn-primary" onclick="showAddVideoModal()">
-                    <i class="fas fa-plus"></i> NUEVO VIDEO
-                </button>
-            </div>
-            
-            <div class="form-grid">
-                ${videos.map(video => `
-                    <div style="background: var(--panel); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark);">
-                        <div style="display: flex; align-items: start; gap: 20px; margin-bottom: 20px;">
-                            <div style="width: 120px; height: 80px; background: linear-gradient(135deg, var(--wow-blue-dark), var(--wow-blue-medium)); 
-                                 border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--wow-gold); font-size: 2rem;">
-                                <i class="fas fa-play-circle"></i>
-                            </div>
-                            <div style="flex: 1;">
-                                <h4 style="color: var(--text); margin-bottom: 10px; font-size: 1.2rem;">${video.title}</h4>
-                                <p style="color: var(--text-gray); font-size: 0.95rem; line-height: 1.5;">${video.description}</p>
-                                ${video.duration ? `
-                                <div style="color: var(--text-gray); font-size: 0.9rem; margin-top: 8px;">
-                                    <i class="fas fa-clock"></i> ${video.duration}
-                                </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" value="${video.url}" style="flex: 1; font-size: 0.95rem;" id="video-url-${video.id}" placeholder="URL del video (YouTube, etc.)" autocomplete="off">
-                            <button class="btn-primary" onclick="updateVideo(${video.id})" data-tooltip="Actualizar URL">
-                                <i class="fas fa-save"></i>
-                            </button>
-                            <button class="btn-danger" onclick="deleteVideo(${video.id})" data-tooltip="Eliminar video">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `).join('')}
-                
-                ${videos.length === 0 ? `
-                <div style="text-align: center; padding: 60px 40px; color: var(--text-gray); background: var(--panel); border-radius: 10px; border: 2px dashed var(--wow-gold-dark);">
-                    <i class="fas fa-video-slash" style="font-size: 4rem; margin-bottom: 20px; color: var(--wow-gold); opacity: 0.5;"></i>
-                    <h4 style="color: var(--wow-gold); margin-bottom: 15px;">No hay videos registrados</h4>
-                    <p style="font-size: 1.05rem;">Agrega videos de referencia para mostrar a los usuarios</p>
                 </div>
                 ` : ''}
             </div>
@@ -7084,6 +7241,7 @@
         
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
         renderGoldCategories(); // Actualizar categorías de oro
+        updateGoldOrderForm();
         closeModal();
         
         if (isAdmin) {
@@ -7116,6 +7274,7 @@
         
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
         renderGoldCategories(); // Actualizar categorías de oro
+        updateGoldOrderForm();
         showMessage('✅ Oro actualizado exitosamente', 'success');
     }
     
@@ -7127,53 +7286,9 @@
             gold.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
             renderGoldCategories(); // Actualizar categorías de oro
+            updateGoldOrderForm();
             if (isAdmin) switchAdminTab('gold');
             showMessage('✅ Oro eliminado exitosamente', 'success');
-        }
-    }
-    
-    function showAddVideoModal() {
-        const newVideo = {
-            id: Date.now(),
-            title: 'Nuevo Video Tutorial',
-            description: 'Descripción del nuevo video tutorial',
-            url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-            duration: '10:00'
-        };
-        
-        videos.push(newVideo);
-        localStorage.setItem('epicgoldshop_videos', JSON.stringify(videos));
-        renderVideos();
-        if (isAdmin) switchAdminTab('videos');
-        showMessage('✅ Nuevo video agregado exitosamente', 'success');
-    }
-    
-    function updateVideo(id) {
-        const video = videos.find(v => v.id === id);
-        if (!video) return;
-        
-        const newUrl = document.getElementById(`video-url-${id}`).value.trim();
-        if (!newUrl) {
-            showMessage('La URL del video no puede estar vacía', 'error');
-            return;
-        }
-        
-        video.url = newUrl;
-        localStorage.setItem('epicgoldshop_videos', JSON.stringify(videos));
-        renderVideos();
-        showMessage('✅ URL del video actualizada', 'success');
-    }
-    
-    function deleteVideo(id) {
-        if (!confirm('¿Estás seguro de eliminar este video?')) return;
-        
-        const index = videos.findIndex(v => v.id === id);
-        if (index !== -1) {
-            videos.splice(index, 1);
-            localStorage.setItem('epicgoldshop_videos', JSON.stringify(videos));
-            renderVideos();
-            if (isAdmin) switchAdminTab('videos');
-            showMessage('✅ Video eliminado exitosamente', 'success');
         }
     }
     
@@ -7280,7 +7395,6 @@
         localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        localStorage.setItem('epicgoldshop_videos', JSON.stringify(videos));
         localStorage.setItem('epicgoldshop_references', JSON.stringify(references));
         localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
