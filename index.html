@@ -4737,7 +4737,7 @@
 
         list.innerHTML = games.map(game => {
             const category = goldCategories.find(item => item.game === game) || {};
-            const image = resolveCategoryImage(category);
+            const image = resolveCategoryImage(category) || getGameImage(game);
             const description = category.description || `Compra oro para ${game} con entrega rápida y segura.`;
             const serversCount = getGoldOrderServers(game).length;
 
@@ -6554,6 +6554,10 @@
         return value;
     }
 
+    function getGameImage(game = '') {
+        return GAME_IMAGES[game] || GAME_IMAGES.default;
+    }
+
     function resolveCategoryImage(category) {
         const game = category?.game || '';
         const raw = (category?.image || '').trim();
@@ -6564,16 +6568,18 @@
 
         const normalized = normalizeImageUrl(raw);
         if (!normalized) {
-            return GAME_IMAGES[game] || GAME_IMAGES.default;
-        }
-
-        // Imgur suele devolver una imagen de error con HTTP 200.
-        // Para evitar portadas rotas, preferimos imagen fija por juego.
-        if (/imgur\.com/i.test(normalized)) {
-            return GAME_IMAGES[game] || GAME_IMAGES.default;
+            return getGameImage(game);
         }
 
         return normalized;
+    }
+
+    function syncGameImagesFromCategories() {
+        if (!Array.isArray(goldCategories)) return;
+        goldCategories.forEach(category => {
+            if (!category?.game) return;
+            GAME_IMAGES[category.game] = resolveCategoryImage(category);
+        });
     }
 
     function sanitizeGoldCategoryImages() {
@@ -6592,12 +6598,13 @@
         if (changed) {
             localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
         }
+        syncGameImagesFromCategories();
     }
 
     function updateGoldCategoryImagePreview(src = '') {
         const preview = document.getElementById('gold-category-image-preview');
         if (!preview) return;
-        preview.src = normalizeImageUrl(src) || GAME_IMAGES.default;
+        preview.src = normalizeImageUrl(src) || getGameImage('default');
     }
 
     function setupGoldCategoryImageInputs() {
@@ -6634,7 +6641,7 @@
     document.getElementById('gold-category-description').value = '';
     document.getElementById('gold-category-image').value = '';
     document.getElementById('gold-category-image-file').value = '';
-    updateGoldCategoryImagePreview(GAME_IMAGES.default);
+    updateGoldCategoryImagePreview(getGameImage('default'));
 
     document.getElementById('gold-category-message').style.display = 'none';
 
@@ -6656,7 +6663,7 @@
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
-    updateGoldCategoryImagePreview(resolveCategoryImage(category));
+    updateGoldCategoryImagePreview(resolveCategoryImage(category) || getGameImage(category.game));
 
     document.getElementById('gold-category-message').style.display = 'none';
 
@@ -6687,8 +6694,8 @@
             return;
         }
 
-        let categoryImage = resolveCategoryImage({ game: name, image: imageUrl });
-        if (!categoryImage && imageFile) {
+        let categoryImage = '';
+        if (imageFile) {
             try {
                 categoryImage = await readFileAsDataUrl(imageFile);
             } catch (error) {
@@ -6697,10 +6704,12 @@
                 message.style.display = 'block';
                 return;
             }
+        } else {
+            categoryImage = resolveCategoryImage({ game: name, image: imageUrl });
         }
         const game = name;
         if (!categoryImage) {
-            categoryImage = GAME_IMAGES[game] || GAME_IMAGES.default;
+            categoryImage = getGameImage(game);
         }
 
         if (editingGoldCategoryId) {
@@ -6736,6 +6745,7 @@
         }
 
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+        syncGameImagesFromCategories();
         closeModal();
 
         if (isAdmin) {
