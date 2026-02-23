@@ -3805,7 +3805,7 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
-    const BUILD_ID = "2026.02.23.4";
+    const BUILD_ID = "2026.02.23.5";
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -3923,7 +3923,7 @@
             game: "Turtle WoW",
             server: "Nordanaar",
             description: "Compra oro para Turtle WoW con entrega segura y rápida.",
-            image: "https://i.imgur.com/ynvAS9B.png"
+            image: ""
         },
         {
             id: 2,
@@ -3931,7 +3931,7 @@
             game: "Albion Online",
             server: "Americas",
             description: "Silver de Albion Online con stock actualizado diariamente.",
-            image: "https://i.imgur.com/ynvAS9B.png"
+            image: ""
         },
         {
             id: 3,
@@ -3939,7 +3939,7 @@
             game: "World of Warcraft",
             server: "Retail",
             description: "Oro para WoW Retail y Classic con soporte 24/7.",
-            image: "https://i.imgur.com/ynvAS9B.png"
+            image: ""
         },
         {
             id: 4,
@@ -3947,7 +3947,7 @@
             game: "Runescape",
             server: "OSRS",
             description: "Oro para Old School RuneScape y cuentas verificadas.",
-            image: "https://i.imgur.com/ynvAS9B.png"
+            image: ""
         }
     ];
 
@@ -4417,19 +4417,9 @@
         const url = new URL(window.location.href);
         const currentRefreshParam = url.searchParams.get('refresh');
 
-        if (storedBuild === BUILD_ID) {
+        if (storedBuild === BUILD_ID && currentRefreshParam === BUILD_ID) {
             return true;
         }
-
-        // Migra cliente: limpia datos cacheados que suelen dejar la app en estado viejo en móvil
-        [
-            'epicgoldshop_accounts',
-            'epicgoldshop_gold',
-            'epicgoldshop_gold_categories',
-            'epicgoldshop_game_servers',
-            'epicgoldshop_categories',
-            'epicgoldshop_references'
-        ].forEach(key => localStorage.removeItem(key));
 
         localStorage.setItem('epicgoldshop_build_id', BUILD_ID);
 
@@ -4524,6 +4514,23 @@
         });
     }
 
+    function buildGameServersFromData() {
+        const serverMap = new Map();
+        const add = (game, serverName) => {
+            const gameSafe = (game || '').trim();
+            const serverSafe = (serverName || '').trim();
+            if (!gameSafe || !serverSafe) return;
+            const key = `${gameSafe}::${serverSafe}`.toLowerCase();
+            if (!serverMap.has(key)) {
+                serverMap.set(key, { id: Date.now() + serverMap.size, game: gameSafe, name: serverSafe });
+            }
+        };
+
+        goldCategories.forEach(category => add(category.game, category.server));
+        gold.forEach(item => add(item.game, item.server));
+        return Array.from(serverMap.values());
+    }
+
     function loadData() {
         // Cargar datos del localStorage
         const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
@@ -4543,6 +4550,10 @@
         if (savedCategories) categories = JSON.parse(savedCategories);
         if (savedGameServers) {
             gameServers = normalizeGameServers(JSON.parse(savedGameServers));
+        }
+
+        if (!Array.isArray(gameServers) || gameServers.length === 0) {
+            gameServers = buildGameServersFromData();
         }
 
         const goldCategoryGames = goldCategories.map(category => category.game);
