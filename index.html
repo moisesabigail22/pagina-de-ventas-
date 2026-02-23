@@ -4085,29 +4085,6 @@
     };
     
     // Cargar datos del localStorage
-    function buildDefaultGameServers() {
-        const serverMap = new Map();
-
-        const addServer = (game, name) => {
-            if (!game || !name) return;
-            const key = `${game}::${name}`.toLowerCase();
-            if (!serverMap.has(key)) {
-                serverMap.set(key, {
-                    id: Date.now() + serverMap.size,
-                    game,
-                    name,
-                    type: 'Sin definir'
-                });
-            }
-        };
-
-        goldCategories.forEach(category => addServer(category.game, category.server));
-        gold.forEach(item => addServer(item.game, item.server));
-        accounts.forEach(account => addServer(account.category, account.server));
-
-        return Array.from(serverMap.values());
-    }
-
     function normalizeGameServers(servers) {
         if (!Array.isArray(servers)) return [];
         return servers.map((server, index) => ({
@@ -4125,10 +4102,6 @@
     let settings = JSON.parse(localStorage.getItem('epicgoldshop_settings')) || contactInfo;
     let categories = JSON.parse(localStorage.getItem('epicgoldshop_categories')) || defaultCategories;
     let gameServers = normalizeGameServers(JSON.parse(localStorage.getItem('epicgoldshop_game_servers'))) || [];
-
-    if (gameServers.length === 0) {
-        gameServers = buildDefaultGameServers();
-    }
     
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
@@ -4502,8 +4475,6 @@
         if (savedCategories) categories = JSON.parse(savedCategories);
         if (savedGameServers) {
             gameServers = normalizeGameServers(JSON.parse(savedGameServers));
-        } else if (!gameServers || gameServers.length === 0) {
-            gameServers = buildDefaultGameServers();
         }
 
         const goldCategoryGames = goldCategories.map(category => category.game);
@@ -4682,16 +4653,19 @@
     }
 
     function getGoldOrderGames() {
-        const games = gold.map(item => item.game).filter(Boolean);
+        const games = gameServers.map(server => server.game).filter(Boolean);
         return Array.from(new Set(games)).sort();
     }
 
     function getGoldOrderServerTypes(game) {
         if (!game) return [];
-        const types = gameServers
+        const normalizedTypes = gameServers
             .filter(server => server.game === game)
-            .map(server => server.type || 'Sin definir');
-        return Array.from(new Set(types)).sort();
+            .map(server => (server.type || '').trim())
+            .filter(Boolean);
+
+        const types = Array.from(new Set(normalizedTypes)).sort();
+        return types.length > 0 ? types : ['Sin definir'];
     }
 
     function getGoldOrderServers(game, type) {
