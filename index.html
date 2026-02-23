@@ -3308,7 +3308,10 @@
 
         <div class="admin-container">
             <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('accounts')">
+                <button class="admin-tab active" onclick="switchAdminTab('account-categories')">
+                    <i class="fas fa-tags"></i> Categorías de Cuentas
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('accounts')">
                     <i class="fas fa-gamepad"></i> Cuentas
                 </button>
                 <button class="admin-tab" onclick="switchAdminTab('gold-categories')">
@@ -5408,7 +5411,7 @@
                 top: document.getElementById('admin-section').offsetTop - 120,
                 behavior: 'smooth'
             });
-            switchAdminTab('settings');
+            switchAdminTab('account-categories');
         }
     }
 
@@ -5668,7 +5671,7 @@
     function showAdmin() {
         if (isAdmin) {
             showModal('admin-section');
-            switchAdminTab('accounts');
+            switchAdminTab('account-categories');
             document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-user-shield"></i> PANEL ADMIN';
         } else {
             showLoginModal();
@@ -5779,6 +5782,9 @@
         const content = document.getElementById('admin-content');
 
         switch(tab) {
+            case 'account-categories':
+                content.innerHTML = renderAdminAccountCategories();
+                break;
             case 'accounts':
                 content.innerHTML = renderAdminAccounts();
                 break;
@@ -6303,13 +6309,53 @@
     }
 
     function renderAdminSettings() {
+        return `
+            <div style="margin-bottom: 40px;">
+                <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.5rem;">
+                    <i class="fas fa-cog"></i> Configuración General
+                </h3>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Enlace de Discord</label>
+                        <input type="text" id="setting-discord" value="${settings.discord}" placeholder="https://discord.gg/..." autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Enlace de WhatsApp</label>
+                        <input type="text" id="setting-whatsapp" value="${settings.whatsapp}" placeholder="https://wa.me/..." autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Enlace de TikTok</label>
+                        <input type="text" id="setting-tiktok" value="${settings.tiktok}" placeholder="https://tiktok.com/@..." autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email de Contacto</label>
+                        <input type="email" id="setting-email" value="${settings.email}" placeholder="soporte@epicgoldshop.com" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">URL del Sitio</label>
+                        <input type="text" id="setting-site" value="${settings.site}" placeholder="https://epicgoldshop.com/" autocomplete="off">
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="saveSettings()" style="margin-top: 20px; padding: 18px 35px;">
+                    <i class="fas fa-save"></i> GUARDAR CONFIGURACIÓN
+                </button>
+            </div>
+        `;
+    }
+
+    function renderAdminAccountCategories() {
         const totalCategories = categories.length;
         const accountsUsingCategories = accounts.reduce((count, acc) => categories.includes(acc.category) ? count + 1 : count, 0);
-        const goldUsingCategories = gold.reduce((count, g) => categories.includes(g.game) ? count + 1 : count, 0);
 
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
-                <h3 style="color: var(--wow-gold); font-size: 1.8rem;">Configuración del Sitio</h3>
+                <h3 style="color: var(--wow-gold); font-size: 1.8rem;">Categorías de Cuentas</h3>
                 <div style="display: flex; gap: 20px;">
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalCategories}</div>
@@ -6318,10 +6364,6 @@
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${accountsUsingCategories}</div>
                         <div style="color: var(--text-gray); font-size: 0.9rem;">Cuentas</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${goldUsingCategories}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Paquetes Oro</div>
                     </div>
                 </div>
             </div>
@@ -6372,42 +6414,6 @@
                 </div>
             </div>
 
-            <div style="margin-bottom: 40px;">
-                <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.5rem;">
-                    <i class="fas fa-cog"></i> Configuración General
-                </h3>
-
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">Enlace de Discord</label>
-                        <input type="text" id="setting-discord" value="${settings.discord}" placeholder="https://discord.gg/..." autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Enlace de WhatsApp</label>
-                        <input type="text" id="setting-whatsapp" value="${settings.whatsapp}" placeholder="https://wa.me/..." autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Enlace de TikTok</label>
-                        <input type="text" id="setting-tiktok" value="${settings.tiktok}" placeholder="https://tiktok.com/@..." autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Email de Contacto</label>
-                        <input type="email" id="setting-email" value="${settings.email}" placeholder="soporte@epicgoldshop.com" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">URL del Sitio</label>
-                        <input type="text" id="setting-site" value="${settings.site}" placeholder="https://epicgoldshop.com/" autocomplete="off">
-                    </div>
-                </div>
-
-                <button class="btn-primary" onclick="saveSettings()" style="margin-top: 20px; padding: 18px 35px;">
-                    <i class="fas fa-save"></i> GUARDAR CONFIGURACIÓN
-                </button>
-            </div>
         `;
     }
 
@@ -6436,7 +6442,7 @@
 
         updateCategorySelects();
         renderCategoryDropdown(); // Actualizar el dropdown de categorías
-        switchAdminTab('settings'); // Recargar la pestaña de configuración
+        switchAdminTab('account-categories'); // Recargar la pestaña de categorías de cuentas
 
         newCategoryInput.value = '';
         showMessage(`✅ Categoría "${categoryName}" añadida exitosamente. Ahora aparecerá en el menú desplegable.`, 'success');
@@ -6457,7 +6463,7 @@
 
             updateCategorySelects();
             renderCategoryDropdown(); // Actualizar el dropdown de categorías
-            switchAdminTab('settings'); // Recargar la pestaña de configuración
+            switchAdminTab('account-categories'); // Recargar la pestaña de categorías de cuentas
 
             showMessage(`✅ Categoría "${category}" eliminada exitosamente`, 'success');
         }
