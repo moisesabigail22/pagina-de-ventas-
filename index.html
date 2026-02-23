@@ -7255,7 +7255,12 @@
     // INICIALIZACIÓN
     // ============================================
 
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
+        window.scrollTo(0, 0);
         init();
     });
 
