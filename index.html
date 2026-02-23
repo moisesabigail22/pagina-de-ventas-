@@ -4498,6 +4498,7 @@
         if (savedAccounts) accounts = JSON.parse(savedAccounts);
         if (savedGold) gold = JSON.parse(savedGold);
         if (savedGoldCategories) goldCategories = JSON.parse(savedGoldCategories);
+        sanitizeGoldCategoryImages();
         if (savedReferences) references = JSON.parse(savedReferences);
         if (savedSettings) settings = JSON.parse(savedSettings);
         if (savedCategories) categories = JSON.parse(savedCategories);
@@ -4736,7 +4737,7 @@
 
         list.innerHTML = games.map(game => {
             const category = goldCategories.find(item => item.game === game) || {};
-            const image = category.image || GAME_IMAGES[game] || GAME_IMAGES.default;
+            const image = resolveCategoryImage(category);
             const description = category.description || `Compra oro para ${game} con entrega rápida y segura.`;
             const serversCount = getGoldOrderServers(game).length;
 
@@ -6056,7 +6057,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
                                     <div style="width: 80px; height: 80px; background: rgba(200, 170, 109, 0.1); border-radius: 50%; border: 2px solid var(--wow-gold); display: flex; align-items: center; justify-content: center;">
-                                        <img src="${category.image || GAME_IMAGES[category.game] || GAME_IMAGES.default}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${GAME_IMAGES.default}';">
+                                        <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${GAME_IMAGES.default}';">
                                     </div>
                                     <div style="flex: 1;">
                                         <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
@@ -6553,6 +6554,46 @@
         return value;
     }
 
+    function resolveCategoryImage(category) {
+        const game = category?.game || '';
+        const raw = (category?.image || '').trim();
+
+        if (raw.startsWith('data:image/')) {
+            return raw;
+        }
+
+        const normalized = normalizeImageUrl(raw);
+        if (!normalized) {
+            return GAME_IMAGES[game] || GAME_IMAGES.default;
+        }
+
+        // Imgur suele devolver una imagen de error con HTTP 200.
+        // Para evitar portadas rotas, preferimos imagen fija por juego.
+        if (/imgur\.com/i.test(normalized)) {
+            return GAME_IMAGES[game] || GAME_IMAGES.default;
+        }
+
+        return normalized;
+    }
+
+    function sanitizeGoldCategoryImages() {
+        if (!Array.isArray(goldCategories)) return;
+        let changed = false;
+
+        goldCategories = goldCategories.map(category => {
+            const nextImage = resolveCategoryImage(category);
+            if (category.image !== nextImage) {
+                changed = true;
+                return { ...category, image: nextImage };
+            }
+            return category;
+        });
+
+        if (changed) {
+            localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+        }
+    }
+
     function updateGoldCategoryImagePreview(src = '') {
         const preview = document.getElementById('gold-category-image-preview');
         if (!preview) return;
@@ -6615,7 +6656,7 @@
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
-    updateGoldCategoryImagePreview(category.image || GAME_IMAGES.default);
+    updateGoldCategoryImagePreview(resolveCategoryImage(category));
 
     document.getElementById('gold-category-message').style.display = 'none';
 
@@ -6646,7 +6687,7 @@
             return;
         }
 
-        let categoryImage = normalizeImageUrl(imageUrl);
+        let categoryImage = resolveCategoryImage({ game: name, image: imageUrl });
         if (!categoryImage && imageFile) {
             try {
                 categoryImage = await readFileAsDataUrl(imageFile);
