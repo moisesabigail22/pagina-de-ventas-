@@ -3804,7 +3804,7 @@
     const DISCORD_LINK = "https://discord.gg/AYJkmeZn";
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
-    const SITE_URL = "https://epicgoldshop.com/";
+    const SITE_URL = `${window.location.origin}/`;
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4587,8 +4587,8 @@
             }
         });
 
-        // Actualizar URL del sitio
-        document.querySelectorAll('a[href*="epicgoldshop.com"]').forEach(link => {
+        // Actualizar URL del sitio (sin forzar dominio fijo)
+        document.querySelectorAll('a[href*="epicgoldshop.com"], a[href*="vercel.app"], a[href^="/"]').forEach(link => {
             link.href = SITE_URL;
         });
     }
@@ -4607,7 +4607,7 @@
             link.href = settings.tiktok;
         });
 
-        document.querySelectorAll('a[href*="epicgoldshop.com"]').forEach(link => {
+        document.querySelectorAll('a[href*="epicgoldshop.com"], a[href*="vercel.app"], a[href^="/"]').forEach(link => {
             link.href = settings.site;
         });
 
