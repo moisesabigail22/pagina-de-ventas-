@@ -3677,6 +3677,11 @@
         <div class="gold-order-step" id="gold-order-step-details" style="display: none;">
             <div class="form-grid">
                 <div class="form-group">
+                    <label class="form-label">Tipo de servidor</label>
+                    <input type="text" id="gold-order-server-type-selected" value="No seleccionado" readonly>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Cantidad de Oro</label>
                     <select id="gold-order-amount" disabled>
                         <option value="">Selecciona una cantidad</option>
@@ -4743,12 +4748,19 @@
         `;
     }
 
+    function syncGoldOrderServerTypeField() {
+        const selectedTypeField = document.getElementById('gold-order-server-type-selected');
+        if (!selectedTypeField) return;
+        selectedTypeField.value = goldOrderState.serverType || 'No seleccionado';
+    }
+
     function renderGoldOrderServerList() {
         const list = document.getElementById('gold-order-server-list');
         const serverTypeSelect = document.getElementById('gold-order-server-type');
         if (!list || !serverTypeSelect) return;
         const selectedType = serverTypeSelect.value;
         goldOrderState.serverType = selectedType;
+        syncGoldOrderServerTypeField();
         if (!selectedType) {
             list.innerHTML = '<p style="color: var(--text-gray);">Selecciona primero el tipo de servidor.</p>';
             return;
@@ -4879,12 +4891,16 @@
 
         const serverTypeSelect = document.getElementById('gold-order-server-type');
         const amountSelect = document.getElementById('gold-order-amount');
+        const selectedTypeField = document.getElementById('gold-order-server-type-selected');
         if (serverTypeSelect) {
             serverTypeSelect.value = '';
         }
         if (amountSelect) {
             amountSelect.value = '';
             amountSelect.disabled = true;
+        }
+        if (selectedTypeField) {
+            selectedTypeField.value = 'No seleccionado';
         }
 
         document.getElementById('gold-order-modal-title').textContent = 'Selecciona un juego';
