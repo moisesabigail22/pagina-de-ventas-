@@ -3805,7 +3805,7 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
-    const BUILD_ID = "2026.02.23.3";
+    const BUILD_ID = "2026.02.23.4";
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4415,21 +4415,33 @@
     function ensureFreshClientVersion() {
         const storedBuild = localStorage.getItem('epicgoldshop_build_id');
         const url = new URL(window.location.href);
-        const currentBuildParam = url.searchParams.get('build');
+        const currentRefreshParam = url.searchParams.get('refresh');
 
-        if (storedBuild === BUILD_ID && currentBuildParam === BUILD_ID) {
+        if (storedBuild === BUILD_ID) {
             return true;
         }
 
-        if (currentBuildParam !== BUILD_ID) {
-            url.searchParams.set('build', BUILD_ID);
+        // Migra cliente: limpia datos cacheados que suelen dejar la app en estado viejo en móvil
+        [
+            'epicgoldshop_accounts',
+            'epicgoldshop_gold',
+            'epicgoldshop_gold_categories',
+            'epicgoldshop_game_servers',
+            'epicgoldshop_categories',
+            'epicgoldshop_references'
+        ].forEach(key => localStorage.removeItem(key));
+
+        localStorage.setItem('epicgoldshop_build_id', BUILD_ID);
+
+        if (currentRefreshParam !== BUILD_ID) {
+            url.searchParams.set('refresh', BUILD_ID);
             window.location.replace(url.toString());
             return false;
         }
 
-        localStorage.setItem('epicgoldshop_build_id', BUILD_ID);
         return true;
     }
+
 
     function init() {
         if (!ensureFreshClientVersion()) return;
