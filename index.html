@@ -3421,9 +3421,8 @@
 
         <div style="margin-top: 35px; padding-top: 25px; border-top: 2px solid rgba(139, 107, 41, 0.3);">
             <p style="text-align: center; color: var(--text-gray); font-size: 1rem; line-height: 1.6;">
-                <strong>Credenciales por defecto:</strong><br>
-                Usuario: <strong>admin</strong><br>
-                Contraseña: <strong>admin123</strong>
+                Ingresa tus credenciales de administrador.<br>
+                Si es tu primer acceso, el usuario y contraseña que escribas se guardarán como credenciales nuevas.
             </p>
         </div>
     </div>
@@ -3682,8 +3681,14 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Imagen del Juego (Archivo)</label>
+            <label class="form-label">Imagen del Juego (Archivo de tu computadora)</label>
             <input type="file" id="gold-category-image-file" accept="image/*">
+            <small style="display:block; margin-top:8px; color:var(--text-gray);">Puedes subir una imagen real desde tu PC. Se guardará para esta categoría.</small>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Vista previa</label>
+            <img id="gold-category-image-preview" alt="Vista previa categoría" style="width:100%; max-height:180px; object-fit:cover; border:2px solid var(--wow-gold-dark); border-radius:10px;" src="https://i.imgur.com/xYQk3Fn.png">
         </div>
 
         <div style="display: flex; gap: 20px; margin-top: 40px;">
@@ -3916,40 +3921,32 @@
             name: "Turtle WoW Gold",
             game: "Turtle WoW",
             server: "Nordanaar",
-            description: "Oro para servidor Nordanaar de Turtle WoW",
-            image: GAME_IMAGES['Turtle WoW']
+            description: "Compra oro para Turtle WoW con entrega segura y rápida.",
+            image: "https://i.imgur.com/T3qQk9J.jpeg"
         },
         {
             id: 2,
-            name: "Turtle WoW Gold",
-            game: "Turtle WoW",
-            server: "Tel'Abim",
-            description: "Oro para servidor Tel'Abim de Turtle WoW",
-            image: GAME_IMAGES['Turtle WoW']
-        },
-        {
-            id: 3,
             name: "Albion Online Silver",
             game: "Albion Online",
             server: "Americas",
-            description: "Silver para Albion Online servidor Americas",
-            image: GAME_IMAGES['Albion Online']
+            description: "Silver de Albion Online con stock actualizado diariamente.",
+            image: "https://i.imgur.com/vHqB3qX.png"
         },
         {
-            id: 4,
+            id: 3,
             name: "World of Warcraft Gold",
             game: "World of Warcraft",
             server: "Retail",
-            description: "Oro para World of Warcraft Retail",
-            image: GAME_IMAGES['World of Warcraft']
+            description: "Oro para WoW Retail y Classic con soporte 24/7.",
+            image: "https://i.imgur.com/9p6WxcP.png"
         },
         {
-            id: 5,
+            id: 4,
             name: "Runescape Gold",
             game: "Runescape",
             server: "OSRS",
-            description: "Oro para Old School Runescape",
-            image: GAME_IMAGES['Runescape']
+            description: "Oro para Old School RuneScape y cuentas verificadas.",
+            image: "https://i.imgur.com/xYQk3Fn.png"
         }
     ];
 
@@ -4444,6 +4441,7 @@
 
         // Configurar eventos
         setupEventListeners();
+        setupGoldCategoryImageInputs();
 
         // Actualizar selects de categorías
         updateCategorySelects();
@@ -5692,7 +5690,34 @@
             return;
         }
 
-        if (username === 'admin' && password === 'admin123') {
+        const savedCredentials = getAdminCredentials();
+
+        if (!savedCredentials) {
+            localStorage.setItem('epicgoldshop_admin_credentials', JSON.stringify({ username, password }));
+            isAdmin = true;
+            sessionStorage.setItem('isAdmin', 'true');
+
+            message.textContent = '✓ Credenciales creadas y acceso concedido.';
+            message.className = 'message success';
+            message.style.display = 'block';
+
+            const loginBtn = document.querySelector('#login-modal .btn-primary');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INGRESANDO...';
+            loginBtn.disabled = true;
+
+            setTimeout(() => {
+                closeModal();
+                showAdmin();
+                showMessage('✅ Sesión de administrador iniciada', 'success');
+
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }, 800);
+            return;
+        }
+
+        if (username === savedCredentials.username && password === savedCredentials.password) {
             isAdmin = true;
             sessionStorage.setItem('isAdmin', 'true');
 
@@ -5714,7 +5739,7 @@
                 loginBtn.disabled = false;
             }, 800);
         } else {
-            message.textContent = '✗ Credenciales incorrectas. Usuario: admin / Contraseña: admin123';
+            message.textContent = '✗ Credenciales incorrectas';
             message.className = 'message error';
             message.style.display = 'block';
 
@@ -6543,6 +6568,43 @@
     // FUNCIONES DE CATEGORÍAS DE ORO (AGREGAR/EDITAR)
     // ============================================
 
+    function updateGoldCategoryImagePreview(src = '') {
+        const preview = document.getElementById('gold-category-image-preview');
+        if (!preview) return;
+        preview.src = src || GAME_IMAGES.default;
+    }
+
+    function setupGoldCategoryImageInputs() {
+        const imageUrlInput = document.getElementById('gold-category-image');
+        const imageFileInput = document.getElementById('gold-category-image-file');
+
+        if (imageUrlInput) {
+            imageUrlInput.addEventListener('input', function() {
+                if (this.value.trim()) {
+                    updateGoldCategoryImagePreview(this.value.trim());
+                }
+            });
+        }
+
+        if (imageFileInput) {
+            imageFileInput.addEventListener('change', function(event) {
+                const file = event.target.files && event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = () => updateGoldCategoryImagePreview(reader.result);
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    function getAdminCredentials() {
+        const saved = JSON.parse(localStorage.getItem('epicgoldshop_admin_credentials') || 'null');
+        if (saved && saved.username && saved.password) {
+            return saved;
+        }
+        return null;
+    }
+
     function showAddGoldCategoryModal() {
     editingGoldCategoryId = null;
 
@@ -6554,6 +6616,7 @@
     document.getElementById('gold-category-description').value = '';
     document.getElementById('gold-category-image').value = '';
     document.getElementById('gold-category-image-file').value = '';
+    updateGoldCategoryImagePreview(GAME_IMAGES.default);
 
     document.getElementById('gold-category-message').style.display = 'none';
 
@@ -6575,6 +6638,7 @@
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
+    updateGoldCategoryImagePreview(category.image || GAME_IMAGES.default);
 
     document.getElementById('gold-category-message').style.display = 'none';
 
@@ -6616,10 +6680,10 @@
                 return;
             }
         }
-        if (!categoryImage) {
-            categoryImage = GAME_IMAGES.default;
-        }
         const game = name;
+        if (!categoryImage) {
+            categoryImage = GAME_IMAGES[game] || GAME_IMAGES.default;
+        }
 
         if (editingGoldCategoryId) {
             const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
