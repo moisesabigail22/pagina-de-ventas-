@@ -4517,11 +4517,14 @@
             gameServers = buildGameServersFromData();
         }
 
-        const goldCategoryGames = goldCategories.map(category => category.game);
-        const combinedGames = Array.from(new Set([...categories, ...goldCategoryGames]));
-        if (combinedGames.length !== categories.length) {
-            categories = combinedGames.sort();
-        }
+        // Mantener las categorías generales separadas de juegos de Oro
+        // (si una categoría coincide con un juego de oro y no la usa ninguna cuenta, se limpia)
+        const accountCategoriesInUse = new Set(accounts.map(account => account.category).filter(Boolean));
+        const goldCategoryGames = new Set(getGoldCategoryGames());
+        categories = Array.from(new Set(categories.filter(Boolean))).filter(category => {
+            if (accountCategoriesInUse.has(category)) return true;
+            return !goldCategoryGames.has(category);
+        }).sort();
 
         // Asegurar que los enlaces estén actualizados
         if (!settings.discord || settings.discord !== DISCORD_LINK) {
@@ -6425,9 +6428,7 @@
     }
 
     function countCategoryUsage(category) {
-        const accountsUsing = accounts.filter(a => a.category === category).length;
-        const goldUsing = gold.filter(g => g.game === category).length;
-        return accountsUsing + goldUsing;
+        return accounts.filter(account => account.category === category).length;
     }
 
     function addNewCategory() {
