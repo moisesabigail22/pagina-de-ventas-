@@ -3805,6 +3805,7 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
+    const BUILD_ID = "2026.02.23.3";
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4411,7 +4412,28 @@
     // FUNCIONES DE INICIALIZACIÓN
     // ============================================
 
+    function ensureFreshClientVersion() {
+        const storedBuild = localStorage.getItem('epicgoldshop_build_id');
+        const url = new URL(window.location.href);
+        const currentBuildParam = url.searchParams.get('build');
+
+        if (storedBuild === BUILD_ID && currentBuildParam === BUILD_ID) {
+            return true;
+        }
+
+        if (currentBuildParam !== BUILD_ID) {
+            url.searchParams.set('build', BUILD_ID);
+            window.location.replace(url.toString());
+            return false;
+        }
+
+        localStorage.setItem('epicgoldshop_build_id', BUILD_ID);
+        return true;
+    }
+
     function init() {
+        if (!ensureFreshClientVersion()) return;
+
         // Cargar datos
         loadData();
 
