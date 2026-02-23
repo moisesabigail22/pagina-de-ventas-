@@ -4926,12 +4926,7 @@
     }
 
     function getAdminGoldGames() {
-        const gameSet = new Set([
-            ...categories,
-            ...gold.map(item => item.game),
-            ...goldCategories.map(item => item.game)
-        ].filter(Boolean));
-        return Array.from(gameSet).sort();
+        return getGoldCategoryGames();
     }
 
     function setupAdminGoldPriceForm() {
@@ -4991,6 +4986,17 @@
         if (!gameSelect || !serverSelect || !packageSelect) return;
 
         const games = getAdminGoldGames();
+        if (games.length === 0) {
+            gameSelect.innerHTML = '<option value="">Sin juegos disponibles</option>';
+            serverSelect.innerHTML = '<option value="">Sin servidores</option>';
+            serverSelect.disabled = true;
+            packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
+            packageSelect.disabled = true;
+            if (priceInput) priceInput.value = '';
+            if (stockInput) stockInput.value = 0;
+            if (statusSelect) statusSelect.value = 'available';
+            return;
+        }
         gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
 
         const updateServers = () => {
