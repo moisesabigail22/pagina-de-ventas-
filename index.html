@@ -3419,12 +3419,7 @@
 
         <div class="message" id="login-message"></div>
 
-        <div style="margin-top: 35px; padding-top: 25px; border-top: 2px solid rgba(139, 107, 41, 0.3);">
-            <p style="text-align: center; color: var(--text-gray); font-size: 1rem; line-height: 1.6;">
-                Ingresa tus credenciales de administrador.<br>
-                Si es tu primer acceso, el usuario y contraseña que escribas se guardarán como credenciales nuevas.
-            </p>
-        </div>
+
     </div>
 </div>
 
@@ -5690,34 +5685,7 @@
             return;
         }
 
-        const savedCredentials = getAdminCredentials();
-
-        if (!savedCredentials) {
-            localStorage.setItem('epicgoldshop_admin_credentials', JSON.stringify({ username, password }));
-            isAdmin = true;
-            sessionStorage.setItem('isAdmin', 'true');
-
-            message.textContent = '✓ Credenciales creadas y acceso concedido.';
-            message.className = 'message success';
-            message.style.display = 'block';
-
-            const loginBtn = document.querySelector('#login-modal .btn-primary');
-            const originalText = loginBtn.innerHTML;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INGRESANDO...';
-            loginBtn.disabled = true;
-
-            setTimeout(() => {
-                closeModal();
-                showAdmin();
-                showMessage('✅ Sesión de administrador iniciada', 'success');
-
-                loginBtn.innerHTML = originalText;
-                loginBtn.disabled = false;
-            }, 800);
-            return;
-        }
-
-        if (username === savedCredentials.username && password === savedCredentials.password) {
+        if (username === 'admin' && password === 'admin123') {
             isAdmin = true;
             sessionStorage.setItem('isAdmin', 'true');
 
@@ -6595,14 +6563,6 @@
                 reader.readAsDataURL(file);
             });
         }
-    }
-
-    function getAdminCredentials() {
-        const saved = JSON.parse(localStorage.getItem('epicgoldshop_admin_credentials') || 'null');
-        if (saved && saved.username && saved.password) {
-            return saved;
-        }
-        return null;
     }
 
     function showAddGoldCategoryModal() {
