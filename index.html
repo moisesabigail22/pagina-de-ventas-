@@ -3683,7 +3683,7 @@
 
         <div class="form-group">
             <label class="form-label">Vista previa</label>
-            <img id="gold-category-image-preview" alt="Vista previa categoría" style="width:100%; max-height:180px; object-fit:cover; border:2px solid var(--wow-gold-dark); border-radius:10px;" src="https://i.imgur.com/xYQk3Fn.png">
+            <img id="gold-category-image-preview" alt="Vista previa categoría" style="width:100%; max-height:180px; object-fit:cover; border:2px solid var(--wow-gold-dark); border-radius:10px;" src="https://upload.wikimedia.org/wikipedia/en/9/9a/Old_School_RuneScape_logo.png">
         </div>
 
         <div style="display: flex; gap: 20px; margin-top: 40px;">
@@ -3808,23 +3808,23 @@
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
-        turtleWow1: "https://i.imgur.com/T3qQk9J.jpeg",
+        turtleWow1: "https://upload.wikimedia.org/wikipedia/en/5/56/World_of_Warcraft_-_The_Burning_Crusade_logo.png",
         turtleWow2: "https://i.imgur.com/uCclv8s.png",
-        albionOnline: "https://i.imgur.com/vHqB3qX.png",
-        wowRetail: "https://i.imgur.com/9p6WxcP.png",
+        albionOnline: "https://upload.wikimedia.org/wikipedia/en/8/80/Albion_Online_Logo.png",
+        wowRetail: "https://upload.wikimedia.org/wikipedia/commons/8/8d/World_of_Warcraft_Logo.png",
         wowClassic: "https://i.imgur.com/4L8zKqX.png",
         wowMage: "https://i.imgur.com/QRf9Cm4.jpeg",
         wowWarrior: "https://i.imgur.com/vL6TmbD.jpeg",
-        goldCoins: "https://i.imgur.com/xYQk3Fn.png"
+        goldCoins: "https://upload.wikimedia.org/wikipedia/en/9/9a/Old_School_RuneScape_logo.png"
     };
 
     // Imágenes para juegos
     const GAME_IMAGES = {
-        'Turtle WoW': 'https://i.imgur.com/T3qQk9J.jpeg',
-        'World of Warcraft': 'https://i.imgur.com/9p6WxcP.png',
-        'Albion Online': 'https://i.imgur.com/vHqB3qX.png',
-        'Runescape': 'https://i.imgur.com/xYQk3Fn.png',
-        'default': 'https://i.imgur.com/xYQk3Fn.png'
+        'Turtle WoW': 'https://upload.wikimedia.org/wikipedia/en/5/56/World_of_Warcraft_-_The_Burning_Crusade_logo.png',
+        'World of Warcraft': 'https://upload.wikimedia.org/wikipedia/commons/8/8d/World_of_Warcraft_Logo.png',
+        'Albion Online': 'https://upload.wikimedia.org/wikipedia/en/8/80/Albion_Online_Logo.png',
+        'Runescape': 'https://upload.wikimedia.org/wikipedia/en/9/9a/Old_School_RuneScape_logo.png',
+        'default': 'https://upload.wikimedia.org/wikipedia/en/9/9a/Old_School_RuneScape_logo.png'
     };
 
     // Datos de ejemplo - Cuentas CON IMÁGENES REALES DE IMGUR
@@ -3917,7 +3917,7 @@
             game: "Turtle WoW",
             server: "Nordanaar",
             description: "Compra oro para Turtle WoW con entrega segura y rápida.",
-            image: "https://i.imgur.com/T3qQk9J.jpeg"
+            image: "https://upload.wikimedia.org/wikipedia/en/5/56/World_of_Warcraft_-_The_Burning_Crusade_logo.png"
         },
         {
             id: 2,
@@ -3925,7 +3925,7 @@
             game: "Albion Online",
             server: "Americas",
             description: "Silver de Albion Online con stock actualizado diariamente.",
-            image: "https://i.imgur.com/vHqB3qX.png"
+            image: "https://upload.wikimedia.org/wikipedia/en/8/80/Albion_Online_Logo.png"
         },
         {
             id: 3,
@@ -3933,7 +3933,7 @@
             game: "World of Warcraft",
             server: "Retail",
             description: "Oro para WoW Retail y Classic con soporte 24/7.",
-            image: "https://i.imgur.com/9p6WxcP.png"
+            image: "https://upload.wikimedia.org/wikipedia/commons/8/8d/World_of_Warcraft_Logo.png"
         },
         {
             id: 4,
@@ -3941,7 +3941,7 @@
             game: "Runescape",
             server: "OSRS",
             description: "Oro para Old School RuneScape y cuentas verificadas.",
-            image: "https://i.imgur.com/xYQk3Fn.png"
+            image: "https://upload.wikimedia.org/wikipedia/en/9/9a/Old_School_RuneScape_logo.png"
         }
     ];
 
@@ -4743,7 +4743,7 @@
             return `
             <button class="gold-order-option" type="button" data-game="${game}">
                 <span class="gold-order-option-badge">Compra rápida</span>
-                <img class="gold-order-option-cover" src="${image}" alt="${game}" loading="lazy">
+                <img class="gold-order-option-cover" src="${image}" alt="${game}" loading="lazy" onerror="this.onerror=null;this.src='${GAME_IMAGES.default}';">
                 <div class="gold-order-option-content">
                     <div class="gold-order-option-title">${game}</div>
                     <div class="gold-order-option-description">${description}</div>
@@ -6056,7 +6056,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
                                     <div style="width: 80px; height: 80px; background: rgba(200, 170, 109, 0.1); border-radius: 50%; border: 2px solid var(--wow-gold); display: flex; align-items: center; justify-content: center;">
-                                        <img src="${category.image || GAME_IMAGES[category.game] || GAME_IMAGES.default}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                        <img src="${category.image || GAME_IMAGES[category.game] || GAME_IMAGES.default}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${GAME_IMAGES.default}';">
                                     </div>
                                     <div style="flex: 1;">
                                         <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
@@ -6536,10 +6536,27 @@
     // FUNCIONES DE CATEGORÍAS DE ORO (AGREGAR/EDITAR)
     // ============================================
 
+    function normalizeImageUrl(url = '') {
+        const value = (url || '').trim();
+        if (!value) return '';
+
+        const imgurDirect = value.match(/^https?:\/\/(?:i\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.[a-zA-Z]{3,4})?$/i);
+        if (imgurDirect) {
+            return `https://i.imgur.com/${imgurDirect[1]}.jpg`;
+        }
+
+        const imgurPage = value.match(/^https?:\/\/imgur\.com\/(?:gallery\/|a\/)?([a-zA-Z0-9]+)$/i);
+        if (imgurPage) {
+            return `https://i.imgur.com/${imgurPage[1]}.jpg`;
+        }
+
+        return value;
+    }
+
     function updateGoldCategoryImagePreview(src = '') {
         const preview = document.getElementById('gold-category-image-preview');
         if (!preview) return;
-        preview.src = src || GAME_IMAGES.default;
+        preview.src = normalizeImageUrl(src) || GAME_IMAGES.default;
     }
 
     function setupGoldCategoryImageInputs() {
@@ -6549,7 +6566,7 @@
         if (imageUrlInput) {
             imageUrlInput.addEventListener('input', function() {
                 if (this.value.trim()) {
-                    updateGoldCategoryImagePreview(this.value.trim());
+                    updateGoldCategoryImagePreview(normalizeImageUrl(this.value.trim()));
                 }
             });
         }
@@ -6629,7 +6646,7 @@
             return;
         }
 
-        let categoryImage = imageUrl;
+        let categoryImage = normalizeImageUrl(imageUrl);
         if (!categoryImage && imageFile) {
             try {
                 categoryImage = await readFileAsDataUrl(imageFile);
