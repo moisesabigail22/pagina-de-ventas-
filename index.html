@@ -4059,14 +4059,6 @@
         'Guild Wars 2'
     ];
 
-    const SERVER_TYPES = [
-        'PVE',
-        'PVP',
-        'RP',
-        'Hardcore',
-        'Mixto',
-        'Sin definir'
-    ];
 
     // Configuración de contactos
     const contactInfo = {
@@ -4083,8 +4075,7 @@
         return servers.map((server, index) => ({
             id: server.id || Date.now() + index,
             game: server.game || 'Sin juego',
-            name: server.name || server.server || 'Sin servidor',
-            type: server.type || 'Sin definir'
+            name: server.name || server.server || 'Sin servidor'
         }));
     }
 
@@ -4610,7 +4601,7 @@
         serverSelect.innerHTML = `
             <option value="">Selecciona un servidor</option>
             ${serversForGame.map(server => `
-                <option value="${server.name}">${server.name} (${server.type})</option>
+                <option value="${server.name}">${server.name}</option>
             `).join('')}
             <option value="custom">Otro...</option>
         `;
@@ -6100,12 +6091,6 @@
                         <label class="form-label">Servidor</label>
                         <input type="text" id="server-name" placeholder="Ej: Nordanaar" maxlength="50">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Tipo</label>
-                        <select id="server-type">
-                            ${SERVER_TYPES.map(type => `<option value="${type}">${type}</option>`).join('')}
-                        </select>
-                    </div>
                 </div>
                 <button class="btn-primary" onclick="addGameServer()" style="margin-top: 15px;">
                     <i class="fas fa-save"></i> Guardar servidor
@@ -6129,7 +6114,7 @@
                                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
                                     ${servers.map(server => `
                                         <span style="background: rgba(200, 170, 109, 0.12); color: var(--wow-gold-light); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem;">
-                                            ${server.name} (${server.type})
+                                            ${server.name}
                                             <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer(${server.id})" data-tooltip="Eliminar servidor">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -6156,14 +6141,12 @@
     function addGameServer() {
         const gameSelect = document.getElementById('server-game');
         const nameInput = document.getElementById('server-name');
-        const typeSelect = document.getElementById('server-type');
         const message = document.getElementById('server-message');
 
-        if (!gameSelect || !nameInput || !typeSelect) return;
+        if (!gameSelect || !nameInput) return;
 
         const game = gameSelect.value;
         const name = nameInput.value.trim();
-        const type = typeSelect.value;
 
         if (!game) {
             showMessage('Primero crea una categoría en "Categorías de Juegos (Oro)"', 'error');
@@ -6190,8 +6173,7 @@
         gameServers.push({
             id: Date.now(),
             game,
-            name,
-            type
+            name
         });
 
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
