@@ -5874,30 +5874,9 @@
     }
 
     function renderAdminGold() {
-        const totalPackages = gold.length;
-        const totalStock = gold.reduce((sum, g) => sum + (g.stock || 0), 0);
-        const totalValue = gold.reduce((sum, g) => {
-            const price = parseFloat(g.price.replace('$', '').replace(',', ''));
-            return sum + (price * (g.stock || 0));
-        }, 0);
-
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
                 <h3 style="color: var(--wow-gold); font-size: 1.8rem;">Gestión de Oro</h3>
-                <div style="display: flex; gap: 20px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalPackages}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Paquetes</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalStock}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Stock Total</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">$${totalValue.toFixed(2)}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Valor Total</div>
-                    </div>
-                </div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-bottom: 25px;">
