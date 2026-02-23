@@ -3810,12 +3810,12 @@
     const IMGUR_IMAGE_URLS = {
         turtleWow1: "https://i.imgur.com/ynvAS9B.png",
         turtleWow2: "https://i.imgur.com/uCclv8s.png",
-        albionOnline: "https://i.imgur.com/ynvAS9B.png",
+        albionOnline: "https://i.imgur.com/vL6TmbD.jpeg",
         wowRetail: "https://i.imgur.com/ynvAS9B.png",
         wowClassic: "https://i.imgur.com/4L8zKqX.png",
         wowMage: "https://i.imgur.com/QRf9Cm4.jpeg",
         wowWarrior: "https://i.imgur.com/vL6TmbD.jpeg",
-        goldCoins: "https://i.imgur.com/ynvAS9B.png"
+        goldCoins: "https://i.imgur.com/QRf9Cm4.jpeg"
     };
 
     function generateGameCoverDataUrl(game = 'Epic Gold Shop') {
@@ -3823,12 +3823,12 @@
         return `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='320' viewBox='0 0 800 320'><defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop offset='0' stop-color='%230c1c2c'/><stop offset='1' stop-color='%231a365d'/></linearGradient></defs><rect width='800' height='320' fill='url(%23g)'/><circle cx='730' cy='-10' r='160' fill='%23c8aa6d' opacity='0.10'/><circle cx='0' cy='320' r='180' fill='%23c8aa6d' opacity='0.08'/><text x='40' y='175' fill='%23f7e7a0' font-family='Segoe UI, Arial' font-size='46' font-weight='700'>${safe}</text><text x='40' y='220' fill='%23e8d8a6' font-family='Segoe UI, Arial' font-size='24'>Epic Gold Shop</text></svg>`;
     }
 
-    // Imágenes para juegos (mecanismo global tipo logo, pero con portada por juego)
+    // Imágenes para juegos (portadas reales por juego)
     const GAME_IMAGES = {
-        'Turtle WoW': generateGameCoverDataUrl('Turtle WoW'),
-        'World of Warcraft': generateGameCoverDataUrl('World of Warcraft'),
-        'Albion Online': generateGameCoverDataUrl('Albion Online'),
-        'Runescape': generateGameCoverDataUrl('Runescape'),
+        'Turtle WoW': IMGUR_IMAGE_URLS.turtleWow2,
+        'World of Warcraft': IMGUR_IMAGE_URLS.wowClassic,
+        'Albion Online': IMGUR_IMAGE_URLS.albionOnline,
+        'Runescape': IMGUR_IMAGE_URLS.goldCoins,
         'default': generateGameCoverDataUrl('Epic Gold Shop')
     };
 
@@ -3922,7 +3922,7 @@
             game: "Turtle WoW",
             server: "Nordanaar",
             description: "Compra oro para Turtle WoW con entrega segura y rápida.",
-            image: ""
+            image: IMGUR_IMAGE_URLS.turtleWow2
         },
         {
             id: 2,
@@ -3930,7 +3930,7 @@
             game: "Albion Online",
             server: "Americas",
             description: "Silver de Albion Online con stock actualizado diariamente.",
-            image: ""
+            image: IMGUR_IMAGE_URLS.albionOnline
         },
         {
             id: 3,
@@ -3938,7 +3938,7 @@
             game: "World of Warcraft",
             server: "Retail",
             description: "Oro para WoW Retail y Classic con soporte 24/7.",
-            image: ""
+            image: IMGUR_IMAGE_URLS.wowClassic
         },
         {
             id: 4,
@@ -3946,7 +3946,7 @@
             game: "Runescape",
             server: "OSRS",
             description: "Oro para Old School RuneScape y cuentas verificadas.",
-            image: ""
+            image: IMGUR_IMAGE_URLS.goldCoins
         }
     ];
 
