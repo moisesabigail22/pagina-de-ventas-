@@ -3660,12 +3660,6 @@
         <div class="gold-order-step" id="gold-order-step-server" style="display: none;">
             <div class="form-grid">
                 <div class="form-group">
-                    <label class="form-label">Tipo de servidor</label>
-                    <select id="gold-order-server-type">
-                        <option value="">Selecciona un tipo</option>
-                    </select>
-                </div>
-                <div class="form-group">
                     <label class="form-label">Servidor</label>
                     <select id="gold-order-server-select" disabled>
                         <option value="">Selecciona un servidor</option>
@@ -3681,11 +3675,6 @@
 
         <div class="gold-order-step" id="gold-order-step-details" style="display: none;">
             <div class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Tipo de servidor</label>
-                    <input type="text" id="gold-order-server-type-selected" value="No seleccionado" readonly>
-                </div>
-
                 <div class="form-group">
                     <label class="form-label">Cantidad de Oro</label>
                     <select id="gold-order-amount" disabled>
@@ -3757,7 +3746,6 @@
     let imageCache = new Map();
     let goldOrderState = {
         game: '',
-        serverType: '',
         server: ''
     };
 
@@ -4684,23 +4672,10 @@
         return Array.from(new Set(games)).sort();
     }
 
-    function getGoldOrderServerTypes(game) {
+    function getGoldOrderServers(game) {
         if (!game) return [];
-        const normalizedTypes = gameServers
-            .filter(server => server.game === game)
-            .map(server => (server.type || '').trim())
-            .filter(Boolean);
-
-        const types = Array.from(new Set(normalizedTypes)).sort();
-        return types.length > 0 ? types : ['Sin definir'];
-    }
-
-    function getGoldOrderServers(game, type) {
-        if (!game) return [];
-        const serverType = type || '';
         const servers = gameServers
             .filter(server => server.game === game)
-            .filter(server => !serverType || server.type === serverType)
             .map(server => server.name);
         return Array.from(new Set(servers)).sort();
     }
@@ -4729,9 +4704,7 @@
         list.querySelectorAll('[data-game]').forEach(btn => {
             btn.addEventListener('click', () => {
                 goldOrderState.game = btn.dataset.game || '';
-                goldOrderState.serverType = '';
                 goldOrderState.server = '';
-                updateGoldOrderServerTypeOptions();
                 renderGoldOrderServerList();
                 document.getElementById('gold-order-modal-title').textContent = 'Selecciona un servidor';
                 showGoldOrderStep('server');
@@ -4739,39 +4712,13 @@
         });
     }
 
-    function updateGoldOrderServerTypeOptions() {
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
-        if (!serverTypeSelect) return;
-        const types = getGoldOrderServerTypes(goldOrderState.game);
-        serverTypeSelect.innerHTML = `
-            <option value="">Selecciona un tipo</option>
-            ${types.map(type => `<option value="${type}">${type}</option>`).join('')}
-        `;
-    }
-
-    function syncGoldOrderServerTypeField() {
-        const selectedTypeField = document.getElementById('gold-order-server-type-selected');
-        if (!selectedTypeField) return;
-        selectedTypeField.value = goldOrderState.serverType || 'No seleccionado';
-    }
-
     function renderGoldOrderServerList() {
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
         const serverSelect = document.getElementById('gold-order-server-select');
-        if (!serverTypeSelect || !serverSelect) return;
+        if (!serverSelect) return;
 
-        const selectedType = serverTypeSelect.value;
-        goldOrderState.serverType = selectedType;
         goldOrderState.server = '';
-        syncGoldOrderServerTypeField();
 
-        if (!selectedType) {
-            serverSelect.disabled = true;
-            serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
-            return;
-        }
-
-        const servers = getGoldOrderServers(goldOrderState.game, selectedType);
+        const servers = getGoldOrderServers(goldOrderState.game);
         if (servers.length === 0) {
             serverSelect.disabled = true;
             serverSelect.innerHTML = '<option value="">No hay servidores disponibles</option>';
@@ -4792,7 +4739,6 @@
             showGoldOrderStep('details');
         }
     }
-
     function updateGoldOrderAmountOptions() {
         const detailContainer = document.getElementById('gold-order-step-details');
         const amountSelect = document.getElementById('gold-order-amount');
@@ -4885,7 +4831,6 @@
         const modal = document.getElementById('gold-order-modal');
         if (modal && modal.style.display === 'flex') {
             renderGoldOrderGameList();
-            updateGoldOrderServerTypeOptions();
             renderGoldOrderServerList();
             updateGoldOrderAmountOptions();
             updateGoldOrderSummary();
@@ -4895,17 +4840,11 @@
     function resetGoldOrderFlow() {
         goldOrderState = {
             game: '',
-            serverType: '',
             server: ''
         };
 
-        const serverTypeSelect = document.getElementById('gold-order-server-type');
         const serverSelect = document.getElementById('gold-order-server-select');
         const amountSelect = document.getElementById('gold-order-amount');
-        const selectedTypeField = document.getElementById('gold-order-server-type-selected');
-        if (serverTypeSelect) {
-            serverTypeSelect.value = '';
-        }
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -4915,14 +4854,9 @@
             amountSelect.value = '';
             amountSelect.disabled = true;
         }
-        if (selectedTypeField) {
-            selectedTypeField.value = 'No seleccionado';
-        }
-
         document.getElementById('gold-order-modal-title').textContent = 'Selecciona un juego';
         showGoldOrderStep('game');
         renderGoldOrderGameList();
-        updateGoldOrderServerTypeOptions();
         renderGoldOrderServerList();
         updateGoldOrderSummary();
     }
@@ -5264,13 +5198,6 @@
         if (goldOrderBackBtn) {
             goldOrderBackBtn.addEventListener('click', function() {
                 resetGoldOrderFlow();
-            });
-        }
-
-        const goldOrderServerTypeSelect = document.getElementById('gold-order-server-type');
-        if (goldOrderServerTypeSelect) {
-            goldOrderServerTypeSelect.addEventListener('change', function() {
-                renderGoldOrderServerList();
             });
         }
 
