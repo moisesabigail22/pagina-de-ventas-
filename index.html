@@ -3805,7 +3805,8 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
-    const APP_VERSION = "2026.02.23.1";
+    const PRODUCTION_HOST = "epicgoldshop.com";
+    const APP_VERSION = "2026.02.23.2";
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4412,6 +4413,22 @@
     // FUNCIONES DE INICIALIZACIÓN
     // ============================================
 
+    function ensureProductionHost() {
+        const currentHost = window.location.hostname;
+        const isLocal = currentHost === 'localhost' || currentHost === '127.0.0.1';
+
+        if (isLocal || currentHost === PRODUCTION_HOST) {
+            return true;
+        }
+
+        // Fuerza que cualquier enlace de deploy/preview termine en producción
+        const target = new URL(window.location.href);
+        target.hostname = PRODUCTION_HOST;
+        target.protocol = 'https:';
+        window.location.replace(target.toString());
+        return false;
+    }
+
     function ensureLatestBuildLoaded() {
         const url = new URL(window.location.href);
         const currentVersion = url.searchParams.get('v');
@@ -4434,6 +4451,7 @@
     }
 
     function init() {
+        if (!ensureProductionHost()) return;
         if (!ensureLatestBuildLoaded()) return;
         runAppVersionMigration();
 
