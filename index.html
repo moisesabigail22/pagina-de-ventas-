@@ -3457,21 +3457,6 @@
             <textarea id="account-description" placeholder="Describe las características de la cuenta, equipo, profesiones, monturas, etc..." maxlength="500"></textarea>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label class="form-label">Stock Disponible</label>
-                <input type="number" id="account-stock" placeholder="0" min="0" value="1">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Destacada</label>
-                <select id="account-featured">
-                    <option value="false">No</option>
-                    <option value="true">Sí</option>
-                </select>
-            </div>
-        </div>
-
         <div class="form-group">
             <label class="form-label">Imagen de la Cuenta</label>
 
@@ -5489,7 +5474,6 @@
                 <div class="product-image-container" data-category="${account.category}">
                     <!-- La imagen se carga dinámicamente con el sistema de caché -->
                 </div>
-                ${account.featured ? `<div class="product-badge">DESTACADA</div>` : ''}
                 <div class="product-content">
                     <div class="product-category">
                         <i class="fas fa-gamepad"></i> ${account.category} ${account.server ? '• ' + account.server : ''}
@@ -5509,14 +5493,6 @@
                             <i class="fas fa-shopping-cart"></i> COMPRAR
                         </a>
                     </div>
-
-                    ${account.stock ? `
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px;">
-                        <div style="font-size: 0.95rem; color: var(${account.stock > 3 ? '--success' : account.stock > 0 ? 'var(--wow-gold)' : '--danger'});">
-                            <i class="fas fa-cube"></i> ${account.stock} ${account.stock === 1 ? 'disponible' : 'disponibles'}
-                        </div>
-                    </div>
-                    ` : ''}
                 </div>
             </div>
         `).join('');
@@ -5816,8 +5792,6 @@
 
     function renderAdminAccounts() {
         const totalAccounts = accounts.length;
-        const featuredAccounts = accounts.filter(a => a.featured).length;
-        const totalStock = accounts.reduce((sum, a) => sum + (a.stock || 0), 0);
 
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
@@ -5826,14 +5800,6 @@
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalAccounts}</div>
                         <div style="color: var(--text-gray); font-size: 0.9rem;">Cuentas Totales</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${featuredAccounts}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Destacadas</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${totalStock}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Stock Total</div>
                     </div>
                 </div>
             </div>
@@ -5860,20 +5826,12 @@
                                         <div style="color: var(--text-gray); font-size: 0.95rem;">
                                             <i class="fas fa-tag"></i> ${account.category} ${account.server ? '• ' + account.server : ''}
                                         </div>
-                                        ${account.featured ? `
-                                        <span style="background: var(--wow-gold); color: var(--wow-blue-dark); padding: 4px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; margin-top: 8px; display: inline-block;">
-                                            <i class="fas fa-star"></i> Destacada
-                                        </span>
-                                        ` : ''}
                                     </div>
                                 </div>
                                 <p style="color: var(--text-gray); font-size: 1rem; margin-bottom: 15px; line-height: 1.6;">${account.description}</p>
                                 <div style="display: flex; gap: 25px; font-size: 0.95rem; flex-wrap: wrap;">
                                     <span style="color: var(--wow-gold); font-weight: 800; font-size: 1.1rem;">
                                         <i class="fas fa-dollar-sign"></i> ${account.price}
-                                    </span>
-                                    <span style="color: var(--text-gray);">
-                                        <i class="fas fa-cube"></i> Stock: <strong>${account.stock}</strong>
                                     </span>
                                     <span style="color: var(--text-gray);">
                                         <i class="fas fa-id-card"></i> ID: ${account.id}
@@ -6807,8 +6765,6 @@
         document.getElementById('account-server').value = '';
         document.getElementById('account-description').value = '';
         document.getElementById('account-price').value = '';
-        document.getElementById('account-stock').value = '1';
-        document.getElementById('account-featured').value = 'false';
         document.getElementById('account-image-url').value = '';
 
         // Actualizar select de categorías
@@ -6848,8 +6804,6 @@
         document.getElementById('account-server').value = account.server || '';
         document.getElementById('account-description').value = account.description;
         document.getElementById('account-price').value = account.price;
-        document.getElementById('account-stock').value = account.stock || 1;
-        document.getElementById('account-featured').value = account.featured ? 'true' : 'false';
         document.getElementById('account-image-url').value = account.image;
 
         // Actualizar select de categorías
@@ -6881,8 +6835,6 @@
         const server = document.getElementById('account-server').value.trim();
         const description = document.getElementById('account-description').value.trim();
         const price = document.getElementById('account-price').value.trim();
-        const stock = parseInt(document.getElementById('account-stock').value) || 0;
-        const featured = document.getElementById('account-featured').value === 'true';
         const imageUrl = document.getElementById('account-image-url').value.trim();
         const message = document.getElementById('account-message');
 
@@ -6946,8 +6898,6 @@
                     server,
                     description,
                     price: formattedPrice,
-                    stock,
-                    featured,
                     image,
                     tags
                 };
@@ -6963,8 +6913,6 @@
                 name,
                 description,
                 price: formattedPrice,
-                stock,
-                featured,
                 image,
                 tags
             };
