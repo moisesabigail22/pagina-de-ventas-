@@ -5193,6 +5193,7 @@
                     // Cerrar admin section si está abierta
                     if (targetId !== '#admin-section') {
                         document.getElementById('admin-section').style.display = 'none';
+                        updateBodyScrollLock();
                     }
                 }
             });
@@ -5744,6 +5745,7 @@
         sessionStorage.removeItem('isAdmin');
 
         document.getElementById('admin-section').style.display = 'none';
+        updateBodyScrollLock();
         document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-key"></i> ACCESO';
 
         showMessage('👋 Sesión de administrador cerrada', 'info');
@@ -7169,9 +7171,15 @@
     // FUNCIONES UTILITARIAS
     // ============================================
 
+    function updateBodyScrollLock() {
+        const hasOpenModal = Array.from(document.querySelectorAll('.modal'))
+            .some(modal => getComputedStyle(modal).display !== 'none');
+        document.body.style.overflow = hasOpenModal ? 'hidden' : 'auto';
+    }
+
     function showModal(modalId) {
         document.getElementById(modalId).style.display = 'flex';
-        document.body.style.overflow = 'hidden';
+        updateBodyScrollLock();
     }
 
     function closeModal() {
@@ -7182,7 +7190,7 @@
         document.getElementById('gold-category-modal').style.display = 'none';
         document.getElementById('gold-order-modal').style.display = 'none';
 
-        document.body.style.overflow = 'auto';
+        updateBodyScrollLock();
 
         const wowBg = document.querySelector('.wow-bg');
         if (wowBg) {
