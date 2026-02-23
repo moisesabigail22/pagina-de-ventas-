@@ -3665,8 +3665,13 @@
                         <option value="">Selecciona un tipo</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Servidor</label>
+                    <select id="gold-order-server-select" disabled>
+                        <option value="">Selecciona un servidor</option>
+                    </select>
+                </div>
             </div>
-            <div class="gold-order-options" id="gold-order-server-list"></div>
             <div style="display: flex; justify-content: flex-start; margin-top: 20px;">
                 <button class="btn-secondary" type="button" id="gold-order-back-btn">
                     <i class="fas fa-arrow-left"></i> VOLVER ATRÁS
@@ -4751,32 +4756,41 @@
     }
 
     function renderGoldOrderServerList() {
-        const list = document.getElementById('gold-order-server-list');
         const serverTypeSelect = document.getElementById('gold-order-server-type');
-        if (!list || !serverTypeSelect) return;
+        const serverSelect = document.getElementById('gold-order-server-select');
+        if (!serverTypeSelect || !serverSelect) return;
+
         const selectedType = serverTypeSelect.value;
         goldOrderState.serverType = selectedType;
+        goldOrderState.server = '';
         syncGoldOrderServerTypeField();
+
         if (!selectedType) {
-            list.innerHTML = '<p style="color: var(--text-gray);">Selecciona primero el tipo de servidor.</p>';
+            serverSelect.disabled = true;
+            serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
             return;
         }
+
         const servers = getGoldOrderServers(goldOrderState.game, selectedType);
         if (servers.length === 0) {
-            list.innerHTML = '<p style="color: var(--text-gray);">No hay servidores disponibles.</p>';
+            serverSelect.disabled = true;
+            serverSelect.innerHTML = '<option value="">No hay servidores disponibles</option>';
             return;
         }
-        list.innerHTML = servers.map(server => `
-            <button class="gold-order-option" type="button" data-server="${server}">${server}</button>
-        `).join('');
-        list.querySelectorAll('[data-server]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                goldOrderState.server = btn.dataset.server || '';
-                updateGoldOrderAmountOptions();
-                document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
-                showGoldOrderStep('details');
-            });
-        });
+
+        serverSelect.disabled = false;
+        serverSelect.innerHTML = `
+            <option value="">Selecciona un servidor</option>
+            ${servers.map(server => `<option value="${server}">${server}</option>`).join('')}
+        `;
+
+        if (servers.length === 1) {
+            serverSelect.value = servers[0];
+            goldOrderState.server = servers[0];
+            updateGoldOrderAmountOptions();
+            document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
+            showGoldOrderStep('details');
+        }
     }
 
     function updateGoldOrderAmountOptions() {
@@ -4886,10 +4900,16 @@
         };
 
         const serverTypeSelect = document.getElementById('gold-order-server-type');
+        const serverSelect = document.getElementById('gold-order-server-select');
         const amountSelect = document.getElementById('gold-order-amount');
         const selectedTypeField = document.getElementById('gold-order-server-type-selected');
         if (serverTypeSelect) {
             serverTypeSelect.value = '';
+        }
+        if (serverSelect) {
+            serverSelect.value = '';
+            serverSelect.disabled = true;
+            serverSelect.innerHTML = '<option value="">Selecciona un servidor</option>';
         }
         if (amountSelect) {
             amountSelect.value = '';
@@ -5251,6 +5271,17 @@
         if (goldOrderServerTypeSelect) {
             goldOrderServerTypeSelect.addEventListener('change', function() {
                 renderGoldOrderServerList();
+            });
+        }
+
+        const goldOrderServerSelect = document.getElementById('gold-order-server-select');
+        if (goldOrderServerSelect) {
+            goldOrderServerSelect.addEventListener('change', function() {
+                goldOrderState.server = this.value || '';
+                if (!goldOrderState.server) return;
+                updateGoldOrderAmountOptions();
+                document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
+                showGoldOrderStep('details');
             });
         }
 
