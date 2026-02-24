@@ -3798,6 +3798,16 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
+    const DATA_BUILD_VERSION = '2026.02.23.6';
+    const STORAGE_KEYS = [
+        'epicgoldshop_accounts',
+        'epicgoldshop_gold',
+        'epicgoldshop_gold_categories',
+        'epicgoldshop_references',
+        'epicgoldshop_settings',
+        'epicgoldshop_categories',
+        'epicgoldshop_game_servers'
+    ];
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4405,7 +4415,8 @@
     // ============================================
 
     function init() {
-        // Cargar datos
+        // Sincronizar datos locales con la versión del deploy y luego cargar datos
+        ensureCurrentDataVersion();
         loadData();
 
         // Renderizar contenido inicial
@@ -4498,6 +4509,14 @@
         goldCategories.forEach(category => add(category.game, category.server));
         gold.forEach(item => add(item.game, item.server));
         return Array.from(serverMap.values());
+    }
+
+    function ensureCurrentDataVersion() {
+        const storedVersion = localStorage.getItem('epicgoldshop_data_build_version');
+        if (storedVersion === DATA_BUILD_VERSION) return;
+
+        STORAGE_KEYS.forEach(key => localStorage.removeItem(key));
+        localStorage.setItem('epicgoldshop_data_build_version', DATA_BUILD_VERSION);
     }
 
     function loadData() {
