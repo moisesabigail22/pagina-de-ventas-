@@ -94,3 +94,23 @@ Para que producción use estas actualizaciones:
 4. Si tu deploy usa inyección en `window.__SUPABASE_*` o `window.__ENV__.*`, también es compatible.
 
 Adicionalmente, la página ahora hace refresh remoto periódico (30s) y al volver foco para reflejar cambios hechos directo en la base (por ejemplo borrados). 
+
+
+## Verificar que producción ya tiene este deploy
+
+1. Haz deploy en el **Production Branch** de Vercel.
+2. Verifica con:
+
+```bash
+curl -sL https://epicgoldshop.com/ | rg "SUPABASE_SYNC_VERSION"
+```
+
+Si devuelve `SUPABASE_SYNC_VERSION: 2026-02-26-1`, ya estás en el deploy correcto.
+
+3. Verifica datos en vivo:
+
+```bash
+curl -sL https://epicgoldshop.com/ | rg "supabase-js"
+```
+
+Además, este repo ahora incluye `vercel.json` con `Cache-Control: no-store` para evitar que producción quede pegada a HTML viejo.
