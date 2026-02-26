@@ -64,3 +64,8 @@ Como compartiste keys sensibles en el chat, te recomiendo rotarlas en Supabase:
 1. Project Settings > API > Rotate keys.
 2. Actualiza en `index.html` solo la nueva `anon`/`publishable` key.
 3. No expongas `service_role` en cliente ni repositorio.
+
+
+## Nota sobre eliminaciones
+
+Ahora, cuando una tabla remota queda vacía, la página también la refleja vacía al recargar (ya no conserva datos locales viejos para esa sección).

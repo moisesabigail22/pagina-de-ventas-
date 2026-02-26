@@ -3760,8 +3760,8 @@
 
     // Supabase (base pelada)
     // Reemplaza estos valores con los de tu proyecto Supabase
-    const SUPABASE_URL = "https://syhpmjsmnveflltqgakb.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5aHBtanNtbnZlZmxsdHFnYWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzU1OTAsImV4cCI6MjA4NzY1MTU5MH0.IpDNLw4XpMDA5VTrLFVyYpeClXiX_uKjRSux7qNIIwU";
+    const SUPABASE_URL = window.__SUPABASE_URL__ || "https://syhpmjsmnveflltqgakb.supabase.co";
+    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5aHBtanNtbnZlZmxsdHFnYWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzU1OTAsImV4cCI6MjA4NzY1MTU5MH0.IpDNLw4XpMDA5VTrLFVyYpeClXiX_uKjRSux7qNIIwU";
     const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY)
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         : null;
@@ -4161,32 +4161,32 @@
                 supabaseClient.from('game_servers').select('data').eq('id', 1).maybeSingle()
             ]);
 
-            if (!accountsRes.error && Array.isArray(accountsRes.data) && accountsRes.data.length) {
+            if (!accountsRes.error && Array.isArray(accountsRes.data)) {
                 accounts = accountsRes.data.map(row => row.data);
             }
 
-            if (!goldRes.error && Array.isArray(goldRes.data) && goldRes.data.length) {
+            if (!goldRes.error && Array.isArray(goldRes.data)) {
                 gold = goldRes.data.map(row => row.data);
             }
 
-            if (!goldCategoriesRes.error && Array.isArray(goldCategoriesRes.data) && goldCategoriesRes.data.length) {
+            if (!goldCategoriesRes.error && Array.isArray(goldCategoriesRes.data)) {
                 goldCategories = goldCategoriesRes.data.map(row => row.data);
             }
 
-            if (!referencesRes.error && Array.isArray(referencesRes.data) && referencesRes.data.length) {
+            if (!referencesRes.error && Array.isArray(referencesRes.data)) {
                 references = referencesRes.data.map(row => row.data);
             }
 
-            if (!settingsRes.error && settingsRes.data?.data) {
-                settings = settingsRes.data.data;
+            if (!settingsRes.error) {
+                settings = settingsRes.data?.data || contactInfo;
             }
 
-            if (!categoriesRes.error && categoriesRes.data?.data && Array.isArray(categoriesRes.data.data)) {
-                categories = categoriesRes.data.data;
+            if (!categoriesRes.error) {
+                categories = Array.isArray(categoriesRes.data?.data) ? categoriesRes.data.data : [];
             }
 
-            if (!gameServersRes.error && gameServersRes.data?.data && Array.isArray(gameServersRes.data.data)) {
-                gameServers = normalizeGameServers(gameServersRes.data.data);
+            if (!gameServersRes.error) {
+                gameServers = normalizeGameServers(Array.isArray(gameServersRes.data?.data) ? gameServersRes.data.data : []);
             }
 
             const hasRemoteData =
