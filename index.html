@@ -3788,6 +3788,7 @@
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         : null;
     let syncTimeout = null;
+    let remoteRefreshInterval = null;
     
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4268,6 +4269,17 @@
         }
     }
 
+    async function refreshFromSupabaseAndRender() {
+        if (!supabaseClient) return;
+
+        await loadDataFromSupabase();
+        renderAccounts();
+        renderGold();
+        renderReferences();
+        updateGoldOrderForm();
+        updateAverageRating();
+    }
+
     function scheduleSupabaseSync() {
         if (!supabaseClient) return;
         clearTimeout(syncTimeout);
@@ -4591,6 +4603,19 @@
         
         // Configurar eventos
         setupEventListeners();
+
+        // Mantener producción sincronizada con cambios remotos (ej: borrado directo en DB)
+        if (supabaseClient) {
+            window.addEventListener('focus', refreshFromSupabaseAndRender);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    refreshFromSupabaseAndRender();
+                }
+            });
+
+            if (remoteRefreshInterval) clearInterval(remoteRefreshInterval);
+            remoteRefreshInterval = setInterval(refreshFromSupabaseAndRender, 30000);
+        }
         
         // Actualizar selects de categorías
         updateCategorySelects();
@@ -7357,6 +7382,10 @@
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
         syncDataToSupabase();
+        if (remoteRefreshInterval) {
+            clearInterval(remoteRefreshInterval);
+            remoteRefreshInterval = null;
+        }
     });
 </script>
 </body>

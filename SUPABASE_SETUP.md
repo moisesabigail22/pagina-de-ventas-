@@ -80,3 +80,17 @@ Como compartiste keys sensibles en el chat, te recomiendo rotarlas en Supabase:
 ## Nota sobre eliminaciones
 
 Ahora, cuando una tabla remota queda vacía, la página también la refleja vacía al recargar (ya no conserva datos locales viejos para esa sección).
+
+
+## Vercel (producción) - branch y variables
+
+Para que producción use estas actualizaciones:
+
+1. En Vercel > Project > Settings > Git, valida **Production Branch** (ej. `main`).
+2. Asegúrate de mergear este branch a ese branch de producción.
+3. En Vercel > Settings > Environment Variables define (si usas runtime vars):
+   - `SUPABASE_URL`
+   - `SUPABASE_ANON_KEY`
+4. Si tu deploy usa inyección en `window.__SUPABASE_*` o `window.__ENV__.*`, también es compatible.
+
+Adicionalmente, la página ahora hace refresh remoto periódico (30s) y al volver foco para reflejar cambios hechos directo en la base (por ejemplo borrados). 
