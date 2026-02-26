@@ -3758,10 +3758,32 @@
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
 
-    // Supabase (base pelada)
-    // Reemplaza estos valores con los de tu proyecto Supabase
-    const SUPABASE_URL = window.__SUPABASE_URL__ || "https://syhpmjsmnveflltqgakb.supabase.co";
-    const SUPABASE_ANON_KEY = window.__SUPABASE_ANON_KEY__ || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5aHBtanNtbnZlZmxsdHFnYWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzU1OTAsImV4cCI6MjA4NzY1MTU5MH0.IpDNLw4XpMDA5VTrLFVyYpeClXiX_uKjRSux7qNIIwU";
+    // Supabase (compatibilidad con deploy actual y deploy anterior)
+    // Orden de prioridad:
+    // 1) window.__SUPABASE_* (deploy nuevo)
+    // 2) window.SUPABASE_* (deploy anterior)
+    // 3) window.__ENV__.SUPABASE_* (inyección por script)
+    // 4) fallback embebido
+    function resolveSupabaseValue(keys, fallback = '') {
+        for (const key of keys) {
+            if (window[key]) return window[key];
+        }
+        if (window.__ENV__) {
+            for (const key of keys) {
+                if (window.__ENV__[key]) return window.__ENV__[key];
+            }
+        }
+        return fallback;
+    }
+
+    const SUPABASE_URL = resolveSupabaseValue(
+        ['__SUPABASE_URL__', 'SUPABASE_URL'],
+        "https://syhpmjsmnveflltqgakb.supabase.co"
+    );
+    const SUPABASE_ANON_KEY = resolveSupabaseValue(
+        ['__SUPABASE_ANON_KEY__', 'SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY'],
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5aHBtanNtbnZlZmxsdHFnYWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzU1OTAsImV4cCI6MjA4NzY1MTU5MH0.IpDNLw4XpMDA5VTrLFVyYpeClXiX_uKjRSux7qNIIwU"
+    );
     const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY)
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         : null;

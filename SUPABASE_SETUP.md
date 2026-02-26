@@ -44,6 +44,17 @@ const SUPABASE_ANON_KEY = "<anon-key>";
 
 > Nunca uses `service_role` ni `secret key` en frontend.
 
+Configuración compatible con ambos deploys:
+
+```js
+const SUPABASE_URL = resolveSupabaseValue(['__SUPABASE_URL__', 'SUPABASE_URL'], '<url>');
+const SUPABASE_ANON_KEY = resolveSupabaseValue(['__SUPABASE_ANON_KEY__', 'SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY'], '<anon>');
+```
+
+- Deploy nuevo: usa `window.__SUPABASE_URL__` y `window.__SUPABASE_ANON_KEY__`.
+- Deploy anterior: usa `window.SUPABASE_URL` y `window.SUPABASE_ANON_KEY`.
+- También soporta `window.__ENV__.*` si inyectas variables por script.
+
 ## Paso 4) Cómo guarda ahora
 
 - Al cargar la página, intenta leer desde Supabase (`accounts`, `gold_packages`, etc.).
