@@ -3729,6 +3729,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ============================================
     // DATOS Y CONFIGURACIÓN
@@ -3756,6 +3757,40 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = "https://epicgoldshop.com/";
+
+    // Supabase (compatibilidad con deploy actual y deploy anterior)
+    // SUPABASE_SYNC_VERSION: 2026-02-26-3
+    // Orden de prioridad:
+    // 1) window.__SUPABASE_* (deploy nuevo)
+    // 2) window.SUPABASE_* (deploy anterior)
+    // 3) window.__ENV__.SUPABASE_* (inyección por script)
+    // 4) fallback embebido
+    function resolveSupabaseValue(keys, fallback = '') {
+        for (const key of keys) {
+            if (window[key]) return window[key];
+        }
+        if (window.__ENV__) {
+            for (const key of keys) {
+                if (window.__ENV__[key]) return window.__ENV__[key];
+            }
+        }
+        return fallback;
+    }
+
+    const SUPABASE_URL = resolveSupabaseValue(
+        ['__SUPABASE_URL__', 'SUPABASE_URL'],
+        "https://syhpmjsmnveflltqgakb.supabase.co"
+    );
+    const SUPABASE_ANON_KEY = resolveSupabaseValue(
+        ['__SUPABASE_ANON_KEY__', 'SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY'],
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5aHBtanNtbnZlZmxsdHFnYWtiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIwNzU1OTAsImV4cCI6MjA4NzY1MTU5MH0.IpDNLw4XpMDA5VTrLFVyYpeClXiX_uKjRSux7qNIIwU"
+    );
+    const supabaseClient = (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY)
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        : null;
+    let syncTimeout = null;
+    let remoteRefreshInterval = null;
+    let supabaseRealtimeChannel = null;
     
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4113,18 +4148,198 @@
         }));
     }
 
-    let accounts = JSON.parse(localStorage.getItem('epicgoldshop_accounts')) || sampleAccounts;
-    let gold = JSON.parse(localStorage.getItem('epicgoldshop_gold')) || sampleGold;
-    let goldCategories = JSON.parse(localStorage.getItem('epicgoldshop_gold_categories')) || sampleGoldCategories;
-    let references = JSON.parse(localStorage.getItem('epicgoldshop_references')) || sampleReferences;
-    let settings = JSON.parse(localStorage.getItem('epicgoldshop_settings')) || contactInfo;
-    let categories = JSON.parse(localStorage.getItem('epicgoldshop_categories')) || defaultCategories;
-    let gameServers = normalizeGameServers(JSON.parse(localStorage.getItem('epicgoldshop_game_servers'))) || [];
+    function getInitialState(key, fallback) {
+        try {
+            const raw = localStorage.getItem(key);
+            if (raw !== null) {
+                return JSON.parse(raw);
+            }
+        } catch (error) {
+            console.error(`Error leyendo ${key} desde localStorage:`, error);
+        }
+
+        // Si Supabase está activo, evita cargar datos demo viejos al refrescar.
+        // Esto previene que producción "retroceda" visualmente mientras llega data remota.
+        if (supabaseClient) {
+            if (Array.isArray(fallback)) return [];
+            if (fallback && typeof fallback === 'object') return { ...fallback };
+            return fallback;
+        }
+
+        return fallback;
+    }
+
+    let accounts = getInitialState('epicgoldshop_accounts', sampleAccounts);
+    let gold = getInitialState('epicgoldshop_gold', sampleGold);
+    let goldCategories = getInitialState('epicgoldshop_gold_categories', sampleGoldCategories);
+    let references = getInitialState('epicgoldshop_references', sampleReferences);
+    let settings = getInitialState('epicgoldshop_settings', contactInfo);
+    let categories = getInitialState('epicgoldshop_categories', defaultCategories);
+    let gameServers = normalizeGameServers(getInitialState('epicgoldshop_game_servers', [])) || [];
 
     if (gameServers.length === 0) {
         gameServers = buildDefaultGameServers();
     }
     
+    function getCurrentAppState() {
+        return {
+            accounts,
+            gold,
+            goldCategories,
+            references,
+            settings,
+            categories,
+            gameServers
+        };
+    }
+
+    async function loadDataFromSupabase() {
+        if (!supabaseClient) return;
+
+        try {
+            const [accountsRes, goldRes, goldCategoriesRes, referencesRes, settingsRes, categoriesRes, gameServersRes] = await Promise.all([
+                supabaseClient.from('accounts').select('id, data').order('id', { ascending: true }),
+                supabaseClient.from('gold_packages').select('id, data').order('id', { ascending: true }),
+                supabaseClient.from('gold_categories').select('id, data').order('id', { ascending: true }),
+                supabaseClient.from('references').select('id, data').order('id', { ascending: true }),
+                supabaseClient.from('site_settings').select('data').eq('id', 1).maybeSingle(),
+                supabaseClient.from('categories').select('data').eq('id', 1).maybeSingle(),
+                supabaseClient.from('game_servers').select('data').eq('id', 1).maybeSingle()
+            ]);
+
+            const responses = [accountsRes, goldRes, goldCategoriesRes, referencesRes, settingsRes, categoriesRes, gameServersRes];
+            const failedResponse = responses.find(res => res.error);
+            if (failedResponse) {
+                console.error('Error consultando Supabase, se cancela reseed automático:', failedResponse.error);
+                return;
+            }
+
+            if (Array.isArray(accountsRes.data)) {
+                accounts = accountsRes.data.map(row => row.data);
+            }
+
+            if (Array.isArray(goldRes.data)) {
+                gold = goldRes.data.map(row => row.data);
+            }
+
+            if (Array.isArray(goldCategoriesRes.data)) {
+                goldCategories = goldCategoriesRes.data.map(row => row.data);
+            }
+
+            if (Array.isArray(referencesRes.data)) {
+                references = referencesRes.data.map(row => row.data);
+            }
+
+            settings = settingsRes.data?.data || contactInfo;
+
+            categories = Array.isArray(categoriesRes.data?.data) ? categoriesRes.data.data : [];
+
+            gameServers = normalizeGameServers(Array.isArray(gameServersRes.data?.data) ? gameServersRes.data.data : []);
+
+            const hasRemoteData =
+                (Array.isArray(accountsRes.data) && accountsRes.data.length > 0) ||
+                (Array.isArray(goldRes.data) && goldRes.data.length > 0) ||
+                (Array.isArray(goldCategoriesRes.data) && goldCategoriesRes.data.length > 0) ||
+                (Array.isArray(referencesRes.data) && referencesRes.data.length > 0) ||
+                !!settingsRes.data?.data ||
+                !!categoriesRes.data?.data ||
+                !!gameServersRes.data?.data;
+
+            if (!hasRemoteData) {
+                await syncDataToSupabase();
+            }
+        } catch (error) {
+            console.error('Error cargando Supabase:', error);
+        }
+    }
+
+    async function syncDataToSupabase() {
+        if (!supabaseClient) return;
+
+        try {
+            await supabaseClient.from('accounts').delete().gte('id', 0);
+            if (accounts.length) {
+                await supabaseClient.from('accounts').insert(
+                    accounts.map(item => ({ id: item.id, data: item }))
+                );
+            }
+
+            await supabaseClient.from('gold_packages').delete().gte('id', 0);
+            if (gold.length) {
+                await supabaseClient.from('gold_packages').insert(
+                    gold.map(item => ({ id: item.id, data: item }))
+                );
+            }
+
+            await supabaseClient.from('gold_categories').delete().gte('id', 0);
+            if (goldCategories.length) {
+                await supabaseClient.from('gold_categories').insert(
+                    goldCategories.map(item => ({ id: item.id, data: item }))
+                );
+            }
+
+            await supabaseClient.from('references').delete().gte('id', 0);
+            if (references.length) {
+                await supabaseClient.from('references').insert(
+                    references.map(item => ({ id: item.id, data: item }))
+                );
+            }
+
+            await supabaseClient.from('site_settings').upsert({ id: 1, data: settings }, { onConflict: 'id' });
+            await supabaseClient.from('categories').upsert({ id: 1, data: categories }, { onConflict: 'id' });
+            await supabaseClient.from('game_servers').upsert({ id: 1, data: gameServers }, { onConflict: 'id' });
+        } catch (error) {
+            console.error('Error sincronizando con Supabase:', error);
+        }
+    }
+
+    async function refreshFromSupabaseAndRender() {
+        if (!supabaseClient) return;
+
+        await loadDataFromSupabase();
+        renderAccounts();
+        renderGold();
+        renderReferences();
+        updateGoldOrderForm();
+        updateAverageRating();
+    }
+
+    function setupSupabaseRealtimeSync() {
+        if (!supabaseClient || !supabaseClient.channel) return;
+
+        if (supabaseRealtimeChannel) {
+            supabaseClient.removeChannel(supabaseRealtimeChannel);
+            supabaseRealtimeChannel = null;
+        }
+
+        supabaseRealtimeChannel = supabaseClient
+            .channel('epicgoldshop-db-changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'accounts' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'gold_packages' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'gold_categories' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'references' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'site_settings' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, refreshFromSupabaseAndRender)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'game_servers' }, refreshFromSupabaseAndRender)
+            .subscribe();
+    }
+
+    function scheduleSupabaseSync() {
+        if (!supabaseClient) return;
+        clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(() => {
+            syncDataToSupabase();
+        }, 800);
+    }
+
+    const originalSetItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(key, value) {
+        originalSetItem.call(this, key, value);
+        if (typeof key === 'string' && key.startsWith('epicgoldshop_')) {
+            scheduleSupabaseSync();
+        }
+    };
+
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
     // ============================================
@@ -4401,9 +4616,10 @@
     // FUNCIONES DE INICIALIZACIÓN
     // ============================================
     
-    function init() {
+    async function init() {
         // Cargar datos
         loadData();
+        await loadDataFromSupabase();
         
         // Renderizar contenido inicial
         renderAccounts();
@@ -4431,6 +4647,22 @@
         
         // Configurar eventos
         setupEventListeners();
+
+        // Mantener producción sincronizada con cambios remotos (ej: borrado directo en DB)
+        if (supabaseClient) {
+            window.addEventListener('focus', refreshFromSupabaseAndRender);
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') {
+                    refreshFromSupabaseAndRender();
+                }
+            });
+
+            setupSupabaseRealtimeSync();
+
+            if (remoteRefreshInterval) clearInterval(remoteRefreshInterval);
+            // Fallback por si Realtime no está habilitado en el proyecto
+            remoteRefreshInterval = setInterval(refreshFromSupabaseAndRender, 45000);
+        }
         
         // Actualizar selects de categorías
         updateCategorySelects();
@@ -7184,8 +7416,8 @@
     // INICIALIZACIÓN
     // ============================================
     
-    document.addEventListener('DOMContentLoaded', function() {
-        init();
+    document.addEventListener('DOMContentLoaded', async function() {
+        await init();
     });
     
     window.addEventListener('beforeunload', function() {
@@ -7196,6 +7428,15 @@
         localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
+        syncDataToSupabase();
+        if (remoteRefreshInterval) {
+            clearInterval(remoteRefreshInterval);
+            remoteRefreshInterval = null;
+        }
+        if (supabaseClient && supabaseRealtimeChannel) {
+            supabaseClient.removeChannel(supabaseRealtimeChannel);
+            supabaseRealtimeChannel = null;
+        }
     });
 </script>
 </body>
