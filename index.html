@@ -2211,6 +2211,42 @@
             color: #a3e1ff;
         }
 
+
+        .toast-container {
+            position: fixed;
+            top: 110px;
+            right: 20px;
+            z-index: 4000;
+            width: min(380px, calc(100vw - 30px));
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
+        .toast-message {
+            display: block !important;
+            margin: 0;
+            pointer-events: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            border-left-width: 6px;
+            font-size: 1.02rem;
+            padding: 16px 18px;
+            opacity: 0;
+            transform: translateX(30px);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+        }
+
+        .toast-message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .toast-message.hide {
+            opacity: 0;
+            transform: translateY(-10px) scale(0.98);
+        }
+
         /* Login Styles */
         .login-form {
             max-width: 450px;
@@ -7286,71 +7322,51 @@
             wowBg.style.pointerEvents = '';
         }
 
-        document.querySelectorAll('.message').forEach(msg => {
+        document.querySelectorAll('.message:not(.toast-message)').forEach(msg => {
             msg.style.display = 'none';
         });
     }
 
-    function showMessage(text, type) {
-        const message = document.createElement('div');
-        message.className = `message ${type}`;
-        message.textContent = text;
-        message.style.cssText = `
-            position: fixed;
-            top: 120px;
-            right: 25px;
-            z-index: 3000;
-            max-width: 350px;
-            display: block !important;
-            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            border-left-width: 6px;
-            font-size: 1.1rem;
-            padding: 20px 25px;
-        `;
+    let toastContainer = null;
 
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideIn {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-        `;
-        document.head.appendChild(style);
+    function getToastContainer() {
+        if (toastContainer && document.body.contains(toastContainer)) {
+            return toastContainer;
+        }
 
-        document.body.appendChild(message);
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+        document.body.appendChild(toastContainer);
+        return toastContainer;
+    }
 
+    function dismissToast(message, delay = 350) {
+        if (!message || !message.parentNode) return;
+        message.classList.remove('show');
+        message.classList.add('hide');
         setTimeout(() => {
-            message.style.opacity = '0';
-            message.style.transform = 'translateX(100%)';
-            message.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-            setTimeout(() => {
-                if (message.parentNode) {
-                    document.body.removeChild(message);
-                }
-                if (style.parentNode) {
-                    document.head.removeChild(style);
-                }
-            }, 500);
-        }, 4000);
+            if (message.parentNode) message.remove();
+        }, delay);
+    }
 
-        message.addEventListener('click', function() {
-            this.style.opacity = '0';
-            this.style.transform = 'translateX(100%)';
-            setTimeout(() => {
-                if (this.parentNode) {
-                    document.body.removeChild(this);
-                }
-                if (style.parentNode) {
-                    document.head.removeChild(style);
-                }
-            }, 300);
+    function showMessage(text, type) {
+        const container = getToastContainer();
+        const message = document.createElement('div');
+        message.className = `message ${type} toast-message`;
+        message.textContent = text;
+
+        container.prepend(message);
+
+        requestAnimationFrame(() => {
+            message.classList.add('show');
+        });
+
+        const autoHideMs = type === 'error' ? 11000 : 8000;
+        const timeoutId = setTimeout(() => dismissToast(message), autoHideMs);
+
+        message.addEventListener('click', () => {
+            clearTimeout(timeoutId);
+            dismissToast(message, 250);
         });
     }
 
