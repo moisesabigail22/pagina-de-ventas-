@@ -61,3 +61,14 @@ Headers:
 - `Authorization: Bearer <publishable>`
 
 Si devuelve 200/json, conexión OK.
+
+
+## 5) Si el error es SOLO en `gold` y `settings`
+Ejecuta directamente:
+
+- `supabase/fix_rls_gold_settings.sql`
+
+Ese script:
+- reactiva RLS en ambas tablas,
+- repone `GRANT SELECT` para `anon/authenticated`,
+- recrea policies `SELECT` para `anon` (frontend) y `authenticated`.
