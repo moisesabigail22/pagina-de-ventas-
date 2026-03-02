@@ -16,7 +16,7 @@
     <meta property="og:title" content="Epic Gold Shop | Compra y Vende Oro WoW Seguro">
     <meta property="og:description" content="Marketplace especializado en oro World of Warcraft. Compra y vende con seguridad, entrega inmediata, soporte 24/7 en Discord.">
     <meta property="og:image" content="https://i.imgur.com/ynvAS9B.png">
-    <meta property="og:url" content="https://epicgoldshop.com/">
+    <meta property="og:url" content="https://www.epicgoldshop.com/">
     <meta property="og:type" content="website">
 
     <!-- Twitter -->
@@ -26,7 +26,7 @@
     <meta name="twitter:image" content="https://i.imgur.com/ynvAS9B.png">
 
     <!-- Canonical -->
-    <link rel="canonical" href="https://epicgoldshop.com/">
+    <link rel="canonical" href="https://www.epicgoldshop.com/">
 
     <!-- Favicon -->
     <link rel="icon" href="https://i.imgur.com/ynvAS9B.png" type="image/png">
@@ -37,7 +37,7 @@
       "@context": "https://schema.org",
       "@type": "GameStore",
       "name": "Epic Gold Shop",
-      "url": "https://epicgoldshop.com/",
+      "url": "https://www.epicgoldshop.com/",
       "description": "Tienda especializada en oro y cuentas de World of Warcraft",
       "priceRange": "$$"
     }
@@ -3772,6 +3772,7 @@
     </div>
 </div>
 
+<script src="./supabase-config.js"></script>
 <script>
     // ============================================
     // DATOS Y CONFIGURACIÓN
@@ -3797,7 +3798,15 @@
     const DISCORD_LINK = "https://discord.gg/AYJkmeZn";
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
-    const SITE_URL = `${window.location.origin}/`;
+    const SITE_URL = "https://www.epicgoldshop.com/";
+
+    const SUPABASE_URL = window.SUPABASE_URL || '';
+    const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || '';
+
+    // Si existe configuración global, tiene prioridad
+    const SUPABASE_CONFIG = window.EPIC_SUPABASE_CONFIG || {};
+    const EFFECTIVE_SUPABASE_URL = SUPABASE_CONFIG.url || SUPABASE_URL;
+    const EFFECTIVE_SUPABASE_ANON_KEY = SUPABASE_CONFIG.anonKey || SUPABASE_ANON_KEY;
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4404,9 +4413,9 @@
     // FUNCIONES DE INICIALIZACIÓN
     // ============================================
 
-    function init() {
+    async function init() {
         // Cargar datos
-        loadData();
+        await loadData();
 
         // Renderizar contenido inicial
         renderAccounts();
@@ -4500,26 +4509,87 @@
         return Array.from(serverMap.values());
     }
 
-    function loadData() {
-        // Cargar datos del localStorage
-        const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
-        const savedGold = localStorage.getItem('epicgoldshop_gold');
-        const savedGoldCategories = localStorage.getItem('epicgoldshop_gold_categories');
-        const savedReferences = localStorage.getItem('epicgoldshop_references');
-        const savedSettings = localStorage.getItem('epicgoldshop_settings');
-        const savedCategories = localStorage.getItem('epicgoldshop_categories');
-        const savedGameServers = localStorage.getItem('epicgoldshop_game_servers');
+    async function fetchSupabaseTable(table, query = 'select=*') {
+        const url = `${EFFECTIVE_SUPABASE_URL}/rest/v1/${table}?${query}`;
+        const response = await fetch(url, {
+            headers: {
+                apikey: EFFECTIVE_SUPABASE_ANON_KEY,
+                Authorization: `Bearer ${EFFECTIVE_SUPABASE_ANON_KEY}`,
+                Accept: 'application/json'
+            },
+            cache: 'no-store'
+        });
 
-        if (savedAccounts) accounts = JSON.parse(savedAccounts);
-        if (savedGold) gold = JSON.parse(savedGold);
-        if (savedGoldCategories) goldCategories = JSON.parse(savedGoldCategories);
-        sanitizeGoldCategoryImages();
-        if (savedReferences) references = JSON.parse(savedReferences);
-        if (savedSettings) settings = JSON.parse(savedSettings);
-        if (savedCategories) categories = JSON.parse(savedCategories);
-        if (savedGameServers) {
-            gameServers = normalizeGameServers(JSON.parse(savedGameServers));
+        if (!response.ok) {
+            throw new Error(`Supabase ${table}: ${response.status} ${await response.text()}`);
         }
+
+        return response.json();
+    }
+
+    function validateSupabaseFrontendConfig() {
+        if (!EFFECTIVE_SUPABASE_URL || !EFFECTIVE_SUPABASE_ANON_KEY) {
+            return 'Configura supabase-config.js con URL y ANON KEY de Supabase';
+        }
+
+        if (!EFFECTIVE_SUPABASE_URL.startsWith('https://')) {
+            return 'SUPABASE URL inválida: debe empezar con https://';
+        }
+
+        if (EFFECTIVE_SUPABASE_ANON_KEY.startsWith('sb_secret_')) {
+            return 'Estás usando SECRET KEY en frontend. Usa solo PUBLISHABLE/ANON KEY.';
+        }
+
+        if (!EFFECTIVE_SUPABASE_ANON_KEY.startsWith('sb_publishable_') && !EFFECTIVE_SUPABASE_ANON_KEY.startsWith('eyJ')) {
+            return 'La key no parece ANON/PUBLISHABLE. Revisa Supabase > Settings > API.';
+        }
+
+        return '';
+    }
+
+    async function loadData() {
+        const configError = validateSupabaseFrontendConfig();
+        if (configError) {
+            showMessage(configError, 'error');
+            console.error('[SUPABASE CONFIG]', configError, {
+                url: EFFECTIVE_SUPABASE_URL,
+                keyPrefix: EFFECTIVE_SUPABASE_ANON_KEY ? EFFECTIVE_SUPABASE_ANON_KEY.slice(0, 20) : ''
+            });
+            return;
+        }
+
+        try {
+            const [accountsData, goldData, goldCategoriesData, referencesData, gameServersData, settingsRows] = await Promise.all([
+                fetchSupabaseTable('accounts', 'select=*&order=id.asc'),
+                fetchSupabaseTable('gold', 'select=*&order=id.asc'),
+                fetchSupabaseTable('gold_categories', 'select=*&order=id.asc'),
+                fetchSupabaseTable('references', 'select=*&order=id.asc'),
+                fetchSupabaseTable('game_servers', 'select=*&order=id.asc'),
+                fetchSupabaseTable('settings', 'select=key,value')
+            ]);
+
+            accounts = Array.isArray(accountsData) ? accountsData : [];
+            gold = Array.isArray(goldData) ? goldData : [];
+            goldCategories = Array.isArray(goldCategoriesData) ? goldCategoriesData : [];
+            references = Array.isArray(referencesData) ? referencesData : [];
+            gameServers = normalizeGameServers(Array.isArray(gameServersData) ? gameServersData : []);
+
+            const settingsFromDb = Array.isArray(settingsRows)
+                ? settingsRows.reduce((acc, row) => {
+                    if (row?.key) acc[row.key] = row.value;
+                    return acc;
+                }, {})
+                : {};
+
+            settings = { ...settings, ...settingsFromDb };
+            categories = Array.from(new Set(accounts.map(account => account.category).filter(Boolean))).sort();
+        } catch (error) {
+            console.error('Error cargando datos desde Supabase:', error);
+            showMessage('Error Supabase: revisa RLS (policies SELECT) y que la key sea publishable.', 'error');
+            return;
+        }
+
+        sanitizeGoldCategoryImages();
 
         if (!Array.isArray(gameServers) || gameServers.length === 0) {
             gameServers = buildGameServersFromData();
@@ -4545,14 +4615,9 @@
             settings.site = SITE_URL;
         }
 
-        // Guardar configuración actualizada
-        localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
-        localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
-        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-
         // Actualizar enlaces de contacto
         updateContactLinks();
+        showMessage('Catálogo cargado desde Supabase ✅', 'success');
     }
 
     function updateAverageRating() {
@@ -6340,7 +6405,7 @@
 
                     <div class="form-group">
                         <label class="form-label">URL del Sitio</label>
-                        <input type="text" id="setting-site" value="${settings.site}" placeholder="https://epicgoldshop.com/" autocomplete="off">
+                        <input type="text" id="setting-site" value="${settings.site}" placeholder="https://www.epicgoldshop.com/" autocomplete="off">
                     </div>
                 </div>
 
