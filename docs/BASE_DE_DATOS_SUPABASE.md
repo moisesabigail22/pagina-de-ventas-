@@ -52,6 +52,34 @@ Para iniciar rápido:
 
 ---
 
+
+## 3.1) Parte 3 configurada paso a paso (RLS + Admin seguro)
+Sigue estos pasos exactos:
+
+1. Ejecuta primero `supabase/schema.sql`.
+2. Luego ejecuta `supabase/part3_rls_admin.sql`.
+3. Genera un hash bcrypt para la contraseña admin:
+   - `node -e "const b=require('bcryptjs'); console.log(b.hashSync('TU_PASSWORD', 10))"`
+4. Reemplaza `REEMPLAZAR_POR_HASH_BCRYPT_REAL` en el SQL de parte 3.
+5. Vuelve a ejecutar el bloque `insert into public.admin_users ...`.
+
+### Qué deja listo esta Parte 3
+- Tabla `admin_users` para login admin seguro.
+- RLS activo y bloqueo de lectura para `anon` en `admin_users`.
+- Escrituras reservadas para backend (con `SUPABASE_SERVICE_ROLE_KEY`).
+
+### Variables obligatorias en Vercel (backend)
+- `SUPABASE_URL`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `ADMIN_JWT_SECRET` (para sesión admin por token)
+
+### Estructura recomendada de API en Vercel
+- `POST /api/admin/login` -> valida usuario/clave (compara bcrypt)
+- `GET /api/catalog` -> lectura pública consolidada
+- `POST/PUT/DELETE /api/admin/*` -> CRUD protegido para panel admin
+
+> Regla crítica: `SUPABASE_SERVICE_ROLE_KEY` nunca va al frontend.
+
 ## 4) Obtener variables de entorno
 En Supabase > **Project Settings** > **API** copia:
 - `Project URL`
