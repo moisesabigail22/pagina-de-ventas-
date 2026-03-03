@@ -6,6 +6,11 @@ Perfecto: sin backend, pero **sí guardando en Supabase** desde el admin de la w
 En Supabase > SQL Editor:
 - pega y ejecuta `supabase/setup.sql`
 
+
+## Configuración aplicada con tus datos
+- Project URL: `https://meeloixabjkrniwocrzp.supabase.co`
+- Anon Key (Legacy): configurada en `index.html`.
+
 ## 2) Configura tu frontend (importante)
 En `index.html`, antes del script principal, define:
 
