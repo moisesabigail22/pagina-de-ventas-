@@ -4115,7 +4115,7 @@
         site: SITE_URL
     };
 
-    // Supabase (modo sin backend)
+    // Supabase (modo sin backend) - versión simple (1 sola tabla JSON)
     const SUPABASE_URL = window.SUPABASE_URL || localStorage.getItem('SUPABASE_URL') || '';
     const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || localStorage.getItem('SUPABASE_ANON_KEY') || '';
     const SUPABASE_ENABLED = Boolean(window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY);
@@ -4124,67 +4124,46 @@
     let syncTimer = null;
     let skipSupabaseSync = false;
 
-
-    function isUuidLike(value) {
-        return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
+    function snapshotState() {
+        return {
+            accounts,
+            gold,
+            goldCategories,
+            references,
+            settings,
+            categories,
+            gameServers
+        };
     }
 
-    function ensureUuid(value) {
-        if (isUuidLike(value)) return String(value);
-        if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
-        return `${Date.now()}-${Math.random()}`;
-    }
-
-    async function supabaseSelect(table) {
-        if (!SUPABASE_ENABLED) return null;
-        const { data, error } = await supabaseClient.from(table).select('*');
-        if (error) throw error;
-        return data || [];
+    function applySnapshot(data) {
+        if (!data || typeof data !== 'object') return;
+        accounts = Array.isArray(data.accounts) ? data.accounts : accounts;
+        gold = Array.isArray(data.gold) ? data.gold : gold;
+        goldCategories = Array.isArray(data.goldCategories) ? data.goldCategories : goldCategories;
+        references = Array.isArray(data.references) ? data.references : references;
+        settings = data.settings && typeof data.settings === 'object' ? data.settings : settings;
+        categories = Array.isArray(data.categories) ? data.categories : categories;
+        gameServers = Array.isArray(data.gameServers) ? normalizeGameServers(data.gameServers) : gameServers;
     }
 
     async function loadDataFromSupabase() {
         if (!SUPABASE_ENABLED) return false;
         try {
-            const [
-                dbAccounts,
-                dbGold,
-                dbGoldCategories,
-                dbReferences,
-                dbSettings,
-                dbAccountCategories,
-                dbGameServers
-            ] = await Promise.all([
-                supabaseSelect('accounts'),
-                supabaseSelect('gold'),
-                supabaseSelect('gold_categories'),
-                supabaseSelect('references'),
-                supabaseSelect('settings'),
-                supabaseSelect('account_categories'),
-                supabaseSelect('game_servers')
-            ]);
-
-            accounts = Array.isArray(dbAccounts) ? dbAccounts : [];
-            gold = Array.isArray(dbGold) ? dbGold : [];
-            goldCategories = Array.isArray(dbGoldCategories) ? dbGoldCategories : [];
-            references = Array.isArray(dbReferences) ? dbReferences : [];
-            settings = dbSettings && dbSettings[0] ? dbSettings[0] : { ...contactInfo };
-            categories = Array.isArray(dbAccountCategories) ? dbAccountCategories.map(c => c.name).filter(Boolean) : [...defaultCategories];
-            gameServers = normalizeGameServers(Array.isArray(dbGameServers) ? dbGameServers : []);
-
-            return true;
+            const { data, error } = await supabaseClient
+                .from('app_state')
+                .select('data')
+                .eq('id', 'main')
+                .maybeSingle();
+            if (error) throw error;
+            if (data && data.data) {
+                applySnapshot(data.data);
+                return true;
+            }
+            return false;
         } catch (error) {
             console.warn('Supabase load failed, using localStorage fallback:', error.message || error);
             return false;
-        }
-    }
-
-    async function replaceTableData(table, rows) {
-        if (!SUPABASE_ENABLED) return;
-        const { error: deleteError } = await supabaseClient.from(table).delete().not('id', 'is', null);
-        if (deleteError && !String(deleteError.message || '').includes('0 rows')) throw deleteError;
-        if (rows.length > 0) {
-            const { error: insertError } = await supabaseClient.from(table).insert(rows);
-            if (insertError) throw insertError;
         }
     }
 
@@ -4198,15 +4177,11 @@
         if (!SUPABASE_ENABLED || isSyncingSupabase || skipSupabaseSync) return;
         isSyncingSupabase = true;
         try {
-            await Promise.all([
-                replaceTableData('accounts', (accounts || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
-                replaceTableData('gold', (gold || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
-                replaceTableData('gold_categories', (goldCategories || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
-                replaceTableData('references', (references || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
-                replaceTableData('game_servers', (gameServers || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
-                replaceTableData('account_categories', (categories || []).filter(Boolean).map(name => ({ id: ensureUuid(name), name }))),
-                replaceTableData('settings', [{ ...settings, id: ensureUuid(settings?.id) }])
-            ]);
+            const payload = snapshotState();
+            const { error } = await supabaseClient
+                .from('app_state')
+                .upsert({ id: 'main', data: payload }, { onConflict: 'id' });
+            if (error) throw error;
         } catch (error) {
             console.error('Supabase sync error:', error.message || error);
         } finally {
@@ -4219,9 +4194,7 @@
         const rawSetItem = localStorage.setItem.bind(localStorage);
         localStorage.setItem = function(key, value) {
             rawSetItem(key, value);
-            if (String(key).startsWith('epicgoldshop_')) {
-                queueSupabaseSync();
-            }
+            if (String(key).startsWith('epicgoldshop_')) queueSupabaseSync();
         };
         localStorage.__supabaseSyncHookInstalled = '1';
     }
