@@ -4120,6 +4120,17 @@
     let syncTimer = null;
     let skipSupabaseSync = false;
 
+
+    function isUuidLike(value) {
+        return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
+    }
+
+    function ensureUuid(value) {
+        if (isUuidLike(value)) return String(value);
+        if (window.crypto && typeof window.crypto.randomUUID === 'function') return window.crypto.randomUUID();
+        return `${Date.now()}-${Math.random()}`;
+    }
+
     async function supabaseSelect(table) {
         if (!SUPABASE_ENABLED) return null;
         const { data, error } = await supabaseClient.from(table).select('*');
@@ -4184,13 +4195,13 @@
         isSyncingSupabase = true;
         try {
             await Promise.all([
-                replaceTableData('accounts', (accounts || []).map(item => ({ ...item, id: String(item.id) }))),
-                replaceTableData('gold', (gold || []).map(item => ({ ...item, id: String(item.id) }))),
-                replaceTableData('gold_categories', (goldCategories || []).map(item => ({ ...item, id: String(item.id) }))),
-                replaceTableData('references', (references || []).map(item => ({ ...item, id: String(item.id) }))),
-                replaceTableData('game_servers', (gameServers || []).map(item => ({ ...item, id: String(item.id) }))),
-                replaceTableData('account_categories', (categories || []).filter(Boolean).map((name, i) => ({ id: `${Date.now()}-${i}-${name}`, name }))),
-                replaceTableData('settings', [{ ...settings, id: String(settings?.id || Date.now()) }])
+                replaceTableData('accounts', (accounts || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
+                replaceTableData('gold', (gold || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
+                replaceTableData('gold_categories', (goldCategories || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
+                replaceTableData('references', (references || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
+                replaceTableData('game_servers', (gameServers || []).map(item => ({ ...item, id: ensureUuid(item.id) }))),
+                replaceTableData('account_categories', (categories || []).filter(Boolean).map(name => ({ id: ensureUuid(name), name }))),
+                replaceTableData('settings', [{ ...settings, id: ensureUuid(settings?.id) }])
             ]);
         } catch (error) {
             console.error('Supabase sync error:', error.message || error);

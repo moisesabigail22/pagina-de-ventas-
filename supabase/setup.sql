@@ -8,7 +8,7 @@ create extension if not exists "pgcrypto";
 -- =========================
 
 create table if not exists public.settings (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   discord text,
   whatsapp text,
   tiktok text,
@@ -18,13 +18,13 @@ create table if not exists public.settings (
 );
 
 create table if not exists public.account_categories (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   name text unique not null,
   created_at timestamptz not null default now()
 );
 
 create table if not exists public.game_servers (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   game text not null,
   name text not null,
   created_at timestamptz not null default now(),
@@ -32,7 +32,7 @@ create table if not exists public.game_servers (
 );
 
 create table if not exists public.gold_categories (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   name text,
   game text not null,
   server text,
@@ -43,7 +43,7 @@ create table if not exists public.gold_categories (
 );
 
 create table if not exists public.gold (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   game text not null,
   server text not null,
   amount text not null,
@@ -56,7 +56,7 @@ create table if not exists public.gold (
 );
 
 create table if not exists public.accounts (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   type text default 'account',
   category text,
   server text,
@@ -73,7 +73,7 @@ create table if not exists public.accounts (
 
 -- Importante: campos iguales a index.html (userName, userInitial, text, date)
 create table if not exists public.references (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   "userName" text not null,
   "userInitial" text,
   rating integer check (rating between 1 and 5),
@@ -83,7 +83,7 @@ create table if not exists public.references (
 );
 
 create table if not exists public.admin_users (
-  id text primary key default gen_random_uuid()::text,
+  id uuid primary key default gen_random_uuid(),
   username text unique not null,
   password_hash text not null,
   is_active boolean not null default true,
@@ -182,7 +182,7 @@ create policy "deny_anon_read_admin_users" on public.admin_users for select to a
 -- SEED BÁSICO (opcional)
 -- =========================
 insert into public.settings (id, discord, whatsapp, tiktok, email, site)
-select gen_random_uuid()::text,
+select gen_random_uuid(),
   'https://discord.gg/epicgoldshop',
   'https://wa.me/1234567890',
   'https://www.tiktok.com/@epicgoldshop',
@@ -195,7 +195,7 @@ values ('Turtle WoW'), ('World of Warcraft'), ('Albion Online'), ('Runescape')
 on conflict (name) do nothing;
 
 insert into public.references (id, "userName", "userInitial", rating, text, date)
-select gen_random_uuid()::text, r."userName", left(r."userName", 1), r.rating, r.text, to_char(current_date, 'DD/MM/YYYY')
+select gen_random_uuid(), r."userName", left(r."userName", 1), r.rating, r.text, to_char(current_date, 'DD/MM/YYYY')
 from (
   values
     ('GamerPro', 5, 'Excelente servicio!'),
