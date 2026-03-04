@@ -3821,6 +3821,7 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
+    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_04';
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4438,6 +4439,24 @@
         });
     }
 
+    function resetLocalCatalogDataIfNeeded() {
+        const savedVersion = localStorage.getItem('epicgoldshop_catalog_version');
+        if (savedVersion === CATALOG_SCHEMA_VERSION) return;
+
+        const keysToReset = [
+            'epicgoldshop_accounts',
+            'epicgoldshop_gold',
+            'epicgoldshop_gold_categories',
+            'epicgoldshop_references',
+            'epicgoldshop_categories',
+            'epicgoldshop_game_servers',
+            'epicgoldshop_services'
+        ];
+
+        keysToReset.forEach((key) => localStorage.removeItem(key));
+        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
+    }
+
     function buildGameServersFromData() {
         const serverMap = new Map();
         const add = (game, serverName) => {
@@ -4456,6 +4475,8 @@
     }
 
     function loadData() {
+        resetLocalCatalogDataIfNeeded();
+
         // Cargar datos del localStorage
         const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
         const savedGold = localStorage.getItem('epicgoldshop_gold');
@@ -4513,6 +4534,7 @@
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
         localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
+        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
 
         // Actualizar enlaces de contacto
         updateContactLinks();
@@ -7354,6 +7376,7 @@
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
         localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
+        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
     });
 </script>
 </body>
