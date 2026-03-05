@@ -5940,10 +5940,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editAccount(${account.id})" data-tooltip="Editar cuenta">
+                                <button class="btn-primary" onclick='editAccount(${JSON.stringify(account.id)})' data-tooltip="Editar cuenta">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteAccount(${account.id})" data-tooltip="Eliminar cuenta">
+                                <button class="btn-danger" onclick='deleteAccount(${JSON.stringify(account.id)})' data-tooltip="Eliminar cuenta">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6911,7 +6911,7 @@
     }
 
     function editAccount(id) {
-        const account = accounts.find(a => a.id === id);
+        const account = accounts.find(a => String(a.id) === String(id));
         if (!account) return;
 
         editingAccountId = id;
@@ -7063,7 +7063,8 @@
                     return;
                 }
 
-                showMessage('❌ No se pudo guardar en la API. Revisa token/permisos.', 'error');
+                const err = await response.json().catch(() => ({}));
+                showMessage(`❌ No se pudo guardar en la API${err.error ? `: ${err.error}` : ''}`, 'error');
                 return;
             } catch (error) {
                 console.warn('Error guardando cuenta en API:', error.message);
@@ -7073,7 +7074,7 @@
         }
 
         if (editingAccountId) {
-            const index = accounts.findIndex(a => a.id === editingAccountId);
+            const index = accounts.findIndex(a => String(a.id) === String(editingAccountId));
             if (index !== -1) {
                 accounts[index] = {
                     ...accounts[index],
@@ -7169,7 +7170,8 @@
                 return;
             }
 
-            showMessage('❌ No se pudo eliminar en la API. Revisa token/permisos.', 'error');
+            const err = await response.json().catch(() => ({}));
+            showMessage(`❌ No se pudo eliminar en la API${err.error ? `: ${err.error}` : ''}`, 'error');
         } catch (error) {
             console.warn('Error eliminando cuenta en API:', error.message);
             showMessage('❌ Error de conexión con API al eliminar cuenta.', 'error');
