@@ -166,6 +166,9 @@ Escríbeme solo esto: **"listo"**.
 - `POST /api/admin/gold`
 - `PUT /api/admin/gold`
 - `DELETE /api/admin/gold?id=<ID>`
+- `POST /api/admin/services`
+- `PUT /api/admin/services`
+- `DELETE /api/admin/services?id=<ID>`
 
 
 ## Si `https://tu-dominio.com/api/catalog` da 404
@@ -177,6 +180,7 @@ Haz esto en orden:
    - `api/catalog.js`
    - `api/admin/login.js`
    - `api/admin/gold.js`
+   - `api/admin/services.js`
 3. Pulsa **Redeploy** del deploy más reciente.
 4. Espera que diga **Ready**.
 5. Prueba primero con el dominio de Vercel (ejemplo):
@@ -265,6 +269,7 @@ Haz esto:
    - `api/catalog.js`
    - `api/admin/login.js`
    - `api/admin/gold.js`
+   - `api/admin/services.js`
    - `vercel.json`
 3. Si no aparecen, sube la rama con push y luego redeploy en Vercel.
 4. En Vercel, en **Settings → Git**, confirma que el proyecto despliega esa misma rama.
