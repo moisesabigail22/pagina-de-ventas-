@@ -6,6 +6,7 @@ required=(
   "api/catalog.js"
   "api/admin/login.js"
   "api/admin/gold.js"
+  "api/admin/services.js"
   "api/_lib/db.js"
   "api/_lib/auth.js"
   "package.json"

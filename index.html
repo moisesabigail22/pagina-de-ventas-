@@ -3848,210 +3848,20 @@
     };
 
     // Datos de ejemplo - Cuentas CON IMÁGENES REALES DE IMGUR
-    const sampleAccounts = [
-        {
-            id: 1,
-            type: 'account',
-            category: 'Turtle WoW',
-            server: 'Nordanaar',
-            name: 'Cuenta Nivel 60 Guerrero Épico',
-            description: 'Guerrero nivel 60 con equipo épico completo T2.5, monturas raras (Cargador de la Muerte), 300 en herrería y minería, reputaciones máximas, 5000g disponible.',
-            price: '$129.99',
-            stock: 2,
-            image: IMGUR_IMAGE_URLS.turtleWow1,
-            featured: true,
-            tags: ['Nivel 60', 'Equipo Épico', 'Monturas', 'Profesiones', 'Reputación']
-        },
-        {
-            id: 2,
-            type: 'account',
-            category: 'Turtle WoW',
-            server: 'Tel\'Abim',
-            name: 'Cuenta Nivel 40 Mago Avanzado',
-            description: 'Mago nivel 40 con hechizos avanzados, buen equipo azul para continuar leveling, 1000g disponible, profesiones al 225, múltiples bolsas de 16 ranuras.',
-            price: '$49.99',
-            stock: 5,
-            image: IMGUR_IMAGE_URLS.wowMage,
-            featured: false,
-            tags: ['Nivel 40', 'Mago', 'Profesiones', 'Oro Inicial']
-        },
-        {
-            id: 3,
-            type: 'account',
-            category: 'Albion Online',
-            server: 'Americas',
-            name: 'Cuenta T8 Albion Premium',
-            description: 'Cuenta con personaje Tier 8 completo, 15M de silver, isla personalizada nivel 6, especializaciones avanzadas en armas de fuego, múltiples sets de equipo.',
-            price: '$179.99',
-            stock: 1,
-            image: IMGUR_IMAGE_URLS.albionOnline,
-            featured: true,
-            tags: ['Tier 8', '15M Silver', 'Isla', 'Especializaciones']
-        },
-        {
-            id: 4,
-            type: 'account',
-            category: 'World of Warcraft',
-            server: 'Retail',
-            name: 'Cuenta Nivel 70 Dragonflight Mítico',
-            description: 'Cuenta nivel máximo en Dragonflight, equipo mítico+ 480+ ilvl, múltiples personajes de nivel 70, monturas legendarias, logros completos de raid.',
-            price: '$249.99',
-            stock: 1,
-            image: IMGUR_IMAGE_URLS.wowRetail,
-            featured: true,
-            tags: ['Nivel 70', 'Mítico+', 'Monturas', 'Logros']
-        },
-        {
-            id: 5,
-            type: 'account',
-            category: 'World of Warcraft',
-            server: 'Classic',
-            name: 'Cuenta Nivel 80 WotLK Heroico',
-            description: 'Cuenta nivel 80 en Wrath of the Lich King Classic con equipo heroico completo, montura proto-draco, profesiones 450, reputaciones con Kirin Tor máximas.',
-            price: '$149.99',
-            stock: 3,
-            image: IMGUR_IMAGE_URLS.wowClassic,
-            featured: false,
-            tags: ['Nivel 80', 'WotLK', 'Heroico', 'Montura Épica']
-        },
-        {
-            id: 6,
-            type: 'account',
-            category: 'Turtle WoW',
-            server: 'Nordanaar',
-            name: 'Cuenta Nivel 30 Sacerdote',
-            description: 'Sacerdote nivel 30 sombra, buen equipo verde/azul, profesiones en desarrollo, 300g disponible, ideal para jugadores que empiezan en Turtle WoW.',
-            price: '$29.99',
-            stock: 8,
-            image: IMGUR_IMAGE_URLS.turtleWow2,
-            featured: false,
-            tags: ['Nivel 30', 'Sacerdote', 'Principiantes', 'Oro Inicial']
-        }
-    ];
+    const sampleAccounts = [];
 
     // Datos de ejemplo - Categorías de Oro
-    const sampleGoldCategories = [
-        {
-            id: 1,
-            name: 'WoW Turtle Gold',
-            game: 'WoW Turtle',
-            server: 'Nordanaar',
-            description: 'Gold para WoW Turtle (Ambershire, Nordanaar, Telabim y South Sea).',
-            image: IMGUR_IMAGE_URLS.turtleWow2
-        },
-        {
-            id: 2,
-            name: 'WoW Privado Gold',
-            game: 'WoW Privado',
-            server: 'Warmane',
-            description: 'Gold para servidores privados: Bronzebeard, Warmane y Project Epoch.',
-            image: IMGUR_IMAGE_URLS.wowClassic
-        },
-        {
-            id: 3,
-            name: 'WoW Oficial Gold',
-            game: 'WoW Oficial',
-            server: 'Nightslayer A/H',
-            description: 'Gold para WoW oficial en Nightslayer A/H.',
-            image: IMGUR_IMAGE_URLS.wowRetail
-        }
-    ];
+    const sampleGoldCategories = [];
 
     // Datos de ejemplo - Oro
-    const sampleGold = [
-        { id: 1, game: 'WoW Turtle', server: 'Ambershire', amount: '100g', price: '$3.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 2, game: 'WoW Turtle', server: 'Nordanaar', amount: '100g', price: '$2.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 3, game: 'WoW Turtle', server: 'Telabim', amount: '100g', price: '$4.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 4, game: 'WoW Turtle', server: 'South Sea', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 5, game: 'WoW Privado', server: 'Bronzebeard', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 6, game: 'WoW Privado', server: 'Warmane', amount: '1k', price: '$2.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 7, game: 'WoW Privado', server: 'Project Epoch - Kezan', amount: '100g', price: '$4', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 8, game: 'WoW Privado', server: 'Project Epoch - Gurubashi', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 9, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '100g', price: '$5.8', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 10, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '200g', price: '$11.6', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 11, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '300g', price: '$17.4', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 12, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '500g', price: '$29', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 13, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '1000g', price: '$58', delivery: '15-40 minutos', stock: 10, status: 'available' }
-    ];
+    const sampleGold = [];
 
-    const sampleServices = [
-        { id: 1, category: 'Boosteo', game: 'WoW Privado', name: 'Boosteo cualquier clase', description: 'Servicio de boosteo completo para cualquier clase.', price: '$140' },
-        { id: 2, category: 'Profesiones', game: 'WoW', name: 'Herboristería / Minería', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 3, category: 'Profesiones', game: 'WoW', name: 'Sastrería', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 4, category: 'Profesiones', game: 'WoW', name: 'Cocina', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 5, category: 'Profesiones', game: 'WoW', name: 'Pesca', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 6, category: 'Profesiones', game: 'WoW', name: 'Peletería', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 7, category: 'Profesiones', game: 'WoW', name: 'Encantamiento', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 8, category: 'Profesiones', game: 'WoW', name: 'Herrería', description: 'Subida de profesión completa.', price: '$50' },
-        { id: 9, category: 'Profesiones', game: 'WoW', name: 'Ingeniería', description: 'Subida de profesión completa.', price: '$55' },
-        { id: 10, category: 'Profesiones', game: 'WoW', name: 'Alquimia', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 11, category: 'Profesiones', game: 'WoW', name: 'Crafting', description: 'Subida de profesión completa.', price: '$50' },
-        { id: 12, category: 'Profesiones', game: 'WoW', name: 'Desuello', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 13, category: 'PVP', game: 'WoW', name: 'PVP Rank Boosting', description: 'Boosting por rango.', price: '$15' }
-    ];
+    const sampleServices = [];
 
-    const sampleReferences = [
-        {
-            id: 1,
-            userName: 'GamerPro',
-            userInitial: 'G',
-            rating: 5,
-            text: 'Excelente servicio! Compré 5000 gold para Turtle WoW y llegó en menos de 10 minutos. El proceso fue super sencillo y el soporte en Discord responde al instante. Totalmente recomendado, volveré a comprar.',
-            date: '15/10/2023'
-        },
-        {
-            id: 2,
-            userName: 'WoWPlayer',
-            userInitial: 'W',
-            rating: 5,
-            text: 'Vendí 20M de silver en Albion y recibí mi pago al instante mediante PayPal. La mejor plataforma para vender oro, moderadores super atentos y proceso 100% seguro. Llevo 3 ventas exitosas.',
-            date: '10/10/2023'
-        },
-        {
-            id: 3,
-            userName: 'AlbionTrader',
-            userInitial: 'A',
-            rating: 4,
-            text: 'Buenos precios y transacciones seguras. El Discord está muy bien organizado para comprar/vender. Solo le pongo 4 estrellas porque a veces hay que esperar un poco para que haya compradores, pero vale la pena.',
-            date: '05/10/2023'
-        },
-        {
-            id: 4,
-            userName: 'RPGMaster',
-            userInitial: 'R',
-            rating: 5,
-            text: 'Compré una cuenta nivel 60 guerrero y superó mis expectativas. Todo el equipo prometido estaba allí, las monturas, el oro, todo perfecto. El proceso de transferencia fue guiado paso a paso. 100% confiable.',
-            date: '28/09/2023'
-        },
-        {
-            id: 5,
-            userName: 'DragonSlayer',
-            userInitial: 'D',
-            rating: 5,
-            text: 'Necesitaba oro rápido para comprar mi montura épica y en 15 minutos ya lo tenía. Los precios son justos y el servicio es impecable. La comunidad en Discord es muy activa y amigable.',
-            date: '20/09/2023'
-        },
-        {
-            id: 6,
-            userName: 'ShadowHunter',
-            userInitial: 'S',
-            rating: 5,
-            text: 'Vendedor por 3 meses consecutivos. He vendido más de 50M de silver y siempre recibo mi pago inmediato. Los moderadores son profesionales y resuelven cualquier duda al instante. Mejor que cualquier otra plataforma.',
-            date: '12/09/2023'
-        }
-    ];
+    const sampleReferences = [];
 
     // Categorías por defecto
-    const defaultCategories = [
-        'Turtle WoW',
-        'World of Warcraft',
-        'Albion Online',
-        'Runescape',
-        'New World',
-        'Final Fantasy XIV',
-        'Elder Scrolls Online',
-        'Guild Wars 2'
-    ];
+    const defaultCategories = [];
 
 
     // Configuración de contactos
@@ -4078,7 +3888,7 @@
     let goldCategories = [];
     let references = [];
     let settings = { ...contactInfo };
-    let categories = [...defaultCategories];
+    let categories = [];
     let gameServers = [];
     let services = [];
 
@@ -4474,69 +4284,16 @@
     }
 
     function loadData() {
-        resetLocalCatalogDataIfNeeded();
+        // Sin datos hardcodeados/locales: todo viene de la base de datos por API
+        accounts = [];
+        gold = [];
+        goldCategories = [];
+        references = [];
+        settings = { ...contactInfo };
+        categories = [];
+        gameServers = [];
+        services = [];
 
-        // Cargar datos del localStorage
-        const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
-        const savedGold = localStorage.getItem('epicgoldshop_gold');
-        const savedGoldCategories = localStorage.getItem('epicgoldshop_gold_categories');
-        const savedReferences = localStorage.getItem('epicgoldshop_references');
-        const savedSettings = localStorage.getItem('epicgoldshop_settings');
-        const savedCategories = localStorage.getItem('epicgoldshop_categories');
-        const savedGameServers = localStorage.getItem('epicgoldshop_game_servers');
-        const savedServices = localStorage.getItem('epicgoldshop_services');
-
-        if (savedAccounts) accounts = JSON.parse(savedAccounts);
-        sanitizeAccountImages();
-        if (savedGold) gold = JSON.parse(savedGold);
-        if (savedGoldCategories) goldCategories = JSON.parse(savedGoldCategories);
-        sanitizeGoldCategoryImages();
-        if (savedReferences) references = JSON.parse(savedReferences);
-        if (savedSettings) settings = JSON.parse(savedSettings);
-        if (savedCategories) categories = JSON.parse(savedCategories);
-        if (savedGameServers) {
-            gameServers = normalizeGameServers(JSON.parse(savedGameServers));
-        }
-        if (savedServices) services = JSON.parse(savedServices);
-
-        if (!Array.isArray(goldCategories) || goldCategories.length === 0) goldCategories = [...sampleGoldCategories];
-        if (!Array.isArray(gold) || gold.length === 0) gold = [...sampleGold];
-        if (!Array.isArray(references) || references.length === 0) references = [...sampleReferences];
-        if (!Array.isArray(services) || services.length === 0) services = [...sampleServices];
-
-        if (!Array.isArray(gameServers) || gameServers.length === 0) {
-            gameServers = buildGameServersFromData();
-        }
-
-        // Mantener las categorías generales separadas de juegos de Oro
-        // (si una categoría coincide con un juego de oro y no la usa ninguna cuenta, se limpia)
-        const accountCategoriesInUse = new Set(accounts.map(account => account.category).filter(Boolean));
-        const goldCategoryGames = new Set(getGoldCategoryGames());
-        categories = Array.from(new Set(categories.filter(Boolean))).filter(category => {
-            if (accountCategoriesInUse.has(category)) return true;
-            return !goldCategoryGames.has(category);
-        }).sort();
-
-        // Asegurar que los enlaces estén actualizados
-        if (!settings.discord || settings.discord !== DISCORD_LINK) {
-            settings.discord = DISCORD_LINK;
-        }
-        if (!settings.tiktok || settings.tiktok !== TIKTOK_LINK) {
-            settings.tiktok = TIKTOK_LINK;
-        }
-        if (!settings.site || settings.site !== SITE_URL) {
-            settings.site = SITE_URL;
-        }
-
-        // Guardar configuración actualizada
-        localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
-        localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
-        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-        localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
-        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
-
-        // Actualizar enlaces de contacto
         updateContactLinks();
     }
 
@@ -4548,12 +4305,15 @@
             const data = await response.json();
 
             // Solo pisar datos locales si la API trae contenido real
-            if (Array.isArray(data.accounts) && data.accounts.length > 0) accounts = data.accounts;
-            if (Array.isArray(data.gold) && data.gold.length > 0) gold = data.gold;
-            if (Array.isArray(data.gold_categories) && data.gold_categories.length > 0) {
-                goldCategories = data.gold_categories;
+            if (Array.isArray(data.accounts)) accounts = data.accounts;
+            if (Array.isArray(data.gold)) gold = data.gold;
+            if (Array.isArray(data.gold_categories)) {
+                goldCategories = data.gold_categories.map(category => ({
+                    ...category,
+                    name: category.name || category.game || 'Sin nombre'
+                }));
             }
-            if (Array.isArray(data.customer_references) && data.customer_references.length > 0) {
+            if (Array.isArray(data.customer_references)) {
                 references = data.customer_references.map(ref => ({
                     id: ref.id || Date.now() + Math.random(),
                     userName: ref.name || 'Cliente',
@@ -4563,22 +4323,17 @@
                     date: new Date(ref.created_at || Date.now()).toLocaleDateString('es-ES')
                 }));
             }
-            if (Array.isArray(data.game_servers) && data.game_servers.length > 0) {
+            if (Array.isArray(data.game_servers)) {
                 gameServers = normalizeGameServers(data.game_servers);
             }
-            if (Array.isArray(data.services) && data.services.length > 0) {
+            if (Array.isArray(data.services)) {
                 services = data.services;
             }
             if (data.settings && typeof data.settings === 'object') {
                 settings = { ...settings, ...data.settings };
             }
 
-            localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-            localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-            localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-            localStorage.setItem('epicgoldshop_references', JSON.stringify(references));
-            localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-            localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
+            categories = Array.from(new Set((accounts || []).map(account => account.category).filter(Boolean))).sort();
 
             renderAccounts(currentFilter || 'all');
             renderGold();
@@ -5940,10 +5695,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editAccount(${account.id})" data-tooltip="Editar cuenta">
+                                <button class="btn-primary" onclick='editAccount(${JSON.stringify(account.id)})' data-tooltip="Editar cuenta">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteAccount(${account.id})" data-tooltip="Eliminar cuenta">
+                                <button class="btn-danger" onclick='deleteAccount(${JSON.stringify(account.id)})' data-tooltip="Eliminar cuenta">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6120,7 +5875,7 @@
                                         <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
-                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
+                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name || category.game || 'Sin nombre'}</h4>
                                         <div style="color: var(--text-gray); font-size: 0.95rem;">
                                             <i class="fas fa-gamepad"></i> ${category.game} ${category.server ? '• ' + category.server : ''}
                                         </div>
@@ -6143,10 +5898,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editGoldCategory(${category.id})" data-tooltip="Editar juego">
+                                <button class="btn-primary" onclick='editGoldCategory(${JSON.stringify(category.id)})' data-tooltip="Editar juego">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteGoldCategory(${category.id})" data-tooltip="Eliminar juego">
+                                <button class="btn-danger" onclick='deleteGoldCategory(${JSON.stringify(category.id)})' data-tooltip="Eliminar juego">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6751,7 +6506,7 @@
 }
 
     function editGoldCategory(id) {
-    const category = goldCategories.find(c => c.id === id);
+    const category = goldCategories.find(c => String(c.id) === String(id));
     if (!category) return;
 
     editingGoldCategoryId = id;
@@ -6760,7 +6515,7 @@
     document.getElementById('gold-category-modal-title').textContent = 'EDITAR JUEGO';
     document.getElementById('save-gold-category-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR JUEGO';
 
-    document.getElementById('gold-category-name').value = category.name;
+    document.getElementById('gold-category-name').value = category.name || category.game || '';
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
@@ -6814,7 +6569,7 @@
         }
 
         if (editingGoldCategoryId) {
-            const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
+            const index = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
             if (index !== -1) {
                 goldCategories[index] = {
                     ...goldCategories[index],
@@ -6861,7 +6616,7 @@
     function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        const index = goldCategories.findIndex(c => c.id === id);
+        const index = goldCategories.findIndex(c => String(c.id) === String(id));
         if (index !== -1) {
             goldCategories.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
@@ -6911,7 +6666,7 @@
     }
 
     function editAccount(id) {
-        const account = accounts.find(a => a.id === id);
+        const account = accounts.find(a => String(a.id) === String(id));
         if (!account) return;
 
         editingAccountId = id;
@@ -7063,7 +6818,8 @@
                     return;
                 }
 
-                showMessage('❌ No se pudo guardar en la API. Revisa token/permisos.', 'error');
+                const err = await response.json().catch(() => ({}));
+                showMessage(`❌ No se pudo guardar en la API${err.error ? `: ${err.error}` : ''}`, 'error');
                 return;
             } catch (error) {
                 console.warn('Error guardando cuenta en API:', error.message);
@@ -7073,7 +6829,7 @@
         }
 
         if (editingAccountId) {
-            const index = accounts.findIndex(a => a.id === editingAccountId);
+            const index = accounts.findIndex(a => String(a.id) === String(editingAccountId));
             if (index !== -1) {
                 accounts[index] = {
                     ...accounts[index],
@@ -7169,7 +6925,8 @@
                 return;
             }
 
-            showMessage('❌ No se pudo eliminar en la API. Revisa token/permisos.', 'error');
+            const err = await response.json().catch(() => ({}));
+            showMessage(`❌ No se pudo eliminar en la API${err.error ? `: ${err.error}` : ''}`, 'error');
         } catch (error) {
             console.warn('Error eliminando cuenta en API:', error.message);
             showMessage('❌ Error de conexión con API al eliminar cuenta.', 'error');
@@ -7478,18 +7235,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo(0, 0);
         init();
-    });
-
-    window.addEventListener('beforeunload', function() {
-        localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-        localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        localStorage.setItem('epicgoldshop_references', JSON.stringify(references));
-        localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
-        localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
-        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-        localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
-        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
     });
 </script>
 </body>
