@@ -169,6 +169,8 @@ Escríbeme solo esto: **"listo"**.
 - `POST /api/admin/gold-categories`
 - `PUT /api/admin/gold-categories`
 - `DELETE /api/admin/gold-categories?id=<ID>`
+- `POST /api/admin/game-servers`
+- `DELETE /api/admin/game-servers?id=<ID>`
 - `POST /api/admin/services`
 - `PUT /api/admin/services`
 - `DELETE /api/admin/services?id=<ID>`
@@ -184,6 +186,7 @@ Haz esto en orden:
    - `api/admin/login.js`
    - `api/admin/gold.js`
    - `api/admin/services.js`
+   - `api/admin/game-servers.js`
 3. Pulsa **Redeploy** del deploy más reciente.
 4. Espera que diga **Ready**.
 5. Prueba primero con el dominio de Vercel (ejemplo):
@@ -273,6 +276,7 @@ Haz esto:
    - `api/admin/login.js`
    - `api/admin/gold.js`
    - `api/admin/services.js`
+   - `api/admin/game-servers.js`
    - `vercel.json`
 3. Si no aparecen, sube la rama con push y luego redeploy en Vercel.
 4. En Vercel, en **Settings → Git**, confirma que el proyecto despliega esa misma rama.

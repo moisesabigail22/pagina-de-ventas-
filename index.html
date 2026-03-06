@@ -800,7 +800,7 @@
         .product-image-container {
             position: relative;
             width: 100%;
-            height: 250px;
+            height: clamp(220px, 28vw, 260px);
             overflow: hidden;
             perspective: 1000px;
         }
@@ -808,7 +808,9 @@
         .product-image {
             width: 100%;
             height: 100%;
+            display: block;
             object-fit: cover;
+            object-position: center center;
             background: linear-gradient(135deg, var(--wow-blue-dark), var(--wow-blue-medium));
             transition: transform 0.5s;
             transform-style: preserve-3d;
@@ -5991,7 +5993,7 @@
                                     ${servers.map(server => `
                                         <span style="background: rgba(200, 170, 109, 0.12); color: var(--wow-gold-light); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem;">
                                             ${server.name}
-                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer(${server.id})" data-tooltip="Eliminar servidor">
+                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick='deleteGameServer(${JSON.stringify(server.id)})' data-tooltip="Eliminar servidor">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </span>
@@ -6014,7 +6016,7 @@
         `;
     }
 
-    function addGameServer() {
+    async function addGameServer() {
         const gameSelect = document.getElementById('server-game');
         const nameInput = document.getElementById('server-name');
         const message = document.getElementById('server-message');
@@ -6037,13 +6039,51 @@
         }
 
         const exists = gameServers.some(server =>
-            server.game === game && server.name.toLowerCase() === name.toLowerCase()
+            server.game === game && String(server.name || '').toLowerCase() === name.toLowerCase()
         );
 
         if (exists) {
             showMessage('Este servidor ya existe para ese juego', 'error');
             nameInput.focus();
             return;
+        }
+
+        if (isAdmin && !adminToken) {
+            showMessage('⚠️ Debes iniciar sesión con API para guardar servidor en base de datos.', 'error');
+            return;
+        }
+
+        if (isAdmin && adminToken) {
+            try {
+                const response = await fetch('/api/admin/game-servers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify({ game, name })
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    gameServers.push(normalizeGameServers([saved])[0]);
+                    nameInput.value = '';
+                    if (message) message.style.display = 'none';
+                    updateGoldServerOptions();
+                    updateGoldCategoryServerOptions();
+                    switchAdminTab('servers');
+                    showMessage('✅ Servidor agregado en base de datos', 'success');
+                    return;
+                }
+
+                const err = await response.json().catch(() => ({}));
+                showMessage(`❌ No se pudo guardar servidor en API${err.error ? `: ${err.error}` : ''}`, 'error');
+                return;
+            } catch (error) {
+                console.warn('Error guardando servidor en API:', error.message);
+                showMessage('❌ Error de conexión con API al guardar servidor.', 'error');
+                return;
+            }
         }
 
         gameServers.push({
@@ -6062,18 +6102,38 @@
         showMessage('✅ Servidor agregado correctamente', 'success');
     }
 
-    function deleteGameServer(id) {
-        const serverIndex = gameServers.findIndex(server => server.id === id);
+    async function deleteGameServer(id) {
+        const serverIndex = gameServers.findIndex(server => String(server.id) === String(id));
         if (serverIndex === -1) return;
 
         if (!confirm('¿Eliminar este servidor?')) return;
 
-        gameServers.splice(serverIndex, 1);
-        localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-        updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
-        switchAdminTab('servers');
-        showMessage('✅ Servidor eliminado', 'success');
+        if (!isAdmin || !adminToken) {
+            showMessage('⚠️ Debes iniciar sesión con API para eliminar servidor en base de datos.', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/game-servers?id=${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${adminToken}` }
+            });
+
+            if (response.ok) {
+                gameServers.splice(serverIndex, 1);
+                updateGoldServerOptions();
+                updateGoldCategoryServerOptions();
+                switchAdminTab('servers');
+                showMessage('✅ Servidor eliminado de base de datos', 'success');
+                return;
+            }
+
+            const err = await response.json().catch(() => ({}));
+            showMessage(`❌ No se pudo eliminar servidor en API${err.error ? `: ${err.error}` : ''}`, 'error');
+        } catch (error) {
+            console.warn('Error eliminando servidor en API:', error.message);
+            showMessage('❌ Error de conexión con API al eliminar servidor.', 'error');
+        }
     }
 
     function renderAdminReferences() {
