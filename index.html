@@ -4451,6 +4451,11 @@
         }
     }
 
+    // Compatibilidad: algunos flujos admin llaman esta función
+    function updateGoldCategoryServerOptions() {
+        updateGoldServerOptions();
+    }
+
     function toggleGoldServerCustom() {
         const serverSelect = document.getElementById('gold-server-select');
         const customInput = document.getElementById('gold-server-custom');
