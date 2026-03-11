@@ -39,5 +39,5 @@ Haz redeploy luego de guardar variables.
 
 ## 5) Notas importantes
 - No uses `service_role` en frontend público.
-- `seed_catalog.sql` está hecho para poder re-ejecutarse sin duplicar filas clave (usa `on conflict`).
+- `seed_catalog.sql` está hecho para poder re-ejecutarse sin duplicar filas clave (usa lógica `update + insert where not exists`).
 - Si vienes de tabla vieja `references`, el schema la migra a `customer_references`.
