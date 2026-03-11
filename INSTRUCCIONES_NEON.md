@@ -166,6 +166,9 @@ Escríbeme solo esto: **"listo"**.
 - `POST /api/admin/gold`
 - `PUT /api/admin/gold`
 - `DELETE /api/admin/gold?id=<ID>`
+- `POST /api/admin/services`
+- `PUT /api/admin/services`
+- `DELETE /api/admin/services?id=<ID>`
 
 
 ## Si `https://tu-dominio.com/api/catalog` da 404
@@ -177,6 +180,7 @@ Haz esto en orden:
    - `api/catalog.js`
    - `api/admin/login.js`
    - `api/admin/gold.js`
+   - `api/admin/services.js`
 3. Pulsa **Redeploy** del deploy más reciente.
 4. Espera que diga **Ready**.
 5. Prueba primero con el dominio de Vercel (ejemplo):
@@ -265,6 +269,7 @@ Haz esto:
    - `api/catalog.js`
    - `api/admin/login.js`
    - `api/admin/gold.js`
+   - `api/admin/services.js`
    - `vercel.json`
 3. Si no aparecen, sube la rama con push y luego redeploy en Vercel.
 4. En Vercel, en **Settings → Git**, confirma que el proyecto despliega esa misma rama.
@@ -332,4 +337,24 @@ Si quieres no borrar datos previos, puedes ejecutar el importador con:
 
 ```bash
 node scripts/import_catalog_to_neon.js data/catalog.json --no-reset
+```
+
+
+## Migración recomendada (Gold sin stock/entrega)
+Si quieres quitar `stock` y `delivery` de base de datos, ejecuta:
+
+```sql
+alter table gold drop column if exists delivery;
+alter table gold drop column if exists stock;
+```
+
+Luego puedes cargar tramos automáticos (100, 200, 300, 500, 1000) con:
+- `data/sql/gold_tiers_seed.sql`
+
+
+## Migración recomendada (icono de servicios)
+Para guardar iconos de servicios (archivo o link) en DB:
+
+```sql
+alter table services add column if not exists image text;
 ```

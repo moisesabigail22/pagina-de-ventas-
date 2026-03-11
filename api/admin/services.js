@@ -9,40 +9,43 @@ module.exports = async function handler(req, res) {
 
   try {
     if (req.method === 'POST') {
-      const { game, server, amount = 0, price = 0 } = req.body || {};
-      if (!game || !server) {
-        return res.status(400).json({ error: 'game and server are required' });
+      const { category, game = null, server = null, name, description = null, price = null } = req.body || {};
+      if (!category || !name) {
+        return res.status(400).json({ error: 'category and name are required' });
       }
 
       const result = await query(
-        `insert into gold (game, server, amount, price, created_at, updated_at)
-         values ($1, $2, $3, $4, now(), now())
+        `insert into services (category, game, server, name, description, price, created_at, updated_at)
+         values ($1, $2, $3, $4, $5, $6, now(), now())
          returning *`,
-        [game, server, amount, price]
+        [category, game, server, name, description, price]
       );
+
       return res.status(201).json(result.rows[0]);
     }
 
     if (req.method === 'PUT') {
-      const { id, game, server, amount, price } = req.body || {};
+      const { id, category, game, server, name, description, price } = req.body || {};
       if (!id) {
         return res.status(400).json({ error: 'id is required' });
       }
 
       const result = await query(
-        `update gold
-         set game = coalesce($2, game),
-             server = coalesce($3, server),
-             amount = coalesce($4, amount),
-             price = coalesce($5, price),
+        `update services
+         set category = coalesce($2, category),
+             game = coalesce($3, game),
+             server = coalesce($4, server),
+             name = coalesce($5, name),
+             description = coalesce($6, description),
+             price = coalesce($7, price),
              updated_at = now()
          where id = $1
          returning *`,
-        [id, game, server, amount, price]
+        [id, category, game, server, name, description, price]
       );
 
       if (!result.rows[0]) {
-        return res.status(404).json({ error: 'gold row not found' });
+        return res.status(404).json({ error: 'service row not found' });
       }
 
       return res.status(200).json(result.rows[0]);
@@ -54,9 +57,9 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'id is required' });
       }
 
-      const result = await query('delete from gold where id = $1 returning id', [id]);
+      const result = await query('delete from services where id = $1 returning id', [id]);
       if (!result.rows[0]) {
-        return res.status(404).json({ error: 'gold row not found' });
+        return res.status(404).json({ error: 'service row not found' });
       }
 
       return res.status(200).json({ deleted: result.rows[0].id });
