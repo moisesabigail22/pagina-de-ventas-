@@ -1103,12 +1103,10 @@
 
         .gold-order-option-cover {
             width: 100%;
-            height: 120px;
+            height: 86px;
             object-fit: cover;
-            object-position: center center;
             display: block;
             border-bottom: 1px solid rgba(200, 170, 109, 0.35);
-            background: rgba(10, 25, 41, 0.85);
         }
 
         .gold-order-option-content {
@@ -2036,8 +2034,7 @@
         .image-preview {
             width: 100%;
             max-height: 350px;
-            object-fit: cover;
-            object-position: center center;
+            object-fit: contain;
             border-radius: 10px;
             margin-top: 20px;
             display: none;
@@ -2953,9 +2950,6 @@
         <a href="#gold" class="nav-btn">
             <i class="fas fa-coins"></i> ORO
         </a>
-        <a href="#services" class="nav-btn">
-            <i class="fas fa-briefcase"></i> SERVICIOS
-        </a>
         <a href="#sell" class="nav-btn">
             <i class="fas fa-dollar-sign"></i> VENDER
         </a>
@@ -3021,10 +3015,6 @@
             <a href="#gold" class="quick-action-btn">
                 <i class="fas fa-coins" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
                 <span>Comprar Oro</span>
-            </a>
-            <a href="#services" class="quick-action-btn">
-                <i class="fas fa-briefcase" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
-                <span>Ver Servicios</span>
             </a>
             <a href="#sell" class="quick-action-btn">
                 <i class="fas fa-dollar-sign" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
@@ -3092,7 +3082,6 @@
             </button>
         </div>
 
-
         <div style="margin-top: 50px; padding: 35px; background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold); position: relative; overflow: hidden;">
             <div class="feature-highlight">
                 <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.5rem;">
@@ -3110,18 +3099,6 @@
                     <span class="tag">Comunidad Activa</span>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Services Section -->
-<div class="container" id="services">
-    <div class="section">
-        <div class="section-header">
-            <h2 class="section-title">Servicios MMORPG</h2>
-        </div>
-        <div class="products-grid" id="services-grid">
-            <!-- Los servicios se cargan aquí dinámicamente -->
         </div>
     </div>
 </div>
@@ -3351,9 +3328,6 @@
                 </button>
                 <button class="admin-tab" onclick="switchAdminTab('settings')">
                     <i class="fas fa-cog"></i> Configuración
-                </button>
-                <button class="admin-tab" onclick="switchAdminTab('tickets')">
-                    <i class="fas fa-ticket-alt"></i> Tickets
                 </button>
             </div>
 
@@ -3640,6 +3614,24 @@
         </div>
 
         <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Tiempo de Entrega</label>
+                <input type="text" id="gold-delivery" placeholder="Ej: 5-15 minutos, Inmediato" maxlength="30">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Stock Disponible</label>
+                <input type="number" id="gold-stock" placeholder="0" min="0" value="10">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Estado</label>
+                <select id="gold-status">
+                    <option value="available">Disponible</option>
+                    <option value="limited">Stock Limitado</option>
+                    <option value="soldout">Agotado</option>
+                </select>
+            </div>
         </div>
 
         <div style="display: flex; gap: 20px; margin-top: 40px;">
@@ -3764,82 +3756,19 @@
                     <div class="gold-order-summary-label">Precio</div>
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
                 </div>
-                <button class="btn-buy gold-order-cta" id="gold-order-cta" type="button" onclick="openGoldPaymentFromOrder()" disabled>
+                <div class="gold-order-summary-item">
+                    <div class="gold-order-summary-label">Entrega</div>
+                    <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
+                </div>
+                <div class="gold-order-summary-item">
+                    <div class="gold-order-summary-label">Disponibilidad</div>
+                    <div class="gold-order-summary-value" id="gold-order-stock">-</div>
+                </div>
+                <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
                     <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                </button>
+                </a>
             </div>
         </div>
-    </div>
-</div>
-
-
-<div id="payment-modal" class="modal">
-    <div class="modal-content" style="max-width: 760px;">
-        <button class="close-modal" onclick="closeModal()">&times;</button>
-        <h2 class="modal-title">Ventana de Cobranza</h2>
-        <div class="form-grid">
-            <div class="form-group">
-                <label class="form-label">Producto</label>
-                <input type="text" id="payment-product" readonly>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Categoría</label>
-                <input type="text" id="payment-category" readonly>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Precio</label>
-                <input type="text" id="payment-price" readonly>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Método de pago</label>
-                <select id="payment-method">
-                    <option value="">Selecciona un método</option>
-                    <option value="Binance">Binance</option>
-                    <option value="PayPal">PayPal</option>
-                    <option value="Zelle">Zelle</option>
-                    <option value="USDT">USDT</option>
-                </select>
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label class="form-label">Subir comprobante de pago (foto)</label>
-                <input type="file" id="payment-proof" accept="image/*">
-                <img id="payment-proof-preview" class="image-preview" alt="Comprobante" style="display:none; max-height:220px; margin-top:12px;">
-            </div>
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label class="form-label">Nota (opcional)</label>
-                <textarea id="payment-note" maxlength="300" placeholder="Escribe detalles de tu pago o pedido..."></textarea>
-            </div>
-        </div>
-        <div style="display:flex; justify-content:flex-end; margin-top: 20px;">
-            <button class="btn-primary" type="button" onclick="submitPaymentTicket()">
-                <i class="fas fa-paper-plane"></i> ENVIAR TICKET
-            </button>
-        </div>
-        <div class="message" id="payment-message"></div>
-        <div style="display:flex; justify-content:flex-end; margin-top: 10px;">
-            <button class="btn-secondary" type="button" onclick="showTicketTrackingModal()">
-                <i class="fas fa-search"></i> CONSULTAR ESTADO DE TICKET
-            </button>
-        </div>
-    </div>
-</div>
-
-<div id="ticket-tracking-modal" class="modal">
-    <div class="modal-content" style="max-width: 720px;">
-        <button class="close-modal" onclick="closeModal()">&times;</button>
-        <h2 class="modal-title">Seguimiento de Ticket</h2>
-        <div class="form-grid">
-            <div class="form-group" style="grid-column: 1 / -1;">
-                <label class="form-label">Código de ticket</label>
-                <input type="text" id="ticket-track-code" placeholder="Ej: EGS-1A2B3C" maxlength="20">
-            </div>
-        </div>
-        <div style="display:flex; justify-content:flex-end; margin-top: 8px;">
-            <button class="btn-primary" type="button" onclick="trackTicketStatus()">
-                <i class="fas fa-search"></i> CONSULTAR
-            </button>
-        </div>
-        <div id="ticket-track-result" style="margin-top: 15px;"></div>
     </div>
 </div>
 
@@ -3850,7 +3779,6 @@
 
     // Estado de administrador
     let isAdmin = false;
-    let adminToken = '';
     let currentRating = 0;
     let editingAccountId = null;
     let editingGoldId = null;
@@ -3860,8 +3788,6 @@
     let isDropdownOpen = false;
     let currentOptimization = 'auto';
     let imageCache = new Map();
-    let supportTickets = [];
-    let paymentContext = null;
     let goldOrderState = {
         game: '',
         server: ''
@@ -3872,9 +3798,6 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
-    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_05';
-    const LOCAL_ADMIN_USER = 'admin';
-    const LOCAL_ADMIN_PASSWORD = 'admin123';
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -3984,26 +3907,134 @@
         }
     ];
 
-    // Datos de ejemplo - Categorías de Oro
-    const sampleGoldCategories = [];
+    // Datos de ejemplo - Categorías de Oro MODIFICADAS
+    const sampleGoldCategories = [
+        {
+            id: 1,
+            name: "Turtle WoW Gold",
+            game: "Turtle WoW",
+            server: "Nordanaar",
+            description: "Compra oro para Turtle WoW con entrega segura y rápida.",
+            image: IMGUR_IMAGE_URLS.turtleWow2
+        },
+        {
+            id: 2,
+            name: "Albion Online Silver",
+            game: "Albion Online",
+            server: "Americas",
+            description: "Silver de Albion Online con stock actualizado diariamente.",
+            image: IMGUR_IMAGE_URLS.albionOnline
+        },
+        {
+            id: 3,
+            name: "World of Warcraft Gold",
+            game: "World of Warcraft",
+            server: "Retail",
+            description: "Oro para WoW Retail y Classic con soporte 24/7.",
+            image: IMGUR_IMAGE_URLS.wowClassic
+        },
+        {
+            id: 4,
+            name: "Runescape Gold",
+            game: "Runescape",
+            server: "OSRS",
+            description: "Oro para Old School RuneScape y cuentas verificadas.",
+            image: IMGUR_IMAGE_URLS.goldCoins
+        }
+    ];
 
     // Datos de ejemplo - Oro
-    const sampleGold = [];
-
-    const sampleServices = [
-        { id: 1, category: 'Boosteo', game: 'WoW Privado', name: 'Boosteo cualquier clase', description: 'Servicio de boosteo completo para cualquier clase.', price: '$140' },
-        { id: 2, category: 'Profesiones', game: 'WoW', name: 'Herboristería / Minería', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 3, category: 'Profesiones', game: 'WoW', name: 'Sastrería', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 4, category: 'Profesiones', game: 'WoW', name: 'Cocina', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 5, category: 'Profesiones', game: 'WoW', name: 'Pesca', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 6, category: 'Profesiones', game: 'WoW', name: 'Peletería', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 7, category: 'Profesiones', game: 'WoW', name: 'Encantamiento', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 8, category: 'Profesiones', game: 'WoW', name: 'Herrería', description: 'Subida de profesión completa.', price: '$50' },
-        { id: 9, category: 'Profesiones', game: 'WoW', name: 'Ingeniería', description: 'Subida de profesión completa.', price: '$55' },
-        { id: 10, category: 'Profesiones', game: 'WoW', name: 'Alquimia', description: 'Subida de profesión completa.', price: '$40' },
-        { id: 11, category: 'Profesiones', game: 'WoW', name: 'Crafting', description: 'Subida de profesión completa.', price: '$50' },
-        { id: 12, category: 'Profesiones', game: 'WoW', name: 'Desuello', description: 'Subida de profesión completa.', price: '$30' },
-        { id: 13, category: 'PVP', game: 'WoW', name: 'PVP Rank Boosting', description: 'Boosting por rango.', price: '$15' }
+    const sampleGold = [
+        {
+            id: 1,
+            game: 'Turtle WoW',
+            server: 'Nordanaar',
+            amount: '1,000',
+            price: '$24.99',
+            delivery: '5-15 minutos',
+            stock: 50,
+            status: 'available'
+        },
+        {
+            id: 2,
+            game: 'Turtle WoW',
+            server: 'Nordanaar',
+            amount: '5,000',
+            price: '$119.99',
+            delivery: '10-30 minutos',
+            stock: 25,
+            status: 'available'
+        },
+        {
+            id: 3,
+            game: 'Turtle WoW',
+            server: 'Tel\'Abim',
+            amount: '1,000',
+            price: '$27.99',
+            delivery: '5-15 minutos',
+            stock: 40,
+            status: 'available'
+        },
+        {
+            id: 4,
+            game: 'Albion Online',
+            server: 'Americas',
+            amount: '10M',
+            price: '$8.99',
+            delivery: 'Inmediato',
+            stock: 100,
+            status: 'available'
+        },
+        {
+            id: 5,
+            game: 'Albion Online',
+            server: 'Americas',
+            amount: '50M',
+            price: '$39.99',
+            delivery: 'Inmediato',
+            stock: 25,
+            status: 'limited'
+        },
+        {
+            id: 6,
+            game: 'World of Warcraft',
+            server: 'Retail',
+            amount: '100K',
+            price: '$29.99',
+            delivery: '15-30 minutos',
+            stock: 30,
+            status: 'available'
+        },
+        {
+            id: 7,
+            game: 'World of Warcraft',
+            server: 'Retail',
+            amount: '500K',
+            price: '$129.99',
+            delivery: '30-60 minutos',
+            stock: 10,
+            status: 'limited'
+        },
+        {
+            id: 8,
+            game: 'Runescape',
+            server: 'OSRS',
+            amount: '10M',
+            price: '$14.99',
+            delivery: '5-10 minutos',
+            stock: 80,
+            status: 'available'
+        },
+        {
+            id: 9,
+            game: 'Turtle WoW',
+            server: 'Nordanaar',
+            amount: '10,000',
+            price: '$229.99',
+            delivery: '30-60 minutos',
+            stock: 5,
+            status: 'limited'
+        }
     ];
 
     const sampleReferences = [
@@ -4096,7 +4127,6 @@
     let settings = { ...contactInfo };
     let categories = [...defaultCategories];
     let gameServers = [];
-    let services = [];
 
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
@@ -4258,7 +4288,10 @@
             return;
         }
 
-        const normalizedUrl = normalizeImageUrl(url);
+        // Asegurar formato correcto de Imgur
+        if (url.includes('imgur.com') && !url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+            url += '.jpg';
+        }
 
         try {
             // Mostrar loading
@@ -4296,7 +4329,7 @@
                 showMessage('❌ No se pudo cargar la imagen. Verifica la URL', 'error');
             };
 
-            img.src = normalizedUrl;
+            img.src = url;
 
         } catch (error) {
             console.error('Error loading image:', error);
@@ -4378,7 +4411,6 @@
         // Renderizar contenido inicial
         renderAccounts();
         renderGold();
-        renderServices();
         renderReferences();
         updateGoldOrderForm();
 
@@ -4424,9 +4456,6 @@
             }
         });
 
-        // Sincronizar con backend si /api/catalog está disponible
-        syncCatalogFromApi();
-
         // Mostrar mensaje de bienvenida
         setTimeout(() => {
             showMessage('¡Bienvenido a EPIC GOLD SHOP! 🎮✨', 'info');
@@ -4454,25 +4483,6 @@
         });
     }
 
-    function resetLocalCatalogDataIfNeeded() {
-        const savedVersion = localStorage.getItem('epicgoldshop_catalog_version');
-        if (savedVersion === CATALOG_SCHEMA_VERSION) return;
-
-        const keysToReset = [
-            'epicgoldshop_accounts',
-            'epicgoldshop_gold',
-            'epicgoldshop_gold_categories',
-            'epicgoldshop_references',
-            'epicgoldshop_categories',
-            'epicgoldshop_game_servers',
-            'epicgoldshop_services',
-            'epicgoldshop_tickets'
-        ];
-
-        keysToReset.forEach((key) => localStorage.removeItem(key));
-        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
-    }
-
     function buildGameServersFromData() {
         const serverMap = new Map();
         const add = (game, serverName) => {
@@ -4491,8 +4501,6 @@
     }
 
     function loadData() {
-        resetLocalCatalogDataIfNeeded();
-
         // Cargar datos del localStorage
         const savedAccounts = localStorage.getItem('epicgoldshop_accounts');
         const savedGold = localStorage.getItem('epicgoldshop_gold');
@@ -4501,11 +4509,8 @@
         const savedSettings = localStorage.getItem('epicgoldshop_settings');
         const savedCategories = localStorage.getItem('epicgoldshop_categories');
         const savedGameServers = localStorage.getItem('epicgoldshop_game_servers');
-        const savedServices = localStorage.getItem('epicgoldshop_services');
-        const savedTickets = localStorage.getItem('epicgoldshop_tickets');
 
         if (savedAccounts) accounts = JSON.parse(savedAccounts);
-        sanitizeAccountImages();
         if (savedGold) gold = JSON.parse(savedGold);
         if (savedGoldCategories) goldCategories = JSON.parse(savedGoldCategories);
         sanitizeGoldCategoryImages();
@@ -4515,13 +4520,6 @@
         if (savedGameServers) {
             gameServers = normalizeGameServers(JSON.parse(savedGameServers));
         }
-        if (savedServices) services = JSON.parse(savedServices);
-        if (savedTickets) supportTickets = JSON.parse(savedTickets);
-
-        if (!Array.isArray(goldCategories)) goldCategories = [];
-        if (!Array.isArray(gold)) gold = [];
-        if (!Array.isArray(references) || references.length === 0) references = [...sampleReferences];
-        if (!Array.isArray(services) || services.length === 0) services = [...sampleServices];
 
         if (!Array.isArray(gameServers) || gameServers.length === 0) {
             gameServers = buildGameServersFromData();
@@ -4552,66 +4550,9 @@
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-        localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
-        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
-        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
 
         // Actualizar enlaces de contacto
         updateContactLinks();
-    }
-
-    async function syncCatalogFromApi() {
-        try {
-            const response = await fetch('/api/catalog', { cache: 'no-store' });
-            if (!response.ok) return;
-
-            const data = await response.json();
-
-            // Solo pisar datos locales si la API trae contenido real
-            if (Array.isArray(data.accounts) && data.accounts.length > 0) accounts = data.accounts;
-            if (Array.isArray(data.gold)) gold = data.gold;
-            if (Array.isArray(data.gold_categories)) {
-                goldCategories = data.gold_categories;
-            }
-            if (Array.isArray(data.customer_references) && data.customer_references.length > 0) {
-                references = data.customer_references.map(ref => ({
-                    id: ref.id || Date.now() + Math.random(),
-                    userName: ref.name || 'Cliente',
-                    userInitial: (ref.name || 'C').charAt(0).toUpperCase(),
-                    rating: Number(ref.rating || 5),
-                    text: ref.comment || '',
-                    date: new Date(ref.created_at || Date.now()).toLocaleDateString('es-ES')
-                }));
-            }
-            if (Array.isArray(data.game_servers) && data.game_servers.length > 0) {
-                gameServers = normalizeGameServers(data.game_servers);
-            }
-            if (Array.isArray(data.services) && data.services.length > 0) {
-                services = data.services;
-            }
-            if (data.settings && typeof data.settings === 'object') {
-                settings = { ...settings, ...data.settings };
-            }
-
-            localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-            localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
-            localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-            localStorage.setItem('epicgoldshop_references', JSON.stringify(references));
-            localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-            localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
-        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
-
-            renderAccounts(currentFilter || 'all');
-            renderGold();
-            renderServices();
-            renderReferences();
-            updateGoldOrderForm();
-            updateAverageRating();
-            updateCategorySelects();
-            updateContactLinks();
-        } catch (error) {
-            console.warn('No se pudo sincronizar el catálogo desde API:', error.message);
-        }
     }
 
     function updateAverageRating() {
@@ -4923,30 +4864,36 @@
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
+        const deliveryEl = document.getElementById('gold-order-delivery');
+        const stockEl = document.getElementById('gold-order-stock');
         const cta = document.getElementById('gold-order-cta');
 
-        if (!amountSelect || !priceEl) return;
+        if (!amountSelect || !priceEl || !deliveryEl || !stockEl) return;
 
-        const selectedId = String(amountSelect.value || '');
-        const item = gold.find(entry => String(entry.id) === selectedId);
+        const selectedId = parseInt(amountSelect.value, 10);
+        const item = gold.find(entry => entry.id === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
+            deliveryEl.textContent = '-';
+            stockEl.textContent = '-';
             if (cta) {
-                cta.innerHTML = '<i class="fas fa-shopping-cart"></i> COMPRAR ORO';
                 cta.setAttribute('aria-disabled', 'true');
-                cta.disabled = true;
+                cta.style.pointerEvents = 'none';
                 cta.style.opacity = '0.6';
+                cta.href = settings?.discord || DISCORD_LINK;
             }
             return;
         }
 
         priceEl.textContent = item.price;
+        deliveryEl.textContent = item.delivery || 'Por confirmar';
+        stockEl.textContent = item.stock ? `${item.stock} disponibles` : 'Consultar stock';
         if (cta) {
-            cta.innerHTML = `<i class="fas fa-shopping-cart"></i> COMPRAR ORO • ${item.price}`;
             cta.setAttribute('aria-disabled', 'false');
-            cta.disabled = false;
+            cta.style.pointerEvents = 'auto';
             cta.style.opacity = '1';
+            cta.href = settings?.discord || DISCORD_LINK;
         }
     }
 
@@ -4996,7 +4943,8 @@
     function setupAdminGoldPriceForm() {
         const gameSelect = document.getElementById('admin-gold-price-game');
         const serverSelect = document.getElementById('admin-gold-price-server');
-        
+        const deliveryInput = document.getElementById('admin-gold-price-delivery');
+
         if (!gameSelect || !serverSelect) return;
 
         const games = getAdminGoldGames();
@@ -5033,6 +4981,9 @@
         gameSelect.addEventListener('change', updateServers);
         updateServers();
 
+        if (deliveryInput && !deliveryInput.value) {
+            deliveryInput.value = '5-15 minutos';
+        }
     }
 
     function setupAdminGoldEditForm() {
@@ -5040,7 +4991,9 @@
         const serverSelect = document.getElementById('admin-gold-edit-server');
         const packageSelect = document.getElementById('admin-gold-edit-package');
         const priceInput = document.getElementById('admin-gold-edit-price');
-                
+        const stockInput = document.getElementById('admin-gold-edit-stock');
+        const statusSelect = document.getElementById('admin-gold-edit-status');
+
         if (!gameSelect || !serverSelect || !packageSelect) return;
 
         const games = getAdminGoldGames();
@@ -5051,6 +5004,8 @@
             packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
             packageSelect.disabled = true;
             if (priceInput) priceInput.value = '';
+            if (stockInput) stockInput.value = 0;
+            if (statusSelect) statusSelect.value = 'available';
             return;
         }
         gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
@@ -5067,7 +5022,9 @@
                 packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
                 packageSelect.disabled = true;
                 if (priceInput) priceInput.value = '';
-                        return;
+                if (stockInput) stockInput.value = 0;
+                if (statusSelect) statusSelect.value = 'available';
+                return;
             }
             serverSelect.disabled = false;
             serverSelect.innerHTML = uniqueServers.map(server => `<option value="${server}">${server}</option>`).join('');
@@ -5082,7 +5039,9 @@
                 packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
                 packageSelect.disabled = true;
                 if (priceInput) priceInput.value = '';
-                        return;
+                if (stockInput) stockInput.value = 0;
+                if (statusSelect) statusSelect.value = 'available';
+                return;
             }
             packageSelect.disabled = false;
             packageSelect.innerHTML = packages.map(item => `
@@ -5096,6 +5055,8 @@
             const item = gold.find(entry => entry.id === selectedId);
             if (!item) return;
             if (priceInput) priceInput.value = item.price;
+            if (stockInput) stockInput.value = item.stock ?? 0;
+            if (statusSelect) statusSelect.value = item.status;
         };
 
         gameSelect.addEventListener('change', updateServers);
@@ -5108,7 +5069,9 @@
     function saveAdminGoldEdit() {
         const packageSelect = document.getElementById('admin-gold-edit-package');
         const priceInput = document.getElementById('admin-gold-edit-price');
-                
+        const stockInput = document.getElementById('admin-gold-edit-stock');
+        const statusSelect = document.getElementById('admin-gold-edit-status');
+
         if (!packageSelect || !packageSelect.value) {
             showMessage('Selecciona un paquete válido', 'error');
             return;
@@ -5125,6 +5088,8 @@
         }
 
         item.price = newPrice.startsWith('$') ? newPrice : `$${newPrice}`;
+        item.stock = parseInt(stockInput?.value, 10) || 0;
+        item.status = statusSelect?.value || 'available';
 
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
         updateGoldOrderForm();
@@ -5156,6 +5121,9 @@
         const server = document.getElementById('admin-gold-price-server')?.value;
         const amount = document.getElementById('admin-gold-price-amount')?.value.trim();
         const price = document.getElementById('admin-gold-price-price')?.value.trim();
+        const delivery = document.getElementById('admin-gold-price-delivery')?.value.trim() || 'Por confirmar';
+        const stock = parseInt(document.getElementById('admin-gold-price-stock')?.value, 10) || 0;
+        const status = document.getElementById('admin-gold-price-status')?.value || 'available';
 
         if (!game) {
             showMessage('Selecciona un juego válido', 'error');
@@ -5190,6 +5158,9 @@
             server,
             amount,
             price: formattedPrice,
+            delivery,
+            stock,
+            status
         });
 
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
@@ -5290,21 +5261,6 @@
         if (goldServerSelect) {
             goldServerSelect.addEventListener('change', function() {
                 toggleGoldServerCustom();
-            });
-        }
-
-        const paymentProofInput = document.getElementById('payment-proof');
-        if (paymentProofInput) {
-            paymentProofInput.addEventListener('change', previewPaymentProof);
-        }
-
-        const ticketTrackInput = document.getElementById('ticket-track-code');
-        if (ticketTrackInput) {
-            ticketTrackInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    trackTicketStatus();
-                }
             });
         }
 
@@ -5551,9 +5507,9 @@
 
                     <div class="product-details">
                         <div class="product-price">${account.price}</div>
-                        <button type="button" class="btn-buy" onclick="openPaymentModalFromAccount(${account.id})">
+                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" data-tooltip="Comprar en Discord">
                             <i class="fas fa-shopping-cart"></i> COMPRAR
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -5567,40 +5523,9 @@
             }
         });
     }
+
     function renderGold() {
-        // La sección pública de Oro usa la compra rápida del modal (INICIAR COMPRA).
-    }
-
-    function renderServices() {
-        const container = document.getElementById('services-grid');
-        if (!container) return;
-
-        if (!Array.isArray(services) || services.length === 0) {
-            container.innerHTML = `
-                <div style="text-align:center; padding:40px; color: var(--text-gray);">
-                    No hay servicios disponibles por ahora.
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = services.map(service => `
-            <div class="product-card">
-                <div class="product-content">
-                    <div class="product-category">
-                        <i class="fas fa-briefcase"></i> ${service.category || 'Servicio'} ${service.game ? '• ' + service.game : ''}
-                    </div>
-                    <h3 class="product-name">${service.name || 'Servicio MMORPG'}</h3>
-                    <p class="product-description">${service.description || 'Servicio disponible para tu personaje.'}</p>
-                    <div class="product-details">
-                        <div class="product-price">${String(service.price || '$0').startsWith('$') ? service.price : '$' + service.price}</div>
-                        <button type="button" class="btn-buy" onclick="openPaymentModalFromService(${service.id})">
-                            <i class="fas fa-wallet"></i> PAGAR
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
+        // Esta función ahora solo se usa para el panel de administración
     }
 
     function renderReferences() {
@@ -5762,12 +5687,11 @@
         showModal('login-modal');
         document.getElementById('admin-username').focus();
     }
-    async function loginAdmin() {
+
+    function loginAdmin() {
         const username = document.getElementById('admin-username').value.trim();
         const password = document.getElementById('admin-password').value.trim();
         const message = document.getElementById('login-message');
-        const loginBtn = document.querySelector('#login-modal .btn-primary');
-        const originalText = loginBtn.innerHTML;
 
         message.style.display = 'none';
 
@@ -5778,73 +5702,40 @@
             return;
         }
 
-        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INGRESANDO...';
-        loginBtn.disabled = true;
-
-        try {
-            const response = await fetch('/api/admin/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                isAdmin = true;
-                adminToken = data.token || '';
-                sessionStorage.setItem('isAdmin', 'true');
-                sessionStorage.setItem('adminToken', adminToken);
-
-                message.textContent = '✓ Acceso concedido (API). Redirigiendo...';
-                message.className = 'message success';
-                message.style.display = 'block';
-
-                setTimeout(() => {
-                    closeModal();
-                    showAdmin();
-                    showMessage('✅ Sesión de administrador iniciada (API)', 'success');
-                }, 500);
-                return;
-            }
-
-            if (response.status === 401) {
-                message.textContent = '✗ Credenciales incorrectas';
-                message.className = 'message error';
-                message.style.display = 'block';
-                document.getElementById('admin-password').value = '';
-                document.getElementById('admin-password').focus();
-                return;
-            }
-        } catch (error) {
-            console.warn('Login API no disponible. Intentando modo local:', error.message);
-        } finally {
-            loginBtn.innerHTML = originalText;
-            loginBtn.disabled = false;
-        }
-
-        if (username === LOCAL_ADMIN_USER && password === LOCAL_ADMIN_PASSWORD) {
+        if (username === 'admin' && password === 'admin123') {
             isAdmin = true;
-            adminToken = '';
             sessionStorage.setItem('isAdmin', 'true');
-            sessionStorage.removeItem('adminToken');
 
-            message.textContent = '✓ Acceso en modo local (sin API).';
+            message.textContent = '✓ Acceso concedido. Redirigiendo...';
             message.className = 'message success';
             message.style.display = 'block';
+
+            const loginBtn = document.querySelector('#login-modal .btn-primary');
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> INGRESANDO...';
+            loginBtn.disabled = true;
 
             setTimeout(() => {
                 closeModal();
                 showAdmin();
-                showMessage('⚠️ Sesión local iniciada. Para guardar en base de datos usa login API.', 'info');
-            }, 500);
-            return;
-        }
+                showMessage('✅ Sesión de administrador iniciada', 'success');
 
-        message.textContent = '✗ No se pudo iniciar sesión contra la API. Si estás en local usa admin/admin123.';
-        message.className = 'message error';
-        message.style.display = 'block';
-        document.getElementById('admin-password').value = '';
-        document.getElementById('admin-password').focus();
+                loginBtn.innerHTML = originalText;
+                loginBtn.disabled = false;
+            }, 800);
+        } else {
+            message.textContent = '✗ Credenciales incorrectas';
+            message.className = 'message error';
+            message.style.display = 'block';
+
+            message.style.animation = 'none';
+            setTimeout(() => {
+                message.style.animation = 'messageAppear 0.3s ease-out';
+            }, 10);
+
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-password').focus();
+        }
     }
 
     function logoutAdmin() {
@@ -5852,8 +5743,6 @@
 
         isAdmin = false;
         sessionStorage.removeItem('isAdmin');
-        sessionStorage.removeItem('adminToken');
-        adminToken = '';
 
         document.getElementById('admin-section').style.display = 'none';
         updateBodyScrollLock();
@@ -5873,7 +5762,6 @@
         const savedAdmin = sessionStorage.getItem('isAdmin');
         if (savedAdmin === 'true') {
             isAdmin = true;
-            adminToken = sessionStorage.getItem('adminToken') || '';
             document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-user-shield"></i> PANEL ADMIN';
         }
     }
@@ -5918,9 +5806,6 @@
                 break;
             case 'settings':
                 content.innerHTML = renderAdminSettings();
-                break;
-            case 'tickets':
-                content.innerHTML = renderAdminTickets();
                 break;
         }
 
@@ -6034,6 +5919,22 @@
                         <label class="form-label">Precio (USD)</label>
                         <input type="text" id="admin-gold-price-price" placeholder="Ej: $24.99" maxlength="20">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Entrega</label>
+                        <input type="text" id="admin-gold-price-delivery" placeholder="Ej: 5-15 minutos" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock</label>
+                        <input type="number" id="admin-gold-price-stock" placeholder="0" min="0" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="admin-gold-price-status">
+                            <option value="available">Disponible</option>
+                            <option value="limited">Stock Limitado</option>
+                            <option value="soldout">Agotado</option>
+                        </select>
+                    </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 15px;">
                     <button class="btn-primary" onclick="addGoldPriceFromAdmin()">
@@ -6066,6 +5967,18 @@
                         <label class="form-label">Precio (USD)</label>
                         <input type="text" id="admin-gold-edit-price" placeholder="Ej: $24.99">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Stock</label>
+                        <input type="number" id="admin-gold-edit-stock" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado</label>
+                        <select id="admin-gold-edit-status">
+                            <option value="available">Disponible</option>
+                            <option value="limited">Stock Limitado</option>
+                            <option value="soldout">Agotado</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 10px;">
@@ -6078,12 +5991,6 @@
                 </div>
             </div>
         `;
-    }
-
-
-    function getGoldCategoryDisplayName(category) {
-        if (!category || typeof category !== 'object') return 'Sin nombre';
-        return category.name || category.game || 'Sin nombre';
     }
 
     function renderAdminGoldCategories() {
@@ -6108,7 +6015,7 @@
                     </div>
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${categoriesWithPackages}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con Paquetes</div>
+                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con Stock</div>
                     </div>
                 </div>
             </div>
@@ -6134,7 +6041,7 @@
                                         <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
-                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${getGoldCategoryDisplayName(category)}</h4>
+                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
                                         <div style="color: var(--text-gray); font-size: 0.95rem;">
                                             <i class="fas fa-gamepad"></i> ${category.game} ${category.server ? '• ' + category.server : ''}
                                         </div>
@@ -6613,60 +6520,17 @@
         const value = (url || '').trim();
         if (!value) return '';
 
-        if (value.startsWith('data:image/')) return value;
-
-        let normalized = value;
-        if (normalized.startsWith('//')) {
-            normalized = `https:${normalized}`;
-        }
-
-        const imgurDirect = normalized.match(/^https?:\/\/(?:i\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.[a-zA-Z]{3,4})?(?:\?.*)?$/i);
+        const imgurDirect = value.match(/^https?:\/\/(?:i\.)?imgur\.com\/([a-zA-Z0-9]+)(?:\.[a-zA-Z]{3,4})?$/i);
         if (imgurDirect) {
             return `https://i.imgur.com/${imgurDirect[1]}.jpg`;
         }
 
-        const imgurPage = normalized.match(/^https?:\/\/imgur\.com\/(?:gallery\/|a\/)?([a-zA-Z0-9]+)(?:\?.*)?$/i);
+        const imgurPage = value.match(/^https?:\/\/imgur\.com\/(?:gallery\/|a\/)?([a-zA-Z0-9]+)$/i);
         if (imgurPage) {
             return `https://i.imgur.com/${imgurPage[1]}.jpg`;
         }
 
-        const googleDriveFile = normalized.match(/^https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\//i);
-        if (googleDriveFile) {
-            return `https://drive.google.com/uc?export=view&id=${googleDriveFile[1]}`;
-        }
-
-        const googleDriveOpen = normalized.match(/^https?:\/\/drive\.google\.com\/open\?id=([^&]+)/i);
-        if (googleDriveOpen) {
-            return `https://drive.google.com/uc?export=view&id=${googleDriveOpen[1]}`;
-        }
-
-        if (/^https?:\/\/(?:www\.)?dropbox\.com\//i.test(normalized)) {
-            return normalized
-                .replace('?dl=0', '?raw=1')
-                .replace('&dl=0', '&raw=1');
-        }
-
-        return normalized;
-    }
-
-    function sanitizeAccountImages() {
-        if (!Array.isArray(accounts)) return;
-        let changed = false;
-
-        accounts = accounts.map(account => {
-            const current = (account?.image || '').trim();
-            if (!current || current.startsWith('data:image/')) return account;
-            const next = normalizeImageUrl(current);
-            if (next !== current) {
-                changed = true;
-                return { ...account, image: next };
-            }
-            return account;
-        });
-
-        if (changed) {
-            localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-        }
+        return value;
     }
 
     function getGameImage(game = '') {
@@ -6774,7 +6638,7 @@
     document.getElementById('gold-category-modal-title').textContent = 'EDITAR JUEGO';
     document.getElementById('save-gold-category-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR JUEGO';
 
-    document.getElementById('gold-category-name').value = getGoldCategoryDisplayName(category);
+    document.getElementById('gold-category-name').value = category.name;
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
@@ -6822,81 +6686,65 @@
         } else {
             categoryImage = resolveCategoryImage({ game: name, image: imageUrl });
         }
-
-        if (!categoryImage) categoryImage = getGameImage(name);
-
-        const payload = {
-            game: name,
-            server: 'Global',
-            description,
-            image: categoryImage
-        };
-        if (editingGoldCategoryId) payload.id = editingGoldCategoryId;
-
-        if (isAdmin && adminToken) {
-            try {
-                const response = await fetch('/api/admin/gold-categories', {
-                    method: editingGoldCategoryId ? 'PUT' : 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${adminToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    const saved = await response.json();
-                    const normalized = { ...saved, name: saved.game || name };
-                    if (editingGoldCategoryId) {
-                        const idx = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
-                        if (idx !== -1) goldCategories[idx] = normalized;
-                    } else {
-                        goldCategories.push(normalized);
-                    }
-
-                    localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-                    syncGameImagesFromCategories();
-                    closeModal();
-                    if (isAdmin) switchAdminTab('gold-categories');
-                    showMessage(editingGoldCategoryId ? '✅ Categoría actualizada en base de datos' : '✅ Categoría agregada en base de datos', 'success');
-                    return;
-                }
-            } catch (error) {
-                console.warn('Error guardando categoría en API:', error.message);
-            }
+        const game = name;
+        if (!categoryImage) {
+            categoryImage = getGameImage(game);
         }
 
-        message.textContent = '❌ No se pudo guardar en base de datos. Inicia sesión API.';
-        message.className = 'message error';
-        message.style.display = 'block';
+        if (editingGoldCategoryId) {
+            const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
+            if (index !== -1) {
+                goldCategories[index] = {
+                    ...goldCategories[index],
+                    name,
+                    game,
+                    description,
+                    image: categoryImage
+                };
+
+                showMessage('✅ Categoría de oro actualizada exitosamente', 'success');
+            }
+        } else {
+            const newCategory = {
+                id: Date.now(),
+                name,
+                game,
+                description,
+                image: categoryImage
+            };
+            goldCategories.push(newCategory);
+
+            showMessage('✅ Categoría de oro agregada exitosamente', 'success');
+        }
+
+        if (!categories.includes(game)) {
+            categories.push(game);
+            categories.sort();
+            localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
+        }
+
+        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+        syncGameImagesFromCategories();
+        closeModal();
+
+        if (isAdmin) {
+            switchAdminTab('gold-categories');
+        }
+
+        setTimeout(() => {
+            document.getElementById('gold').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 500);
     }
 
-    async function deleteGoldCategory(id) {
+    function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        if (!isAdmin || !adminToken) {
-            showMessage('⚠️ Debes iniciar sesión con API para eliminar en base de datos.', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/admin/gold-categories?id=${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${adminToken}` }
-            });
-            if (!response.ok) {
-                showMessage('❌ No se pudo eliminar en la API.', 'error');
-                return;
-            }
-
-            const index = goldCategories.findIndex(c => String(c.id) === String(id));
-            if (index !== -1) goldCategories.splice(index, 1);
+        const index = goldCategories.findIndex(c => c.id === id);
+        if (index !== -1) {
+            goldCategories.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
             if (isAdmin) switchAdminTab('gold-categories');
-            showMessage('✅ Categoría eliminada de base de datos', 'success');
-        } catch (error) {
-            console.warn('Error eliminando categoría en API:', error.message);
-            showMessage('❌ Error de conexión con API al eliminar categoría.', 'error');
+            showMessage('✅ Categoría de oro eliminada exitosamente', 'success');
         }
     }
 
@@ -6980,14 +6828,6 @@
         document.getElementById('account-name').focus();
     }
 
-    function mapAccountFromApi(row) {
-        if (!row) return null;
-        return {
-            ...row,
-            tags: Array.isArray(row.tags) ? row.tags : []
-        };
-    }
-
     async function saveAccount() {
         const name = document.getElementById('account-name').value.trim();
         const category = document.getElementById('account-category').value;
@@ -7031,7 +6871,7 @@
 
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
 
-        let image = normalizeImageUrl(imageUrl);
+        let image = imageUrl;
         if (currentImageData) {
             image = currentImageData;
         } else if (!imageUrl) {
@@ -7041,66 +6881,11 @@
                 <rect x="10" y="10" width="330" height="230" rx="15" fill="%231a365d" stroke="%23c8aa6d" stroke-width="2"/>
                 <text x="175" y="125" fill="%23c8aa6d" font-family="Arial" font-size="16" text-anchor="middle">${encodeURIComponent(name.substring(0, 30))}</text>
             </svg>`;
+        } else if (imageUrl.includes('imgur.com') && !imageUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+            image = imageUrl + '.jpg';
         }
 
         const tags = generateTags(description, category, name);
-
-        if (isAdmin && !adminToken) {
-            showMessage('⚠️ Esta sesión no tiene token API. Vuelve a iniciar sesión para guardar en base de datos.', 'error');
-            return;
-        }
-
-        if (isAdmin && adminToken) {
-            try {
-                const endpoint = '/api/admin/accounts';
-                const method = editingAccountId ? 'PUT' : 'POST';
-                const payload = {
-                    type: 'account',
-                    category,
-                    server,
-                    name,
-                    description,
-                    price: formattedPrice,
-                    image,
-                    tags
-                };
-                if (editingAccountId) payload.id = editingAccountId;
-
-                const response = await fetch(endpoint, {
-                    method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${adminToken}`
-                    },
-                    body: JSON.stringify(payload)
-                });
-
-                if (response.ok) {
-                    const saved = mapAccountFromApi(await response.json());
-                    if (editingAccountId) {
-                        const index = accounts.findIndex(a => String(a.id) === String(editingAccountId));
-                        if (index !== -1) accounts[index] = saved;
-                    } else {
-                        accounts.push(saved);
-                    }
-
-                    localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-                    renderAccounts(currentFilter);
-                    renderCategoryDropdown();
-                    closeModal();
-                    if (isAdmin) switchAdminTab('accounts');
-                    showMessage(editingAccountId ? '✅ Cuenta actualizada en base de datos' : '✅ Cuenta agregada en base de datos', 'success');
-                    return;
-                }
-
-                showMessage('❌ No se pudo guardar en la API. Revisa token/permisos.', 'error');
-                return;
-            } catch (error) {
-                console.warn('Error guardando cuenta en API:', error.message);
-                showMessage('❌ Error de conexión con API al guardar cuenta.', 'error');
-                return;
-            }
-        }
 
         if (editingAccountId) {
             const index = accounts.findIndex(a => a.id === editingAccountId);
@@ -7175,34 +6960,17 @@
         return [...new Set(tags)].slice(0, 5);
     }
 
-    async function deleteAccount(id) {
+    function deleteAccount(id) {
         if (!confirm('¿Estás seguro de eliminar esta cuenta? Esta acción no se puede deshacer.')) return;
 
-        if (!isAdmin || !adminToken) {
-            showMessage('⚠️ Debes iniciar sesión con API para eliminar en base de datos.', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/admin/accounts?id=${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${adminToken}` }
-            });
-            if (response.ok) {
-                const index = accounts.findIndex(a => String(a.id) === String(id));
-                if (index !== -1) accounts.splice(index, 1);
-                localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
-                renderAccounts(currentFilter);
-                renderCategoryDropdown();
-                if (isAdmin) switchAdminTab('accounts');
-                showMessage('✅ Cuenta eliminada de base de datos', 'success');
-                return;
-            }
-
-            showMessage('❌ No se pudo eliminar en la API. Revisa token/permisos.', 'error');
-        } catch (error) {
-            console.warn('Error eliminando cuenta en API:', error.message);
-            showMessage('❌ Error de conexión con API al eliminar cuenta.', 'error');
+        const index = accounts.findIndex(a => a.id === id);
+        if (index !== -1) {
+            accounts.splice(index, 1);
+            localStorage.setItem('epicgoldshop_accounts', JSON.stringify(accounts));
+            renderAccounts(currentFilter);
+            renderCategoryDropdown(); // Actualizar dropdown de categorías
+            if (isAdmin) switchAdminTab('accounts');
+            showMessage('✅ Cuenta eliminada exitosamente', 'success');
         }
     }
 
@@ -7235,6 +7003,9 @@
         document.getElementById('gold-server-custom').style.display = 'none';
         document.getElementById('gold-amount').value = '';
         document.getElementById('gold-price').value = '';
+        document.getElementById('gold-delivery').value = '5-15 minutos';
+        document.getElementById('gold-stock').value = '10';
+        document.getElementById('gold-status').value = 'available';
 
         // Actualizar select de categorías
         updateCategorySelects();
@@ -7253,6 +7024,9 @@
         const server = getSelectedGoldServer();
         const amount = document.getElementById('gold-amount').value.trim();
         const price = document.getElementById('gold-price').value.trim();
+        const delivery = document.getElementById('gold-delivery').value.trim();
+        const stock = parseInt(document.getElementById('gold-stock').value) || 0;
+        const status = document.getElementById('gold-status').value;
         const message = document.getElementById('gold-message');
 
         if (!game) {
@@ -7303,6 +7077,13 @@
 
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
 
+        if (!delivery) {
+            message.textContent = 'El tiempo de entrega es obligatorio';
+            message.className = 'message error';
+            message.style.display = 'block';
+            document.getElementById('gold-delivery').focus();
+            return;
+        }
 
         if (editingGoldId) {
             const index = gold.findIndex(g => g.id === editingGoldId);
@@ -7313,7 +7094,10 @@
                     server,
                     amount,
                     price: formattedPrice,
-                        };
+                    delivery,
+                    stock,
+                    status
+                };
 
                 showMessage('✅ Oro actualizado exitosamente', 'success');
             }
@@ -7324,7 +7108,10 @@
                 server,
                 amount,
                 price: formattedPrice,
-                };
+                delivery,
+                stock,
+                status
+            };
             gold.push(newGold);
 
             showMessage('✅ Oro agregado exitosamente', 'success');
@@ -7348,6 +7135,8 @@
         if (!item) return;
 
         const newPrice = document.getElementById(`price-${id}`).value.trim();
+        const newStock = parseInt(document.getElementById(`stock-${id}`).value);
+        const newStatus = document.getElementById(`status-${id}`).value;
 
         if (!newPrice.match(/^\$?\d+(\.\d{2})?$/)) {
             showMessage('Formato de precio inválido. Usa: $99.99', 'error');
@@ -7357,6 +7146,8 @@
         const formattedPrice = newPrice.startsWith('$') ? newPrice : `$${newPrice}`;
 
         item.price = formattedPrice;
+        item.stock = isNaN(newStock) ? 0 : newStock;
+        item.status = newStatus;
 
         localStorage.setItem('epicgoldshop_gold', JSON.stringify(gold));
         updateGoldOrderForm();
@@ -7474,286 +7265,6 @@
         });
     }
 
-
-    function openPaymentModal(context) {
-        paymentContext = context;
-        const product = document.getElementById('payment-product');
-        const category = document.getElementById('payment-category');
-        const price = document.getElementById('payment-price');
-        const method = document.getElementById('payment-method');
-        const note = document.getElementById('payment-note');
-        const proof = document.getElementById('payment-proof');
-        const preview = document.getElementById('payment-proof-preview');
-        const message = document.getElementById('payment-message');
-
-        if (product) product.value = context.name || 'Pedido';
-        if (category) category.value = context.section || 'General';
-        if (price) price.value = context.price || 'Por confirmar';
-        if (method) method.value = '';
-        if (note) note.value = '';
-        if (proof) proof.value = '';
-        if (preview) {
-            preview.src = '';
-            preview.style.display = 'none';
-            preview.classList.remove('visible');
-        }
-        if (message) {
-            message.style.display = 'none';
-            message.textContent = '';
-            message.className = 'message';
-        }
-
-        showModal('payment-modal');
-    }
-
-    function openPaymentModalFromAccount(id) {
-        const account = accounts.find(item => String(item.id) === String(id));
-        if (!account) return;
-        openPaymentModal({
-            type: 'account',
-            section: 'Cuentas',
-            id: account.id,
-            name: account.name,
-            price: account.price,
-            details: `${account.category || ''} ${account.server ? '• ' + account.server : ''}`.trim()
-        });
-    }
-
-    function openPaymentModalFromService(id) {
-        const service = services.find(item => String(item.id) === String(id));
-        if (!service) return;
-        openPaymentModal({
-            type: 'service',
-            section: 'Servicios',
-            id: service.id,
-            name: service.name,
-            price: String(service.price || '$0').startsWith('$') ? service.price : `$${service.price || 0}`,
-            details: `${service.category || 'Servicio'} ${service.game ? '• ' + service.game : ''}`.trim()
-        });
-    }
-
-    function openGoldPaymentFromOrder() {
-        const amountSelect = document.getElementById('gold-order-amount');
-        const selectedId = String(amountSelect?.value || '');
-        const item = gold.find(entry => String(entry.id) === selectedId);
-        if (!item) {
-            showMessage('Selecciona una cantidad antes de continuar al pago.', 'error');
-            return;
-        }
-        openPaymentModal({
-            type: 'gold',
-            section: 'Oro',
-            id: item.id,
-            name: `${item.amount} - ${item.game}`,
-            price: item.price,
-            details: `${item.server || ''}`.trim()
-        });
-    }
-
-
-    function generateTicketCode() {
-        const token = Math.random().toString(36).slice(2, 8).toUpperCase();
-        return `EGS-${token}`;
-    }
-
-    function normalizeTicketCode(rawCode) {
-        return String(rawCode || '').trim().toUpperCase();
-    }
-
-    function showTicketTrackingModal(prefillCode = '') {
-        const input = document.getElementById('ticket-track-code');
-        const result = document.getElementById('ticket-track-result');
-        if (input) input.value = prefillCode || '';
-        if (result) result.innerHTML = '';
-        showModal('ticket-tracking-modal');
-        if (input) input.focus();
-    }
-
-    function trackTicketStatus() {
-        const input = document.getElementById('ticket-track-code');
-        const result = document.getElementById('ticket-track-result');
-        if (!input || !result) return;
-        const code = normalizeTicketCode(input.value);
-        if (!code) {
-            result.innerHTML = `<div class="message error" style="display:block;">Ingresa un código de ticket.</div>`;
-            return;
-        }
-
-        const ticket = supportTickets.find(item => normalizeTicketCode(item.ticket_code || item.id) === code);
-        if (!ticket) {
-            result.innerHTML = `<div class="message error" style="display:block;">No encontramos ese ticket. Verifica el código.</div>`;
-            return;
-        }
-
-        const statusLabelMap = {
-            nuevo: 'Recibido',
-            revisando: 'En revisión',
-            aprobado: 'Pago liberado',
-            rechazado: 'Requiere corrección'
-        };
-        const statusLabel = statusLabelMap[ticket.status] || ticket.status || 'Recibido';
-        const customerMessage = ticket.admin_message || 'Tu comprobante fue recibido. Te avisaremos cuando se libere el pago.';
-
-        result.innerHTML = `
-            <div style="background: var(--panel); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:16px;">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
-                    <strong style="color: var(--wow-gold);">Ticket: ${ticket.ticket_code || ticket.id}</strong>
-                    <span style="color: var(--text-gray);">${new Date(ticket.created_at).toLocaleString('es-ES')}</span>
-                </div>
-                <div style="color: var(--text); margin-bottom:6px;"><i class="fas fa-box"></i> ${ticket.product_name}</div>
-                <div style="color: var(--wow-gold-light); margin-bottom:10px;"><i class="fas fa-info-circle"></i> Estado: ${statusLabel}</div>
-                <div style="color: var(--text-gray);">${customerMessage}</div>
-            </div>
-        `;
-    }
-
-    function updateTicketStatus(id) {
-        const statusEl = document.getElementById(`ticket-status-${id}`);
-        const messageEl = document.getElementById(`ticket-message-${id}`);
-        const idx = supportTickets.findIndex(t => String(t.id) === String(id));
-        if (idx === -1) return;
-
-        supportTickets[idx] = {
-            ...supportTickets[idx],
-            status: statusEl?.value || supportTickets[idx].status || 'nuevo',
-            admin_message: messageEl?.value?.trim() || supportTickets[idx].admin_message || ''
-        };
-
-        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
-        showMessage('✅ Ticket actualizado para el cliente.', 'success');
-        if (isAdmin) switchAdminTab('tickets');
-    }
-
-    function submitPaymentTicket() {
-        const method = document.getElementById('payment-method');
-        const note = document.getElementById('payment-note');
-        const proofInput = document.getElementById('payment-proof');
-        const message = document.getElementById('payment-message');
-
-        if (!paymentContext) return;
-        if (!method?.value) {
-            message.textContent = 'Selecciona un método de pago.';
-            message.className = 'message error';
-            message.style.display = 'block';
-            return;
-        }
-
-        const fileName = proofInput?.files?.[0]?.name || '';
-        const ticketCode = generateTicketCode();
-        const ticket = {
-            id: Date.now(),
-            type: paymentContext.type,
-            section: paymentContext.section,
-            product_id: paymentContext.id,
-            product_name: paymentContext.name,
-            price: paymentContext.price,
-            details: paymentContext.details || '',
-            payment_method: method.value,
-            proof_file: fileName,
-            note: note?.value?.trim() || '',
-            ticket_code: ticketCode,
-            status: 'nuevo',
-            admin_message: 'Tu comprobante fue recibido. Te avisaremos cuando se libere el pago.',
-            created_at: new Date().toISOString()
-        };
-
-        supportTickets.unshift(ticket);
-        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
-
-        message.innerHTML = `✅ Ticket enviado: <strong>${ticketCode}</strong>.<br>Guárdalo para consultar tu estado.`;
-        message.className = 'message success';
-        message.style.display = 'block';
-
-        if (isAdmin) {
-            switchAdminTab('tickets');
-        }
-
-        setTimeout(() => {
-            closeModal();
-            showTicketTrackingModal(ticketCode);
-        }, 1100);
-    }
-
-    function previewPaymentProof(event) {
-        const file = event?.target?.files?.[0];
-        const preview = document.getElementById('payment-proof-preview');
-        if (!preview) return;
-        if (!file) {
-            preview.src = '';
-            preview.style.display = 'none';
-            preview.classList.remove('visible');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-            preview.src = reader.result;
-            preview.style.display = 'block';
-            preview.classList.add('visible');
-        };
-        reader.readAsDataURL(file);
-    }
-
-    function renderAdminTickets() {
-        const total = supportTickets.length;
-        const byType = {
-            gold: supportTickets.filter(t => t.type === 'gold'),
-            service: supportTickets.filter(t => t.type === 'service'),
-            account: supportTickets.filter(t => t.type === 'account')
-        };
-
-        const renderTicketCard = (ticket) => `
-            <div style="background: var(--panel); border-left: 4px solid var(--wow-gold); border-radius: 10px; padding: 16px; margin-bottom: 14px;">
-                <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
-                    <strong style="color: var(--wow-gold-light);">${ticket.product_name}</strong>
-                    <span style="color: var(--text-gray); font-size:0.9rem;">${new Date(ticket.created_at).toLocaleString('es-ES')}</span>
-                </div>
-                <div style="color: var(--text); font-size:0.95rem; margin-bottom:8px;">
-                    <i class="fas fa-dollar-sign"></i> ${ticket.price} • <i class="fas fa-wallet"></i> ${ticket.payment_method}
-                </div>
-                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">${ticket.details || 'Sin detalles adicionales'}</div>
-                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">Ticket: ${ticket.ticket_code || ticket.id}</div>
-                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">Nota cliente: ${ticket.note || 'Sin nota'}</div>
-                <div style="color: var(--text-gray); font-size:0.9rem; margin-bottom:10px;">Comprobante: ${ticket.proof_file || 'No adjunto'}</div>
-                <div style="display:grid; gap:8px; grid-template-columns: 1fr;">
-                    <select id="ticket-status-${ticket.id}">
-                        <option value="nuevo" ${ticket.status === 'nuevo' ? 'selected' : ''}>Recibido</option>
-                        <option value="revisando" ${ticket.status === 'revisando' ? 'selected' : ''}>En revisión</option>
-                        <option value="aprobado" ${ticket.status === 'aprobado' ? 'selected' : ''}>Pago liberado</option>
-                        <option value="rechazado" ${ticket.status === 'rechazado' ? 'selected' : ''}>Requiere corrección</option>
-                    </select>
-                    <textarea id="ticket-message-${ticket.id}" maxlength="250" placeholder="Mensaje para el cliente...">${ticket.admin_message || ''}</textarea>
-                    <div style="display:flex; justify-content:flex-end;">
-                        <button class="btn-primary" type="button" onclick="updateTicketStatus(${ticket.id})">
-                            <i class="fas fa-save"></i> GUARDAR RESPUESTA
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        return `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:12px;">
-                <h3 style="color: var(--wow-gold); font-size:1.8rem; margin:0;">Tickets de Cobranza</h3>
-                <div style="color: var(--text-gray);">Total: <strong style="color: var(--wow-gold-light);">${total}</strong></div>
-            </div>
-            <div class="form-grid">
-                <div class="form-group" style="background:var(--panel-light); padding:16px; border-radius:10px; border:1px solid var(--wow-gold-dark);">
-                    <h4 style="color:var(--wow-gold); margin-bottom:12px;"><i class="fas fa-coins"></i> Oro (${byType.gold.length})</h4>
-                    ${byType.gold.length ? byType.gold.map(renderTicketCard).join('') : '<p style="color:var(--text-gray);">Sin tickets de oro.</p>'}
-                </div>
-                <div class="form-group" style="background:var(--panel-light); padding:16px; border-radius:10px; border:1px solid var(--wow-gold-dark);">
-                    <h4 style="color:var(--wow-gold); margin-bottom:12px;"><i class="fas fa-briefcase"></i> Servicios (${byType.service.length})</h4>
-                    ${byType.service.length ? byType.service.map(renderTicketCard).join('') : '<p style="color:var(--text-gray);">Sin tickets de servicios.</p>'}
-                </div>
-                <div class="form-group" style="grid-column:1 / -1; background:var(--panel-light); padding:16px; border-radius:10px; border:1px solid var(--wow-gold-dark);">
-                    <h4 style="color:var(--wow-gold); margin-bottom:12px;"><i class="fas fa-user"></i> Cuentas (${byType.account.length})</h4>
-                    ${byType.account.length ? byType.account.map(renderTicketCard).join('') : '<p style="color:var(--text-gray);">Sin tickets de cuentas.</p>'}
-                </div>
-            </div>
-        `;
-    }
-
-
     // ============================================
     // INICIALIZACIÓN
     // ============================================
@@ -7775,9 +7286,6 @@
         localStorage.setItem('epicgoldshop_settings', JSON.stringify(settings));
         localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
         localStorage.setItem('epicgoldshop_game_servers', JSON.stringify(gameServers));
-        localStorage.setItem('epicgoldshop_services', JSON.stringify(services));
-        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
-        localStorage.setItem('epicgoldshop_catalog_version', CATALOG_SCHEMA_VERSION);
     });
 </script>
 </body>
