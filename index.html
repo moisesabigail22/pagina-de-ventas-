@@ -1105,10 +1105,12 @@
 
         .gold-order-option-cover {
             width: 100%;
-            height: 86px;
+            height: 120px;
             object-fit: cover;
+            object-position: center center;
             display: block;
             border-bottom: 1px solid rgba(200, 170, 109, 0.35);
+            background: rgba(10, 25, 41, 0.85);
         }
 
         .gold-order-option-content {
@@ -2036,7 +2038,8 @@
         .image-preview {
             width: 100%;
             max-height: 350px;
-            object-fit: contain;
+            object-fit: cover;
+            object-position: center center;
             border-radius: 10px;
             margin-top: 20px;
             display: none;
@@ -3354,6 +3357,9 @@
                 <button class="admin-tab" onclick="switchAdminTab('settings')">
                     <i class="fas fa-cog"></i> Configuración
                 </button>
+                <button class="admin-tab" onclick="switchAdminTab('tickets')">
+                    <i class="fas fa-ticket-alt"></i> Tickets
+                </button>
             </div>
 
             <div class="admin-content" id="admin-content">
@@ -3818,9 +3824,80 @@
                 </div>
                 <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
                     <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                </a>
+                </button>
             </div>
         </div>
+    </div>
+</div>
+
+
+<div id="payment-modal" class="modal">
+    <div class="modal-content" style="max-width: 760px;">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">Ventana de Cobranza</h2>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Producto</label>
+                <input type="text" id="payment-product" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Categoría</label>
+                <input type="text" id="payment-category" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Precio</label>
+                <input type="text" id="payment-price" readonly>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Método de pago</label>
+                <select id="payment-method">
+                    <option value="">Selecciona un método</option>
+                    <option value="Binance">Binance</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Zelle">Zelle</option>
+                    <option value="USDT">USDT</option>
+                </select>
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Subir comprobante de pago (foto)</label>
+                <input type="file" id="payment-proof" accept="image/*">
+                <img id="payment-proof-preview" class="image-preview" alt="Comprobante" style="display:none; max-height:220px; margin-top:12px;">
+            </div>
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Nota (opcional)</label>
+                <textarea id="payment-note" maxlength="300" placeholder="Escribe detalles de tu pago o pedido..."></textarea>
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top: 20px;">
+            <button class="btn-primary" type="button" onclick="submitPaymentTicket()">
+                <i class="fas fa-paper-plane"></i> ENVIAR TICKET
+            </button>
+        </div>
+        <div class="message" id="payment-message"></div>
+        <div style="display:flex; justify-content:flex-end; margin-top: 10px;">
+            <button class="btn-secondary" type="button" onclick="showTicketTrackingModal()">
+                <i class="fas fa-search"></i> CONSULTAR ESTADO DE TICKET
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="ticket-tracking-modal" class="modal">
+    <div class="modal-content" style="max-width: 720px;">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">Seguimiento de Ticket</h2>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Código de ticket</label>
+                <input type="text" id="ticket-track-code" placeholder="Ej: EGS-1A2B3C" maxlength="20">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top: 8px;">
+            <button class="btn-primary" type="button" onclick="trackTicketStatus()">
+                <i class="fas fa-search"></i> CONSULTAR
+            </button>
+        </div>
+        <div id="ticket-track-result" style="margin-top: 15px;"></div>
     </div>
 </div>
 
@@ -3841,6 +3918,8 @@
     let isDropdownOpen = false;
     let currentOptimization = 'auto';
     let imageCache = new Map();
+    let supportTickets = [];
+    let paymentContext = null;
     let goldOrderState = {
         game: '',
         server: ''
@@ -3851,7 +3930,9 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
-    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_04';
+    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_05';
+    const LOCAL_ADMIN_USER = 'admin';
+    const LOCAL_ADMIN_PASSWORD = 'admin123';
 
     // URLs de Imgur reales para ejemplos
     const IMGUR_IMAGE_URLS = {
@@ -4292,7 +4373,8 @@
             'epicgoldshop_references',
             'epicgoldshop_categories',
             'epicgoldshop_game_servers',
-            'epicgoldshop_services'
+            'epicgoldshop_services',
+            'epicgoldshop_tickets'
         ];
 
         keysToReset.forEach((key) => localStorage.removeItem(key));
@@ -4722,26 +4804,26 @@
 
         if (!amountSelect || !priceEl) return;
 
-        const selectedId = parseInt(amountSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(amountSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
             if (cta) {
+                cta.innerHTML = '<i class="fas fa-shopping-cart"></i> COMPRAR ORO';
                 cta.setAttribute('aria-disabled', 'true');
-                cta.style.pointerEvents = 'none';
+                cta.disabled = true;
                 cta.style.opacity = '0.6';
-                cta.href = settings?.discord || DISCORD_LINK;
             }
             return;
         }
 
         priceEl.textContent = item.price;
         if (cta) {
+            cta.innerHTML = `<i class="fas fa-shopping-cart"></i> COMPRAR ORO • ${item.price}`;
             cta.setAttribute('aria-disabled', 'false');
-            cta.style.pointerEvents = 'auto';
+            cta.disabled = false;
             cta.style.opacity = '1';
-            cta.href = settings?.discord || DISCORD_LINK;
         }
     }
 
@@ -5088,6 +5170,21 @@
             });
         }
 
+        const paymentProofInput = document.getElementById('payment-proof');
+        if (paymentProofInput) {
+            paymentProofInput.addEventListener('change', previewPaymentProof);
+        }
+
+        const ticketTrackInput = document.getElementById('ticket-track-code');
+        if (ticketTrackInput) {
+            ticketTrackInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    trackTicketStatus();
+                }
+            });
+        }
+
         const goldOrderAmountSelect = document.getElementById('gold-order-amount');
         if (goldOrderAmountSelect) {
             goldOrderAmountSelect.addEventListener('change', function() {
@@ -5331,9 +5428,9 @@
 
                     <div class="product-details">
                         <div class="product-price">${account.price}</div>
-                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" data-tooltip="Comprar en Discord">
+                        <button type="button" class="btn-buy" onclick="openPaymentModalFromAccount(${account.id})">
                             <i class="fas fa-shopping-cart"></i> COMPRAR
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -5379,9 +5476,9 @@
                     <p class="product-description">${service.description || 'Servicio disponible para tu personaje.'}</p>
                     <div class="product-details">
                         <div class="product-price">${String(service.price || '$0').startsWith('$') ? service.price : '$' + service.price}</div>
-                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy">
-                            <i class="fas fa-message"></i> PEDIR
-                        </a>
+                        <button type="button" class="btn-buy" onclick="openPaymentModalFromService(${service.id})">
+                            <i class="fas fa-wallet"></i> PAGAR
+                        </button>
                     </div>
                 </div>
             </div>
@@ -5580,25 +5677,52 @@
                 sessionStorage.setItem('isAdmin', 'true');
                 sessionStorage.setItem('adminToken', adminToken);
 
-                message.textContent = '✓ Acceso concedido. Redirigiendo...';
+                message.textContent = '✓ Acceso concedido (API). Redirigiendo...';
                 message.className = 'message success';
                 message.style.display = 'block';
 
                 setTimeout(() => {
                     closeModal();
                     showAdmin();
-                    showMessage('✅ Sesión de administrador iniciada', 'success');
+                    showMessage('✅ Sesión de administrador iniciada (API)', 'success');
                 }, 500);
                 return;
             }
+
+            if (response.status === 401) {
+                message.textContent = '✗ Credenciales incorrectas';
+                message.className = 'message error';
+                message.style.display = 'block';
+                document.getElementById('admin-password').value = '';
+                document.getElementById('admin-password').focus();
+                return;
+            }
         } catch (error) {
-            console.warn('Login API no disponible, usando fallback local:', error.message);
+            console.warn('Login API no disponible. Intentando modo local:', error.message);
         } finally {
             loginBtn.innerHTML = originalText;
             loginBtn.disabled = false;
         }
 
-        message.textContent = '✗ No se pudo iniciar sesión contra la API. Revisa variables de entorno/deploy.';
+        if (username === LOCAL_ADMIN_USER && password === LOCAL_ADMIN_PASSWORD) {
+            isAdmin = true;
+            adminToken = '';
+            sessionStorage.setItem('isAdmin', 'true');
+            sessionStorage.removeItem('adminToken');
+
+            message.textContent = '✓ Acceso en modo local (sin API).';
+            message.className = 'message success';
+            message.style.display = 'block';
+
+            setTimeout(() => {
+                closeModal();
+                showAdmin();
+                showMessage('⚠️ Sesión local iniciada. Para guardar en base de datos usa login API.', 'info');
+            }, 500);
+            return;
+        }
+
+        message.textContent = '✗ No se pudo iniciar sesión contra la API. Si estás en local usa admin/admin123.';
         message.className = 'message error';
         message.style.display = 'block';
         document.getElementById('admin-password').value = '';
@@ -5679,6 +5803,9 @@
                 break;
             case 'settings':
                 content.innerHTML = renderAdminSettings();
+                break;
+            case 'tickets':
+                content.innerHTML = renderAdminTickets();
                 break;
         }
 
@@ -5838,6 +5965,12 @@
         `;
     }
 
+
+    function getGoldCategoryDisplayName(category) {
+        if (!category || typeof category !== 'object') return 'Sin nombre';
+        return category.name || category.game || 'Sin nombre';
+    }
+
     function renderAdminGoldCategories() {
         const totalCategories = goldCategories.length;
         const totalPackagesInCategories = gold.length;
@@ -5860,7 +5993,7 @@
                     </div>
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${categoriesWithPackages}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con Stock</div>
+                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con Paquetes</div>
                     </div>
                 </div>
             </div>
@@ -6796,10 +6929,6 @@
         } else if (imageUrl) {
             categoryImage = normalizeImageUrl(imageUrl);
         }
-        const game = name;
-        if (!categoryImage) {
-            categoryImage = getGameImage(game);
-        }
 
         if (isAdmin && !adminToken) {
             showMessage('⚠️ Debes iniciar sesión con API para guardar categoría en base de datos.', 'error');
@@ -6869,38 +6998,50 @@
                     image: categoryImage
                 };
 
-                showMessage('✅ Categoría de oro actualizada exitosamente', 'success');
+        const payload = {
+            game: name,
+            server: 'Global',
+            description,
+            image: categoryImage
+        };
+        if (editingGoldCategoryId) payload.id = editingGoldCategoryId;
+
+        if (isAdmin && adminToken) {
+            try {
+                const response = await fetch('/api/admin/gold-categories', {
+                    method: editingGoldCategoryId ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    const normalized = { ...saved, name: saved.game || name };
+                    if (editingGoldCategoryId) {
+                        const idx = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
+                        if (idx !== -1) goldCategories[idx] = normalized;
+                    } else {
+                        goldCategories.push(normalized);
+                    }
+
+                    localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+                    syncGameImagesFromCategories();
+                    closeModal();
+                    if (isAdmin) switchAdminTab('gold-categories');
+                    showMessage(editingGoldCategoryId ? '✅ Categoría actualizada en base de datos' : '✅ Categoría agregada en base de datos', 'success');
+                    return;
+                }
+            } catch (error) {
+                console.warn('Error guardando categoría en API:', error.message);
             }
-        } else {
-            const newCategory = {
-                id: Date.now(),
-                name,
-                game,
-                description,
-                image: categoryImage
-            };
-            goldCategories.push(newCategory);
-
-            showMessage('✅ Categoría de oro agregada exitosamente', 'success');
         }
 
-        if (!categories.includes(game)) {
-            categories.push(game);
-            categories.sort();
-            localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
-        }
-
-        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        syncGameImagesFromCategories();
-        closeModal();
-
-        if (isAdmin) {
-            switchAdminTab('gold-categories');
-        }
-
-        setTimeout(() => {
-            document.getElementById('gold').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 500);
+        message.textContent = '❌ No se pudo guardar en base de datos. Inicia sesión API.';
+        message.className = 'message error';
+        message.style.display = 'block';
     }
 
     async function deleteGoldCategory(id) {
