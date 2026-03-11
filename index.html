@@ -3783,10 +3783,6 @@
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
                 </div>
                 <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Entrega</div>
-                    <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
-                </div>
-                <div class="gold-order-summary-item">
                     <div class="gold-order-summary-label">Disponibilidad</div>
                     <div class="gold-order-summary-value" id="gold-order-stock">-</div>
                 </div>
@@ -4962,20 +4958,19 @@
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
-        const deliveryEl = document.getElementById('gold-order-delivery');
         const stockEl = document.getElementById('gold-order-stock');
         const cta = document.getElementById('gold-order-cta');
 
-        if (!amountSelect || !priceEl || !deliveryEl || !stockEl) return;
+        if (!amountSelect || !priceEl || !stockEl) return;
 
-        const selectedId = parseInt(amountSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(amountSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
-            deliveryEl.textContent = '-';
             stockEl.textContent = '-';
             if (cta) {
+                cta.innerHTML = '<i class="fas fa-shopping-cart"></i> COMPRAR ORO';
                 cta.setAttribute('aria-disabled', 'true');
                 cta.disabled = true;
                 cta.style.opacity = '0.6';
@@ -4984,9 +4979,9 @@
         }
 
         priceEl.textContent = item.price;
-        deliveryEl.textContent = item.delivery || 'Por confirmar';
         stockEl.textContent = item.stock ? `${item.stock} disponibles` : 'Consultar stock';
         if (cta) {
+            cta.innerHTML = `<i class="fas fa-shopping-cart"></i> COMPRAR ORO • ${item.price}`;
             cta.setAttribute('aria-disabled', 'false');
             cta.disabled = false;
             cta.style.opacity = '1';
@@ -7593,8 +7588,8 @@
 
     function openGoldPaymentFromOrder() {
         const amountSelect = document.getElementById('gold-order-amount');
-        const selectedId = parseInt(amountSelect?.value || '', 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(amountSelect?.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
         if (!item) {
             showMessage('Selecciona una cantidad antes de continuar al pago.', 'error');
             return;
@@ -7605,7 +7600,7 @@
             id: item.id,
             name: `${item.amount} - ${item.game}`,
             price: item.price,
-            details: `${item.server || ''} ${item.delivery ? '• ' + item.delivery : ''}`.trim()
+            details: `${item.server || ''}`.trim()
         });
     }
 
