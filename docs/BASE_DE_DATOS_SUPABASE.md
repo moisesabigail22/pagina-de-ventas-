@@ -42,3 +42,22 @@ Haz redeploy luego de guardar variables.
 - `seed_catalog.sql` está hecho para poder re-ejecutarse sin duplicar filas clave (usa lógica `update + insert where not exists`).
 - `seed_catalog.sql` detecta si `gold.amount` está en `text` o `integer` y se adapta automáticamente para evitar errores de tipo.
 - Si vienes de tabla vieja `references`, el schema la migra a `customer_references`.
+
+## 6) Si en la web hay datos pero en Supabase no aparece nada
+Esto casi siempre es una de estas 3 cosas:
+1. La web está mostrando datos guardados en `localStorage` del navegador (no DB).
+2. Vercel apunta a otro proyecto/variables de Supabase distintas.
+3. No se ejecutó seed en el proyecto correcto de Supabase.
+
+Checklist corto:
+- Abre tu web en incógnito o en otro teléfono limpio (sin datos locales).
+- En Supabase ejecuta `supabase/diagnostico_catalog.sql`.
+- Si los conteos salen en 0, ejecuta:
+  1) `supabase/schema.sql`
+  2) `supabase/seed_catalog.sql`
+  3) `supabase/diagnostico_catalog.sql` otra vez
+- En Vercel confirma que `SUPABASE_URL` y `SUPABASE_ANON_KEY` pertenecen al mismo proyecto donde corriste SQL.
+
+Nota importante: que estés en branch `main` o `work` NO crea datos por sí solo en Supabase.
+Los datos aparecen en Supabase solo cuando corres SQL seed en ese proyecto o cuando el backend escribe correctamente en esa DB.
+
