@@ -1,136 +1,72 @@
-# Guía desde cero: Base de datos para Epic Gold Shop (Supabase + Vercel)
+# Guía desde cero: Base de datos anclada en Supabase (Epic Gold Shop)
 
-Esta guía te deja la base lista para que tu panel admin guarde cambios en una base de datos real y todos los usuarios vean lo mismo en cualquier dispositivo.
+Esta guía deja tu base de datos fija con **oro + servicios + categorías + servidores** y valida que realmente quedó cargada.
 
-## 0) Qué problema resuelve
-Actualmente la web usa `localStorage` (datos locales por navegador). Eso significa:
-- Tus cambios no se comparten automáticamente a otros usuarios.
-- Cada teléfono/PC puede ver datos distintos.
+## 1) Ejecutar esquema base
+En Supabase > **SQL Editor** ejecuta primero:
+1. `supabase/schema.sql`
+2. `supabase/part3_rls_admin.sql` (opcional si usarás login admin por backend)
 
-Con Supabase:
-- Los datos viven en una DB central (PostgreSQL).
-- Cualquier deploy reciente lee la misma información.
-- Lo que editas en admin se refleja para todos.
+## 2) Cargar catálogo (oro y servicios)
+Luego ejecuta:
+- `supabase/seed_catalog.sql`
 
----
+Ese script:
+- Verifica/crea lo que falta (`services`, `customer_references` y compatibilidad con `references` antigua).
+- Inserta o actualiza automáticamente datos de:
+  - `settings`
+  - `gold_categories`
+  - `game_servers`
+  - `gold`
+  - `services`
+- Incluye consulta final de verificación por conteo.
 
-## 1) Crear proyecto en Supabase
-1. Entra a https://supabase.com
-2. Crea cuenta / inicia sesión.
-3. Clic en **New project**.
-4. Completa:
-   - Organization
-   - Project name (ej: `epicgoldshop`)
-   - Database password (guárdala)
-   - Region (cerca de tu público)
-5. Espera que termine el provisioning.
-
----
-
-## 2) Crear tablas (schema)
-1. Abre tu proyecto en Supabase.
-2. Ve a **SQL Editor**.
-3. Crea una consulta nueva.
-4. Copia y ejecuta el contenido de `supabase/schema.sql` de este repo.
-
-Eso crea tablas para:
-- `accounts`
-- `gold`
+## 3) Verificar que sí quedó anclada la base
+Al final del `seed_catalog.sql` verás una tabla con conteos. Debe haber números mayores a 0 en:
 - `gold_categories`
 - `game_servers`
-- `references`
+- `gold`
+- `services`
 - `settings`
 
----
-
-## 3) Configurar seguridad (RLS) de forma simple
-Para iniciar rápido:
-- Mantén lectura pública solo para catálogo (accounts/gold/categories/servers/references/settings)
-- Escritura solo con credenciales admin (service role en backend)
-
-> Importante: **nunca** pongas `service_role` key en frontend público.
-
----
-
-
-## 3.1) Parte 3 configurada paso a paso (RLS + Admin seguro)
-Sigue estos pasos exactos:
-
-1. Ejecuta primero `supabase/schema.sql`.
-2. Luego ejecuta `supabase/part3_rls_admin.sql`.
-3. Genera un hash bcrypt para la contraseña admin:
-   - `node -e "const b=require('bcryptjs'); console.log(b.hashSync('TU_PASSWORD', 10))"`
-4. Reemplaza `REEMPLAZAR_POR_HASH_BCRYPT_REAL` en el SQL de parte 3.
-5. Vuelve a ejecutar el bloque `insert into public.admin_users ...`.
-
-### Qué deja listo esta Parte 3
-- Tabla `admin_users` para login admin seguro.
-- RLS activo y bloqueo de lectura para `anon` en `admin_users`.
-- Escrituras reservadas para backend (con `SUPABASE_SERVICE_ROLE_KEY`).
-
-### Variables obligatorias en Vercel (backend)
+## 4) Variables en Vercel (si usas API backend)
+En Vercel > Project > Settings > Environment Variables:
 - `SUPABASE_URL`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `ADMIN_JWT_SECRET` (para sesión admin por token)
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (solo backend)
 
-### Estructura recomendada de API en Vercel
-- `POST /api/admin/login` -> valida usuario/clave (compara bcrypt)
-- `GET /api/catalog` -> lectura pública consolidada
-- `POST/PUT/DELETE /api/admin/*` -> CRUD protegido para panel admin
+Haz redeploy luego de guardar variables.
 
-> Regla crítica: `SUPABASE_SERVICE_ROLE_KEY` nunca va al frontend.
+## 5) Notas importantes
+- No uses `service_role` en frontend público.
+- `seed_catalog.sql` está hecho para poder re-ejecutarse sin duplicar filas clave (usa lógica `update + insert where not exists`).
+- `seed_catalog.sql` detecta si `gold.amount` está en `text` o `integer` y se adapta automáticamente para evitar errores de tipo.
+- Si vienes de tabla vieja `references`, el schema la migra a `customer_references`.
 
-## 4) Obtener variables de entorno
-En Supabase > **Project Settings** > **API** copia:
-- `Project URL`
-- `anon public key`
-- (service_role solo para backend)
+## 6) Si en la web hay datos pero en Supabase no aparece nada
+Esto casi siempre es una de estas 3 cosas:
+1. La web está mostrando datos guardados en `localStorage` del navegador (no DB).
+2. Vercel apunta a otro proyecto/variables de Supabase distintas.
+3. No se ejecutó seed en el proyecto correcto de Supabase.
 
----
+Checklist corto:
+- Abre tu web en incógnito o en otro teléfono limpio (sin datos locales).
+- En Supabase ejecuta `supabase/diagnostico_catalog.sql`.
+- Si los conteos salen en 0, ejecuta:
+  1) `supabase/schema.sql`
+  2) `supabase/seed_catalog.sql`
+  3) `supabase/diagnostico_catalog.sql` otra vez
+- En Vercel confirma que `SUPABASE_URL` y `SUPABASE_ANON_KEY` pertenecen al mismo proyecto donde corriste SQL.
 
-## 5) Configurar en Vercel
-En Vercel > tu proyecto > **Settings** > **Environment Variables** añade:
-- `SUPABASE_URL` = tu Project URL
-- `SUPABASE_ANON_KEY` = tu anon key
-- `SUPABASE_SERVICE_ROLE_KEY` = service role key (solo server-side)
+Nota importante: que estés en branch `main` o `work` NO crea datos por sí solo en Supabase.
+Los datos aparecen en Supabase solo cuando corres SQL seed en ese proyecto o cuando el backend escribe correctamente en esa DB.
 
-Luego redeploy.
 
----
+## 7) Caso puntual: “despausé Supabase y no había datos, pero en la web sí”
+Eso casi siempre significa que la web estaba leyendo `localStorage` (datos del navegador) y no la DB central.
 
-## 6) Estrategia de integración (la que te voy a implementar)
-### Fase A (lectura global)
-- Reemplazar `loadData()` para leer desde Supabase.
-- Si hay error de red, usar fallback temporal local.
+Pasos rápidos:
+1. Ejecuta `supabase/diagnostico_catalog.sql` en Supabase.
+2. Si está vacío, corre `supabase/schema.sql` y luego `supabase/seed_catalog.sql`.
+3. Si en la web había datos personalizados, recupéralos con `docs/RECUPERAR_DATOS_LOCALSTORAGE.md`.
 
-### Fase B (panel admin escribiendo en DB)
-- Crear endpoints serverless (`/api/...`) en Vercel.
-- Altas/ediciones/borrados del admin guardan en DB central.
-
-### Fase C (auth real admin)
-- Login admin contra backend (no hardcodeado en frontend).
-- Auditoría básica (fecha de cambios, usuario).
-
----
-
-## 7) Checklist de éxito
-- [ ] Desde PC A agregas una categoría/juego.
-- [ ] Abres link en teléfono o PC B.
-- [ ] Se ve exactamente lo mismo sin borrar caché.
-- [ ] Eliminas un ítem en admin.
-- [ ] Desaparece para todos los usuarios.
-
----
-
-## 8) Costos/recomendación
-- Supabase free tier sirve para empezar.
-- Cuando crezca el tráfico, subir plan.
-- Para imágenes de usuarios, usar bucket Storage (Supabase o Cloudinary).
-
----
-
-## 9) Siguiente paso
-Con esto listo, yo me encargo de:
-1) conectar frontend a lectura DB,
-2) crear APIs de escritura del panel admin,
-3) dejar autenticación admin segura.
