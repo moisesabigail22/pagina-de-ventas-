@@ -3641,16 +3641,6 @@
 
         <div class="form-grid">
             <div class="form-group">
-                <label class="form-label">Tiempo de Entrega</label>
-                <input type="text" id="gold-delivery" placeholder="Ej: 5-15 minutos, Inmediato" maxlength="30">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Stock Disponible</label>
-                <input type="number" id="gold-stock" placeholder="0" min="0" value="10">
-            </div>
-
-            <div class="form-group">
                 <label class="form-label">Estado</label>
                 <select id="gold-status">
                     <option value="available">Disponible</option>
@@ -3782,10 +3772,6 @@
                     <div class="gold-order-summary-label">Precio</div>
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
                 </div>
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Disponibilidad</div>
-                    <div class="gold-order-summary-value" id="gold-order-stock">-</div>
-                </div>
                 <button class="btn-buy gold-order-cta" id="gold-order-cta" type="button" onclick="openGoldPaymentFromOrder()" disabled>
                     <i class="fas fa-shopping-cart"></i> COMPRAR ORO
                 </button>
@@ -3894,7 +3880,7 @@
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
-    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_04';
+    const CATALOG_SCHEMA_VERSION = 'catalog_v2_mmorpg_2026_05';
     const LOCAL_ADMIN_USER = 'admin';
     const LOCAL_ADMIN_PASSWORD = 'admin123';
 
@@ -4007,49 +3993,10 @@
     ];
 
     // Datos de ejemplo - Categorías de Oro
-    const sampleGoldCategories = [
-        {
-            id: 1,
-            name: 'WoW Turtle Gold',
-            game: 'WoW Turtle',
-            server: 'Nordanaar',
-            description: 'Gold para WoW Turtle (Ambershire, Nordanaar, Telabim y South Sea).',
-            image: IMGUR_IMAGE_URLS.turtleWow2
-        },
-        {
-            id: 2,
-            name: 'WoW Privado Gold',
-            game: 'WoW Privado',
-            server: 'Warmane',
-            description: 'Gold para servidores privados: Bronzebeard, Warmane y Project Epoch.',
-            image: IMGUR_IMAGE_URLS.wowClassic
-        },
-        {
-            id: 3,
-            name: 'WoW Oficial Gold',
-            game: 'WoW Oficial',
-            server: 'Nightslayer A/H',
-            description: 'Gold para WoW oficial en Nightslayer A/H.',
-            image: IMGUR_IMAGE_URLS.wowRetail
-        }
-    ];
+    const sampleGoldCategories = [];
 
     // Datos de ejemplo - Oro
-    const sampleGold = [
-        { id: 1, game: 'WoW Turtle', server: 'Ambershire', amount: '100g', price: '$3.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 2, game: 'WoW Turtle', server: 'Nordanaar', amount: '100g', price: '$2.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 3, game: 'WoW Turtle', server: 'Telabim', amount: '100g', price: '$4.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 4, game: 'WoW Turtle', server: 'South Sea', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 5, game: 'WoW Privado', server: 'Bronzebeard', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 6, game: 'WoW Privado', server: 'Warmane', amount: '1k', price: '$2.5', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 7, game: 'WoW Privado', server: 'Project Epoch - Kezan', amount: '100g', price: '$4', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 8, game: 'WoW Privado', server: 'Project Epoch - Gurubashi', amount: '100g', price: '$3', delivery: '5-20 minutos', stock: 20, status: 'available' },
-        { id: 9, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '100g', price: '$5.8', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 10, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '200g', price: '$11.6', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 11, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '300g', price: '$17.4', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 12, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '500g', price: '$29', delivery: '15-40 minutos', stock: 10, status: 'available' },
-        { id: 13, game: 'WoW Oficial', server: 'Nightslayer A/H', amount: '1000g', price: '$58', delivery: '15-40 minutos', stock: 10, status: 'available' }
-    ];
+    const sampleGold = [];
 
     const sampleServices = [
         { id: 1, category: 'Boosteo', game: 'WoW Privado', name: 'Boosteo cualquier clase', description: 'Servicio de boosteo completo para cualquier clase.', price: '$140' },
@@ -4579,8 +4526,8 @@
         if (savedServices) services = JSON.parse(savedServices);
         if (savedTickets) supportTickets = JSON.parse(savedTickets);
 
-        if (!Array.isArray(goldCategories) || goldCategories.length === 0) goldCategories = [...sampleGoldCategories];
-        if (!Array.isArray(gold) || gold.length === 0) gold = [...sampleGold];
+        if (!Array.isArray(goldCategories)) goldCategories = [];
+        if (!Array.isArray(gold)) gold = [];
         if (!Array.isArray(references) || references.length === 0) references = [...sampleReferences];
         if (!Array.isArray(services) || services.length === 0) services = [...sampleServices];
 
@@ -4630,8 +4577,8 @@
 
             // Solo pisar datos locales si la API trae contenido real
             if (Array.isArray(data.accounts) && data.accounts.length > 0) accounts = data.accounts;
-            if (Array.isArray(data.gold) && data.gold.length > 0) gold = data.gold;
-            if (Array.isArray(data.gold_categories) && data.gold_categories.length > 0) {
+            if (Array.isArray(data.gold)) gold = data.gold;
+            if (Array.isArray(data.gold_categories)) {
                 goldCategories = data.gold_categories;
             }
             if (Array.isArray(data.customer_references) && data.customer_references.length > 0) {
@@ -4984,17 +4931,15 @@
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
-        const stockEl = document.getElementById('gold-order-stock');
         const cta = document.getElementById('gold-order-cta');
 
-        if (!amountSelect || !priceEl || !stockEl) return;
+        if (!amountSelect || !priceEl) return;
 
         const selectedId = String(amountSelect.value || '');
         const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
-            stockEl.textContent = '-';
             if (cta) {
                 cta.innerHTML = '<i class="fas fa-shopping-cart"></i> COMPRAR ORO';
                 cta.setAttribute('aria-disabled', 'true');
@@ -5005,7 +4950,6 @@
         }
 
         priceEl.textContent = item.price;
-        stockEl.textContent = item.stock ? `${item.stock} disponibles` : 'Consultar stock';
         if (cta) {
             cta.innerHTML = `<i class="fas fa-shopping-cart"></i> COMPRAR ORO • ${item.price}`;
             cta.setAttribute('aria-disabled', 'false');
@@ -5060,8 +5004,7 @@
     function setupAdminGoldPriceForm() {
         const gameSelect = document.getElementById('admin-gold-price-game');
         const serverSelect = document.getElementById('admin-gold-price-server');
-        const deliveryInput = document.getElementById('admin-gold-price-delivery');
-
+        
         if (!gameSelect || !serverSelect) return;
 
         const games = getAdminGoldGames();
@@ -5098,9 +5041,6 @@
         gameSelect.addEventListener('change', updateServers);
         updateServers();
 
-        if (deliveryInput && !deliveryInput.value) {
-            deliveryInput.value = '5-15 minutos';
-        }
     }
 
     function setupAdminGoldEditForm() {
@@ -6196,6 +6136,12 @@
         `;
     }
 
+
+    function getGoldCategoryDisplayName(category) {
+        if (!category || typeof category !== 'object') return 'Sin nombre';
+        return category.name || category.game || 'Sin nombre';
+    }
+
     function renderAdminGoldCategories() {
         const totalCategories = goldCategories.length;
         const totalPackagesInCategories = gold.length;
@@ -6244,7 +6190,7 @@
                                         <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
-                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
+                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${getGoldCategoryDisplayName(category)}</h4>
                                         <div style="color: var(--text-gray); font-size: 0.95rem;">
                                             <i class="fas fa-gamepad"></i> ${category.game} ${category.server ? '• ' + category.server : ''}
                                         </div>
@@ -6884,7 +6830,7 @@
     document.getElementById('gold-category-modal-title').textContent = 'EDITAR JUEGO';
     document.getElementById('save-gold-category-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR JUEGO';
 
-    document.getElementById('gold-category-name').value = category.name;
+    document.getElementById('gold-category-name').value = getGoldCategoryDisplayName(category);
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
@@ -6932,65 +6878,81 @@
         } else {
             categoryImage = resolveCategoryImage({ game: name, image: imageUrl });
         }
-        const game = name;
-        if (!categoryImage) {
-            categoryImage = getGameImage(game);
-        }
 
-        if (editingGoldCategoryId) {
-            const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
-            if (index !== -1) {
-                goldCategories[index] = {
-                    ...goldCategories[index],
-                    name,
-                    game,
-                    description,
-                    image: categoryImage
-                };
+        if (!categoryImage) categoryImage = getGameImage(name);
 
-                showMessage('✅ Categoría de oro actualizada exitosamente', 'success');
+        const payload = {
+            game: name,
+            server: 'Global',
+            description,
+            image: categoryImage
+        };
+        if (editingGoldCategoryId) payload.id = editingGoldCategoryId;
+
+        if (isAdmin && adminToken) {
+            try {
+                const response = await fetch('/api/admin/gold-categories', {
+                    method: editingGoldCategoryId ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${adminToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    const saved = await response.json();
+                    const normalized = { ...saved, name: saved.game || name };
+                    if (editingGoldCategoryId) {
+                        const idx = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
+                        if (idx !== -1) goldCategories[idx] = normalized;
+                    } else {
+                        goldCategories.push(normalized);
+                    }
+
+                    localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+                    syncGameImagesFromCategories();
+                    closeModal();
+                    if (isAdmin) switchAdminTab('gold-categories');
+                    showMessage(editingGoldCategoryId ? '✅ Categoría actualizada en base de datos' : '✅ Categoría agregada en base de datos', 'success');
+                    return;
+                }
+            } catch (error) {
+                console.warn('Error guardando categoría en API:', error.message);
             }
-        } else {
-            const newCategory = {
-                id: Date.now(),
-                name,
-                game,
-                description,
-                image: categoryImage
-            };
-            goldCategories.push(newCategory);
-
-            showMessage('✅ Categoría de oro agregada exitosamente', 'success');
         }
 
-        if (!categories.includes(game)) {
-            categories.push(game);
-            categories.sort();
-            localStorage.setItem('epicgoldshop_categories', JSON.stringify(categories));
-        }
-
-        localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
-        syncGameImagesFromCategories();
-        closeModal();
-
-        if (isAdmin) {
-            switchAdminTab('gold-categories');
-        }
-
-        setTimeout(() => {
-            document.getElementById('gold').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 500);
+        message.textContent = '❌ No se pudo guardar en base de datos. Inicia sesión API.';
+        message.className = 'message error';
+        message.style.display = 'block';
     }
 
-    function deleteGoldCategory(id) {
+    async function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        const index = goldCategories.findIndex(c => c.id === id);
-        if (index !== -1) {
-            goldCategories.splice(index, 1);
+        if (!isAdmin || !adminToken) {
+            showMessage('⚠️ Debes iniciar sesión con API para eliminar en base de datos.', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/gold-categories?id=${encodeURIComponent(id)}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${adminToken}` }
+            });
+            if (!response.ok) {
+                showMessage('❌ No se pudo eliminar en la API.', 'error');
+                return;
+            }
+
+            const index = goldCategories.findIndex(c => String(c.id) === String(id));
+            if (index !== -1) goldCategories.splice(index, 1);
             localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
             if (isAdmin) switchAdminTab('gold-categories');
-            showMessage('✅ Categoría de oro eliminada exitosamente', 'success');
+            showMessage('✅ Categoría eliminada de base de datos', 'success');
+        } catch (error) {
+            console.warn('Error eliminando categoría en API:', error.message);
+            showMessage('❌ Error de conexión con API al eliminar categoría.', 'error');
         }
     }
 
@@ -7329,9 +7291,7 @@
         document.getElementById('gold-server-custom').style.display = 'none';
         document.getElementById('gold-amount').value = '';
         document.getElementById('gold-price').value = '';
-        document.getElementById('gold-delivery').value = '5-15 minutos';
-        document.getElementById('gold-stock').value = '10';
-        document.getElementById('gold-status').value = 'available';
+                document.getElementById('gold-status').value = 'available';
 
         // Actualizar select de categorías
         updateCategorySelects();
@@ -7350,9 +7310,7 @@
         const server = getSelectedGoldServer();
         const amount = document.getElementById('gold-amount').value.trim();
         const price = document.getElementById('gold-price').value.trim();
-        const delivery = document.getElementById('gold-delivery').value.trim();
-        const stock = parseInt(document.getElementById('gold-stock').value) || 0;
-        const status = document.getElementById('gold-status').value;
+                const status = document.getElementById('gold-status').value;
         const message = document.getElementById('gold-message');
 
         if (!game) {
@@ -7403,13 +7361,6 @@
 
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
 
-        if (!delivery) {
-            message.textContent = 'El tiempo de entrega es obligatorio';
-            message.className = 'message error';
-            message.style.display = 'block';
-            document.getElementById('gold-delivery').focus();
-            return;
-        }
 
         if (editingGoldId) {
             const index = gold.findIndex(g => g.id === editingGoldId);
@@ -7420,8 +7371,6 @@
                     server,
                     amount,
                     price: formattedPrice,
-                    delivery,
-                    stock,
                     status
                 };
 
@@ -7434,8 +7383,6 @@
                 server,
                 amount,
                 price: formattedPrice,
-                delivery,
-                stock,
                 status
             };
             gold.push(newGold);
