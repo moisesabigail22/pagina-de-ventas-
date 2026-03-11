@@ -3838,6 +3838,30 @@
             </button>
         </div>
         <div class="message" id="payment-message"></div>
+        <div style="display:flex; justify-content:flex-end; margin-top: 10px;">
+            <button class="btn-secondary" type="button" onclick="showTicketTrackingModal()">
+                <i class="fas fa-search"></i> CONSULTAR ESTADO DE TICKET
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="ticket-tracking-modal" class="modal">
+    <div class="modal-content" style="max-width: 720px;">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">Seguimiento de Ticket</h2>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="form-label">Código de ticket</label>
+                <input type="text" id="ticket-track-code" placeholder="Ej: EGS-1A2B3C" maxlength="20">
+            </div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin-top: 8px;">
+            <button class="btn-primary" type="button" onclick="trackTicketStatus()">
+                <i class="fas fa-search"></i> CONSULTAR
+            </button>
+        </div>
+        <div id="ticket-track-result" style="margin-top: 15px;"></div>
     </div>
 </div>
 
@@ -5358,6 +5382,16 @@
         const paymentProofInput = document.getElementById('payment-proof');
         if (paymentProofInput) {
             paymentProofInput.addEventListener('change', previewPaymentProof);
+        }
+
+        const ticketTrackInput = document.getElementById('ticket-track-code');
+        if (ticketTrackInput) {
+            ticketTrackInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    trackTicketStatus();
+                }
+            });
         }
 
         const goldOrderAmountSelect = document.getElementById('gold-order-amount');
@@ -7604,6 +7638,80 @@
         });
     }
 
+
+    function generateTicketCode() {
+        const token = Math.random().toString(36).slice(2, 8).toUpperCase();
+        return `EGS-${token}`;
+    }
+
+    function normalizeTicketCode(rawCode) {
+        return String(rawCode || '').trim().toUpperCase();
+    }
+
+    function showTicketTrackingModal(prefillCode = '') {
+        const input = document.getElementById('ticket-track-code');
+        const result = document.getElementById('ticket-track-result');
+        if (input) input.value = prefillCode || '';
+        if (result) result.innerHTML = '';
+        showModal('ticket-tracking-modal');
+        if (input) input.focus();
+    }
+
+    function trackTicketStatus() {
+        const input = document.getElementById('ticket-track-code');
+        const result = document.getElementById('ticket-track-result');
+        if (!input || !result) return;
+        const code = normalizeTicketCode(input.value);
+        if (!code) {
+            result.innerHTML = `<div class="message error" style="display:block;">Ingresa un código de ticket.</div>`;
+            return;
+        }
+
+        const ticket = supportTickets.find(item => normalizeTicketCode(item.ticket_code || item.id) === code);
+        if (!ticket) {
+            result.innerHTML = `<div class="message error" style="display:block;">No encontramos ese ticket. Verifica el código.</div>`;
+            return;
+        }
+
+        const statusLabelMap = {
+            nuevo: 'Recibido',
+            revisando: 'En revisión',
+            aprobado: 'Pago liberado',
+            rechazado: 'Requiere corrección'
+        };
+        const statusLabel = statusLabelMap[ticket.status] || ticket.status || 'Recibido';
+        const customerMessage = ticket.admin_message || 'Tu comprobante fue recibido. Te avisaremos cuando se libere el pago.';
+
+        result.innerHTML = `
+            <div style="background: var(--panel); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:16px;">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:8px;">
+                    <strong style="color: var(--wow-gold);">Ticket: ${ticket.ticket_code || ticket.id}</strong>
+                    <span style="color: var(--text-gray);">${new Date(ticket.created_at).toLocaleString('es-ES')}</span>
+                </div>
+                <div style="color: var(--text); margin-bottom:6px;"><i class="fas fa-box"></i> ${ticket.product_name}</div>
+                <div style="color: var(--wow-gold-light); margin-bottom:10px;"><i class="fas fa-info-circle"></i> Estado: ${statusLabel}</div>
+                <div style="color: var(--text-gray);">${customerMessage}</div>
+            </div>
+        `;
+    }
+
+    function updateTicketStatus(id) {
+        const statusEl = document.getElementById(`ticket-status-${id}`);
+        const messageEl = document.getElementById(`ticket-message-${id}`);
+        const idx = supportTickets.findIndex(t => String(t.id) === String(id));
+        if (idx === -1) return;
+
+        supportTickets[idx] = {
+            ...supportTickets[idx],
+            status: statusEl?.value || supportTickets[idx].status || 'nuevo',
+            admin_message: messageEl?.value?.trim() || supportTickets[idx].admin_message || ''
+        };
+
+        localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
+        showMessage('✅ Ticket actualizado para el cliente.', 'success');
+        if (isAdmin) switchAdminTab('tickets');
+    }
+
     function submitPaymentTicket() {
         const method = document.getElementById('payment-method');
         const note = document.getElementById('payment-note');
@@ -7619,6 +7727,7 @@
         }
 
         const fileName = proofInput?.files?.[0]?.name || '';
+        const ticketCode = generateTicketCode();
         const ticket = {
             id: Date.now(),
             type: paymentContext.type,
@@ -7630,14 +7739,16 @@
             payment_method: method.value,
             proof_file: fileName,
             note: note?.value?.trim() || '',
+            ticket_code: ticketCode,
             status: 'nuevo',
+            admin_message: 'Tu comprobante fue recibido. Te avisaremos cuando se libere el pago.',
             created_at: new Date().toISOString()
         };
 
         supportTickets.unshift(ticket);
         localStorage.setItem('epicgoldshop_tickets', JSON.stringify(supportTickets));
 
-        message.textContent = '✅ Ticket enviado. El admin lo verá en la sección Tickets.';
+        message.innerHTML = `✅ Ticket enviado: <strong>${ticketCode}</strong>.<br>Guárdalo para consultar tu estado.`;
         message.className = 'message success';
         message.style.display = 'block';
 
@@ -7645,7 +7756,10 @@
             switchAdminTab('tickets');
         }
 
-        setTimeout(() => closeModal(), 900);
+        setTimeout(() => {
+            closeModal();
+            showTicketTrackingModal(ticketCode);
+        }, 1100);
     }
 
     function previewPaymentProof(event) {
@@ -7685,8 +7799,23 @@
                     <i class="fas fa-dollar-sign"></i> ${ticket.price} • <i class="fas fa-wallet"></i> ${ticket.payment_method}
                 </div>
                 <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">${ticket.details || 'Sin detalles adicionales'}</div>
-                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">Nota: ${ticket.note || 'Sin nota'}</div>
-                <div style="color: var(--text-gray); font-size:0.9rem;">Comprobante: ${ticket.proof_file || 'No adjunto'}</div>
+                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">Ticket: ${ticket.ticket_code || ticket.id}</div>
+                <div style="color: var(--text-gray); font-size:0.92rem; margin-bottom:6px;">Nota cliente: ${ticket.note || 'Sin nota'}</div>
+                <div style="color: var(--text-gray); font-size:0.9rem; margin-bottom:10px;">Comprobante: ${ticket.proof_file || 'No adjunto'}</div>
+                <div style="display:grid; gap:8px; grid-template-columns: 1fr;">
+                    <select id="ticket-status-${ticket.id}">
+                        <option value="nuevo" ${ticket.status === 'nuevo' ? 'selected' : ''}>Recibido</option>
+                        <option value="revisando" ${ticket.status === 'revisando' ? 'selected' : ''}>En revisión</option>
+                        <option value="aprobado" ${ticket.status === 'aprobado' ? 'selected' : ''}>Pago liberado</option>
+                        <option value="rechazado" ${ticket.status === 'rechazado' ? 'selected' : ''}>Requiere corrección</option>
+                    </select>
+                    <textarea id="ticket-message-${ticket.id}" maxlength="250" placeholder="Mensaje para el cliente...">${ticket.admin_message || ''}</textarea>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-primary" type="button" onclick="updateTicketStatus(${ticket.id})">
+                            <i class="fas fa-save"></i> GUARDAR RESPUESTA
+                        </button>
+                    </div>
+                </div>
             </div>
         `;
 
