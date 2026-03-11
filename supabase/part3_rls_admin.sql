@@ -43,10 +43,14 @@ using (false);
 -- 3) Mantener lectura pública del catálogo (si la quieres)
 -- Si quieres cerrar lectura pública, elimina estas políticas del schema base.
 
--- 4) Seed inicial de admin (CAMBIA el hash por uno real de bcrypt)
--- Ejemplo: genera hash con Node
--- node -e "const b=require('bcryptjs'); console.log(b.hashSync('TU_PASSWORD', 10))"
+-- 4) Seed inicial de admin
+-- Usuario: admin
+-- Contraseña: admin123
+-- Se genera hash bcrypt en SQL con pgcrypto.
 
 insert into public.admin_users (username, password_hash, is_active)
-values ('admin', '$2a$10$REEMPLAZAR_POR_HASH_BCRYPT_REAL', true)
-on conflict (username) do nothing;
+values ('admin', crypt('admin123', gen_salt('bf', 10)), true)
+on conflict (username) do update set
+  password_hash = excluded.password_hash,
+  is_active = true,
+  updated_at = now();
