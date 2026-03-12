@@ -63,41 +63,39 @@ where not exists (
 -- ==========================================
 -- 3) GOLD PACKAGES (solo oro)
 -- ==========================================
-with src(game, server, amount, price, delivery, stock) as (
+with src(game, server, amount, price) as (
   values
-    ('WoW Turtle'::text, 'Ambershire'::text, 100::integer, 3.00::numeric, '5-30 minutos'::text, 'available'::text),
-    ('WoW Turtle', 'Nordanaar', 100, 2.90, '5-30 minutos', 'available'),
-    ('WoW Turtle', 'Telabim', 100, 4.50, '5-30 minutos', 'available'),
+    ('WoW Turtle'::text, 'Ambershire'::text, 100::integer, 3.00::numeric),
+    ('WoW Turtle', 'Nordanaar', 100, 2.90),
+    ('WoW Turtle', 'Telabim', 100, 4.50),
 
-    ('Servidores Privados', 'Bronzebeard', 100, 3.50, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'South Sea', 100, 4.50, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00, '5-30 minutos', 'available')
+    ('Servidores Privados', 'Bronzebeard', 100, 3.50),
+    ('Servidores Privados', 'South Sea', 100, 4.50),
+    ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00),
+    ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00),
+    ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00)
 )
 update public.gold g
 set price = src.price,
-    delivery = src.delivery,
-    stock = src.stock,
     updated_at = now()
 from src
 where g.game = src.game
   and g.server = src.server
   and g.amount::text = src.amount::text;
 
-insert into public.gold (game, server, amount, price, delivery, stock)
-select src.game, src.server, src.amount, src.price, src.delivery, src.stock
+insert into public.gold (game, server, amount, price)
+select src.game, src.server, src.amount, src.price
 from (
   values
-    ('WoW Turtle'::text, 'Ambershire'::text, 100::integer, 3.00::numeric, '5-30 minutos'::text, 'available'::text),
-    ('WoW Turtle', 'Nordanaar', 100, 2.90, '5-30 minutos', 'available'),
-    ('WoW Turtle', 'Telabim', 100, 4.50, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Bronzebeard', 100, 3.50, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'South Sea', 100, 4.50, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00, '5-30 minutos', 'available'),
-    ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00, '5-30 minutos', 'available')
-) as src(game, server, amount, price, delivery, stock)
+    ('WoW Turtle'::text, 'Ambershire'::text, 100::integer, 3.00::numeric),
+    ('WoW Turtle', 'Nordanaar', 100, 2.90),
+    ('WoW Turtle', 'Telabim', 100, 4.50),
+    ('Servidores Privados', 'Bronzebeard', 100, 3.50),
+    ('Servidores Privados', 'South Sea', 100, 4.50),
+    ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00),
+    ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00),
+    ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00)
+) as src(game, server, amount, price)
 where not exists (
   select 1
   from public.gold g
