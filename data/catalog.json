@@ -1,0 +1,268 @@
+{
+  "settings": {
+    "discord": "https://discord.gg/AYJkmeZn",
+    "whatsapp": "https://wa.me/1234567890",
+    "tiktok": "https://www.tiktok.com/@farmers.de.mmorpg",
+    "email": "soporte@epicgoldshop.com",
+    "site": "https://www.epicgoldshop.com"
+  },
+  "gold_categories": [
+    {
+      "game": "WoW Turtle",
+      "server": "Nordanaar",
+      "description": "Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.",
+      "image": "https://i.imgur.com/wwQK4J5.jpeg"
+    },
+    {
+      "game": "WoW Privado",
+      "server": "Warmane",
+      "description": "Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.",
+      "image": "https://i.imgur.com/E3a0Q5L.jpeg"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "description": "Gold para servidor oficial con stock verificado.",
+      "image": "https://i.imgur.com/5Yh4leB.jpeg"
+    }
+  ],
+  "game_servers": [
+    {
+      "game": "WoW Turtle",
+      "name": "Ambershire"
+    },
+    {
+      "game": "WoW Turtle",
+      "name": "Nordanaar"
+    },
+    {
+      "game": "WoW Turtle",
+      "name": "Telabim"
+    },
+    {
+      "game": "WoW Turtle",
+      "name": "South Sea"
+    },
+    {
+      "game": "WoW Privado",
+      "name": "Bronzebeard"
+    },
+    {
+      "game": "WoW Privado",
+      "name": "Warmane"
+    },
+    {
+      "game": "WoW Privado",
+      "name": "Project Epoch - Kezan"
+    },
+    {
+      "game": "WoW Privado",
+      "name": "Project Epoch - Gurubashi"
+    },
+    {
+      "game": "WoW Oficial",
+      "name": "Nightslayer A/H"
+    }
+  ],
+  "gold": [
+    {
+      "game": "WoW Turtle",
+      "server": "Ambershire",
+      "amount": 100,
+      "price": 3.5,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Turtle",
+      "server": "Nordanaar",
+      "amount": 100,
+      "price": 2.5,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Turtle",
+      "server": "Telabim",
+      "amount": 100,
+      "price": 4.5,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Turtle",
+      "server": "South Sea",
+      "amount": 100,
+      "price": 3,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Privado",
+      "server": "Bronzebeard",
+      "amount": 100,
+      "price": 3,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Privado",
+      "server": "Warmane",
+      "amount": 1000,
+      "price": 2.5,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Privado",
+      "server": "Project Epoch - Kezan",
+      "amount": 100,
+      "price": 4,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Privado",
+      "server": "Project Epoch - Gurubashi",
+      "amount": 100,
+      "price": 3,
+      "delivery": "5-20 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 100,
+      "price": 5.8,
+      "delivery": "15-40 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 200,
+      "price": 11.6,
+      "delivery": "15-40 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 300,
+      "price": 17.4,
+      "delivery": "15-40 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 500,
+      "price": 29.0,
+      "delivery": "15-40 minutos",
+      "stock": "Disponible"
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 1000,
+      "price": 58.0,
+      "delivery": "15-40 minutos",
+      "stock": "Disponible"
+    }
+  ],
+  "accounts": [],
+  "customer_references": [],
+  "services": [
+    {
+      "category": "Boosteo",
+      "game": "WoW Privado",
+      "name": "Boosteo cualquier clase",
+      "description": "Subida de personaje para cualquier clase en WoW privado.",
+      "price": 140
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Herboristería / Minería",
+      "description": "Subida completa de profesión",
+      "price": 30
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Sastrería",
+      "description": "Subida completa de profesión",
+      "price": 40
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Cocina",
+      "description": "Subida completa de profesión",
+      "price": 30
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Pesca",
+      "description": "Subida completa de profesión",
+      "price": 40
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Peletería",
+      "description": "Subida completa de profesión",
+      "price": 40
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Encantamiento",
+      "description": "Subida completa de profesión",
+      "price": 40
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Herrería",
+      "description": "Subida completa de profesión",
+      "price": 50
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Ingeniería",
+      "description": "Subida completa de profesión",
+      "price": 55
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Alquimia",
+      "description": "Subida completa de profesión",
+      "price": 40
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Crafting",
+      "description": "Subida completa de profesión",
+      "price": 50
+    },
+    {
+      "category": "Profesiones",
+      "game": "WoW",
+      "name": "Desuello",
+      "description": "Subida completa de profesión",
+      "price": 30
+    },
+    {
+      "category": "PVP",
+      "game": "WoW",
+      "name": "PVP Rank Boosting",
+      "description": "Servicio por rango",
+      "price": 15
+    }
+  ]
+}

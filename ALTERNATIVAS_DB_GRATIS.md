@@ -40,3 +40,7 @@ Si no tienes una razón fuerte para Firestore, **PostgreSQL (Neon) suele ser mej
 
 ## Decisión final recomendada
 Para que yo te lo construya completo, rápido y pensando en crecimiento: **Neon (PostgreSQL)**.
+
+
+## Guía práctica
+- Sigue el paso a paso en `INSTRUCCIONES_NEON.md`.

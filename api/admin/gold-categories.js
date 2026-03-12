@@ -9,40 +9,41 @@ module.exports = async function handler(req, res) {
 
   try {
     if (req.method === 'POST') {
-      const { game, server, amount = 0, price = 0 } = req.body || {};
-      if (!game || !server) {
-        return res.status(400).json({ error: 'game and server are required' });
+      const { game, server = null, description = null, image = null } = req.body || {};
+      if (!game) {
+        return res.status(400).json({ error: 'game is required' });
       }
 
       const result = await query(
-        `insert into gold (game, server, amount, price, created_at, updated_at)
+        `insert into gold_categories (game, server, description, image, created_at, updated_at)
          values ($1, $2, $3, $4, now(), now())
          returning *`,
-        [game, server, amount, price]
+        [game, server, description, image]
       );
+
       return res.status(201).json(result.rows[0]);
     }
 
     if (req.method === 'PUT') {
-      const { id, game, server, amount, price } = req.body || {};
+      const { id, game, server, description, image } = req.body || {};
       if (!id) {
         return res.status(400).json({ error: 'id is required' });
       }
 
       const result = await query(
-        `update gold
+        `update gold_categories
          set game = coalesce($2, game),
              server = coalesce($3, server),
-             amount = coalesce($4, amount),
-             price = coalesce($5, price),
+             description = coalesce($4, description),
+             image = coalesce($5, image),
              updated_at = now()
          where id = $1
          returning *`,
-        [id, game, server, amount, price]
+        [id, game, server, description, image]
       );
 
       if (!result.rows[0]) {
-        return res.status(404).json({ error: 'gold row not found' });
+        return res.status(404).json({ error: 'gold category row not found' });
       }
 
       return res.status(200).json(result.rows[0]);
@@ -54,9 +55,9 @@ module.exports = async function handler(req, res) {
         return res.status(400).json({ error: 'id is required' });
       }
 
-      const result = await query('delete from gold where id = $1 returning id', [id]);
+      const result = await query('delete from gold_categories where id = $1 returning id', [id]);
       if (!result.rows[0]) {
-        return res.status(404).json({ error: 'gold row not found' });
+        return res.status(404).json({ error: 'gold category row not found' });
       }
 
       return res.status(200).json({ deleted: result.rows[0].id });

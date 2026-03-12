@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "discord": "https://discord.gg/tu-server",
+    "whatsapp": "https://wa.me/0000000000",
+    "tiktok": "https://www.tiktok.com/@tuusuario",
+    "email": "ventas@tudominio.com",
+    "site": "https://www.tudominio.com"
+  },
+  "gold_categories": [
+    {
+      "game": "World of Warcraft",
+      "server": "Whitemane",
+      "description": "Gold rápido y seguro",
+      "image": "https://..."
+    }
+  ],
+  "game_servers": [
+    {
+      "game": "World of Warcraft",
+      "name": "Whitemane"
+    }
+  ],
+  "gold": [
+    {
+      "game": "World of Warcraft",
+      "server": "Whitemane",
+      "amount": 10000,
+      "price": 35.5,
+      "delivery": "5-15 minutos",
+      "stock": "10"
+    }
+  ],
+  "accounts": [
+    {
+      "type": "account",
+      "category": "WoW",
+      "server": "Whitemane",
+      "name": "Cuenta PvP",
+      "description": "Cuenta con equipo",
+      "price": "$120",
+      "image": "https://...",
+      "tags": [
+        "80",
+        "PvP"
+      ]
+    }
+  ],
+  "customer_references": [
+    {
+      "name": "Carlos",
+      "comment": "Excelente servicio",
+      "rating": 5,
+      "image": "https://..."
+    }
+  ],
+  "services": [
+    {
+      "category": "Boosteo",
+      "game": "WoW Privado",
+      "name": "Boosteo cualquier clase",
+      "description": "Subida de personaje",
+      "price": 140
+    }
+  ]
+}
