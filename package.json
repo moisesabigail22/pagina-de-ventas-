@@ -1,0 +1,9 @@
+{
+  "name": "pagina-de-ventas",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.12.0"
+  }
+}
