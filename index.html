@@ -3451,7 +3451,10 @@
 
             <div class="form-group">
                 <label class="form-label">Servidor</label>
-                <input type="text" id="account-server" placeholder="Ej: Nordanaar, Americas, etc." maxlength="50">
+                <select id="account-server-select">
+                    <option value="">Selecciona un servidor</option>
+                </select>
+                <input type="text" id="account-server-custom" placeholder="Otro servidor..." maxlength="50" style="display: none; margin-top: 10px;">
             </div>
 
             <div class="form-group">
@@ -4841,6 +4844,10 @@
         if (document.getElementById('gold-category-modal')?.style.display === 'flex') {
             updateGoldCategoryServerOptions();
         }
+
+        if (document.getElementById('account-modal')?.style.display === 'flex') {
+            updateAccountServerOptions(getSelectedAccountServer());
+        }
     }
 
     function updateGoldServerOptions() {
@@ -4891,6 +4898,94 @@
     function getSelectedGoldServer() {
         const serverSelect = document.getElementById('gold-server-select');
         const customInput = document.getElementById('gold-server-custom');
+
+        if (!serverSelect) return '';
+        if (serverSelect.value === 'custom') {
+            return customInput ? customInput.value.trim() : '';
+        }
+        return serverSelect.value.trim();
+    }
+
+    function getGameMatchesForCategory(category) {
+        const safeCategory = (category || '').trim().toLowerCase();
+        if (!safeCategory) return [];
+
+        return getGoldCategoryGames().filter(game => {
+            const safeGame = game.toLowerCase();
+            return safeCategory.includes(safeGame) || safeGame.includes(safeCategory);
+        });
+    }
+
+    function updateAccountServerOptions(preferredServer = '') {
+        const categorySelect = document.getElementById('account-category');
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
+
+        if (!categorySelect || !serverSelect) return;
+
+        const selectedCategory = categorySelect.value;
+        const matchingGames = getGameMatchesForCategory(selectedCategory);
+        const serverPool = matchingGames.length > 0
+            ? gameServers.filter(server => matchingGames.includes(server.game))
+            : gameServers;
+
+        const uniqueServers = Array.from(new Set(serverPool.map(server => server.name)))
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+
+        serverSelect.innerHTML = `
+            <option value="">Selecciona un servidor</option>
+            ${uniqueServers.map(serverName => `<option value="${serverName}">${serverName}</option>`).join('')}
+            <option value="custom">Otro...</option>
+        `;
+
+        const serverExists = preferredServer && uniqueServers.includes(preferredServer);
+        if (serverExists) {
+            serverSelect.value = preferredServer;
+            if (customInput) {
+                customInput.value = '';
+                customInput.style.display = 'none';
+            }
+            return;
+        }
+
+        if (preferredServer) {
+            serverSelect.value = 'custom';
+            if (customInput) {
+                customInput.value = preferredServer;
+                customInput.style.display = 'block';
+            }
+            return;
+        }
+
+        serverSelect.value = '';
+        if (customInput) {
+            customInput.value = '';
+            customInput.style.display = uniqueServers.length === 0 ? 'block' : 'none';
+        }
+
+        if (uniqueServers.length === 0) {
+            serverSelect.value = 'custom';
+        }
+    }
+
+    function toggleAccountServerCustom() {
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
+        if (!serverSelect || !customInput) return;
+
+        if (serverSelect.value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            customInput.value = '';
+        }
+    }
+
+    function getSelectedAccountServer() {
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
 
         if (!serverSelect) return '';
         if (serverSelect.value === 'custom') {
@@ -5442,6 +5537,20 @@
         if (goldCategorySelect) {
             goldCategorySelect.addEventListener('change', function() {
                 updateGoldServerOptions();
+            });
+        }
+
+        const accountCategorySelect = document.getElementById('account-category');
+        if (accountCategorySelect) {
+            accountCategorySelect.addEventListener('change', function() {
+                updateAccountServerOptions();
+            });
+        }
+
+        const accountServerSelect = document.getElementById('account-server-select');
+        if (accountServerSelect) {
+            accountServerSelect.addEventListener('change', function() {
+                toggleAccountServerCustom();
             });
         }
 
@@ -6955,13 +7064,18 @@
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> GUARDAR CUENTA';
 
         document.getElementById('account-name').value = '';
-        document.getElementById('account-server').value = '';
         document.getElementById('account-description').value = '';
+        const accountServerCustomInput = document.getElementById('account-server-custom');
+        if (accountServerCustomInput) {
+            accountServerCustomInput.value = '';
+            accountServerCustomInput.style.display = 'none';
+        }
         document.getElementById('account-price').value = '';
         document.getElementById('account-image-url').value = '';
 
         // Actualizar select de categorías
         updateCategorySelects();
+        updateAccountServerOptions();
 
         const preview = document.getElementById('account-image-preview');
         preview.src = '';
@@ -6994,7 +7108,6 @@
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR CUENTA';
 
         document.getElementById('account-name').value = account.name;
-        document.getElementById('account-server').value = account.server || '';
         document.getElementById('account-description').value = account.description;
         document.getElementById('account-price').value = account.price;
         document.getElementById('account-image-url').value = account.image;
@@ -7002,6 +7115,7 @@
         // Actualizar select de categorías
         updateCategorySelects();
         document.getElementById('account-category').value = account.category;
+        updateAccountServerOptions(account.server || '');
 
         const preview = document.getElementById('account-image-preview');
         preview.src = account.image;
@@ -7025,7 +7139,7 @@
     async function saveAccount() {
         const name = document.getElementById('account-name').value.trim();
         const category = document.getElementById('account-category').value;
-        const server = document.getElementById('account-server').value.trim();
+        const server = getSelectedAccountServer();
         const description = document.getElementById('account-description').value.trim();
         const price = document.getElementById('account-price').value.trim();
         const imageUrl = document.getElementById('account-image-url').value.trim();
@@ -7044,6 +7158,20 @@
             message.className = 'message error';
             message.style.display = 'block';
             document.getElementById('account-description').focus();
+            return;
+        }
+
+        if (!server) {
+            message.textContent = 'Selecciona un servidor válido';
+            message.className = 'message error';
+            message.style.display = 'block';
+            const accountServerSelect = document.getElementById('account-server-select');
+            const accountServerCustomInput = document.getElementById('account-server-custom');
+            if (accountServerSelect && accountServerSelect.value === 'custom' && accountServerCustomInput) {
+                accountServerCustomInput.focus();
+            } else if (accountServerSelect) {
+                accountServerSelect.focus();
+            }
             return;
         }
 
