@@ -17,6 +17,7 @@ set -euo pipefail
 #   KEEP_CURRENT_REMOTE_BRANCH=true|false
 #   CLEAN_UNTRACKED_BETWEEN_MERGES=true|false
 #   CONFLICT_STRATEGY=manual|ours|theirs
+#   FORCE_DELETE_CONFLICTING=false|true
 
 REMOTE="${REMOTE:-origin}"
 MAIN_BRANCH="${MAIN_BRANCH:-main}"
@@ -26,6 +27,7 @@ DELETE_MERGED="${DELETE_MERGED:-false}"
 KEEP_CURRENT_REMOTE_BRANCH="${KEEP_CURRENT_REMOTE_BRANCH:-true}"
 CLEAN_UNTRACKED_BETWEEN_MERGES="${CLEAN_UNTRACKED_BETWEEN_MERGES:-true}"
 CONFLICT_STRATEGY="${CONFLICT_STRATEGY:-manual}"
+FORCE_DELETE_CONFLICTING="${FORCE_DELETE_CONFLICTING:-false}"
 
 if ! git rev-parse --git-dir >/dev/null 2>&1; then
   echo "❌ Este script debe ejecutarse dentro de un repositorio git."
@@ -34,6 +36,11 @@ fi
 
 if [ "$CONFLICT_STRATEGY" != "manual" ] && [ "$CONFLICT_STRATEGY" != "ours" ] && [ "$CONFLICT_STRATEGY" != "theirs" ]; then
   echo "❌ CONFLICT_STRATEGY inválida: $CONFLICT_STRATEGY (usa manual|ours|theirs)"
+  exit 1
+fi
+
+if [ "$FORCE_DELETE_CONFLICTING" != "true" ] && [ "$FORCE_DELETE_CONFLICTING" != "false" ]; then
+  echo "❌ FORCE_DELETE_CONFLICTING inválida: $FORCE_DELETE_CONFLICTING (usa true|false)"
   exit 1
 fi
 
@@ -78,12 +85,7 @@ auto_resolve_conflict() {
 
   git add -A
 
-  if git diff --cached --quiet; then
-    # No hay cambios staged; no se puede crear commit de merge
-    return 1
-  fi
-
-  git commit -m "Auto-merge ${local_branch} into ${MAIN_BRANCH} (${CONFLICT_STRATEGY})" >/dev/null
+  git commit --no-edit >/dev/null 2>&1 || git commit --allow-empty -m "Auto-merge ${local_branch} into ${MAIN_BRANCH} (${CONFLICT_STRATEGY})" >/dev/null
   echo "✅ Conflicto resuelto automáticamente: $local_branch"
   return 0
 }
@@ -145,6 +147,26 @@ safe_delete_remote_branch() {
   fi
 }
 
+
+force_delete_remote_branch() {
+  local branch="$1"
+
+  if [ "$DELETE_MERGED" != "true" ] || [ "$FORCE_DELETE_CONFLICTING" != "true" ]; then
+    return 0
+  fi
+
+  if [ "$KEEP_CURRENT_REMOTE_BRANCH" = "true" ] && [ "$branch" = "$CURRENT_REMOTE_CANDIDATE" ]; then
+    SKIPPED_DELETE+=("$branch (rama actual protegida)")
+    return 0
+  fi
+
+  if git push "$REMOTE" --delete "$branch"; then
+    DELETED+=("$branch (borrada aunque tenía conflicto)")
+  else
+    SKIPPED_DELETE+=("$branch (falló delete remoto)")
+  fi
+}
+
 for remote_branch in "${REMOTE_BRANCHES[@]}"; do
   local_branch="${remote_branch#${REMOTE}/}"
 
@@ -166,7 +188,12 @@ for remote_branch in "${REMOTE_BRANCHES[@]}"; do
     continue
   fi
 
-  if git merge --no-ff --no-edit "$remote_branch"; then
+  MERGE_ARGS=(--no-ff --no-edit)
+  if [ "$CONFLICT_STRATEGY" = "ours" ] || [ "$CONFLICT_STRATEGY" = "theirs" ]; then
+    MERGE_ARGS+=("-X" "$CONFLICT_STRATEGY")
+  fi
+
+  if git merge "${MERGE_ARGS[@]}" "$remote_branch"; then
     MERGED_NOW+=("$local_branch")
     echo "✅ Merge OK: $local_branch"
 
@@ -196,6 +223,8 @@ for remote_branch in "${REMOTE_BRANCHES[@]}"; do
     if git rev-parse -q --verify MERGE_HEAD >/dev/null 2>&1; then
       git merge --abort || true
     fi
+
+    force_delete_remote_branch "$local_branch"
 
     reset_to_main_state
   fi
