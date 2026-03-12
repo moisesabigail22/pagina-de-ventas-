@@ -7047,30 +7047,12 @@
     async function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        if (!isAdmin || !adminToken) {
-            showMessage('⚠️ Debes iniciar sesión con API para eliminar categoría en base de datos.', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/admin/gold-categories?id=${encodeURIComponent(id)}`, {
-                method: 'DELETE',
-                headers: { Authorization: `Bearer ${adminToken}` }
-            });
-
-            if (response.ok) {
-                const index = goldCategories.findIndex(c => String(c.id) === String(id));
-                if (index !== -1) goldCategories.splice(index, 1);
-                if (isAdmin) switchAdminTab('gold-categories');
-                showMessage('✅ Categoría de oro eliminada de base de datos', 'success');
-                return;
-            }
-
-            const err = await response.json().catch(() => ({}));
-            showMessage(`❌ No se pudo eliminar categoría en API${err.error ? `: ${err.error}` : ''}`, 'error');
-        } catch (error) {
-            console.warn('Error eliminando categoría de oro en API:', error.message);
-            showMessage('❌ Error de conexión con API al eliminar categoría.', 'error');
+        const index = goldCategories.findIndex(c => String(c.id) === String(id));
+        if (index !== -1) {
+            goldCategories.splice(index, 1);
+            localStorage.setItem('epicgoldshop_gold_categories', JSON.stringify(goldCategories));
+            if (isAdmin) switchAdminTab('gold-categories');
+            showMessage('✅ Categoría de oro eliminada exitosamente', 'success');
         }
     }
 
