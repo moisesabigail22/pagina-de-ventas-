@@ -68,7 +68,6 @@ with src(game, server, amount, price) as (
     ('WoW Turtle'::text, 'Ambershire'::text, 100::integer, 3.00::numeric),
     ('WoW Turtle', 'Nordanaar', 100, 2.90),
     ('WoW Turtle', 'Telabim', 100, 4.50),
-
     ('Servidores Privados', 'Bronzebeard', 100, 3.50),
     ('Servidores Privados', 'South Sea', 100, 4.50),
     ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00),
@@ -105,52 +104,49 @@ where not exists (
 );
 
 -- ==========================================
--- 4) SERVICES (solo boosteo + profesiones)
+-- 4) SERVICES (visibles al público + admin)
 -- ==========================================
-with src(category, game, name, description, price) as (
-  values
-    ('boosteo'::text, 'WoW Privado'::text, 'Boosteo cualquier clase'::text, 'Boosteo completo en servidor privado'::text, 280.00::numeric),
-    ('boosteo', 'WoW Privado', 'PVP Rank Boosting por rango', 'Boosting por rango PVP', 15.00),
+alter table if exists public.services
+  add column if not exists image text;
 
-    ('profesiones', 'WoW', 'Herboristería / Minería', 'Subida de profesión', 30.00),
-    ('profesiones', 'WoW', 'Sastrería', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Cocina', 'Subida de profesión', 30.00),
-    ('profesiones', 'WoW', 'Pesca', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Peletería', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Encantamiento', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Herrería', 'Subida de profesión', 50.00),
-    ('profesiones', 'WoW', 'Ingeniería', 'Subida de profesión', 55.00),
-    ('profesiones', 'WoW', 'Alquimia', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Inscripción / Crafting', 'Subida de profesión', 50.00),
-    ('profesiones', 'WoW', 'Desuello', 'Subida de profesión', 30.00)
+with src(category, game, name, description, price, image) as (
+  values
+    ('boosteo'::text, 'WoW Privado'::text, 'Boosting Epic 1-70'::text, 'Boosteo manual, niveles personalizados, soporte por región.', 280.00::numeric, 'https://i.imgur.com/ynvAS9B.png'::text),
+    ('profesiones', 'WoW', 'Alchemy Epic 1-375', 'Subida manual de Alquimia 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Blacksmithing Epic 1-375', 'Subida manual de Herrería 1-375.', 50.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Cooking Epic 1-375', 'Subida manual de Cocina 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Enchanting Epic 1-375', 'Subida manual de Encantamiento 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Fishing Epic 1-375', 'Subida manual de Pesca 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Herbalism Epic 1-375', 'Subida manual de Herboristería 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Jewelcrafting Epic 1-375', 'Subida manual de Joyería 1-375.', 50.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Mining Epic 1-375', 'Subida manual de Minería 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Skinning Epic 1-375', 'Subida manual de Desuello 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png')
 )
 update public.services s
 set description = src.description,
     price = src.price,
+    image = src.image,
     updated_at = now()
 from src
 where s.category = src.category
   and s.game = src.game
   and s.name = src.name;
 
-insert into public.services (category, game, name, description, price)
-select src.category, src.game, src.name, src.description, src.price
+insert into public.services (category, game, name, description, price, image)
+select src.category, src.game, src.name, src.description, src.price, src.image
 from (
   values
-    ('boosteo'::text, 'WoW Privado'::text, 'Boosteo cualquier clase'::text, 'Boosteo completo en servidor privado'::text, 280.00::numeric),
-    ('boosteo', 'WoW Privado', 'PVP Rank Boosting por rango', 'Boosting por rango PVP', 15.00),
-    ('profesiones', 'WoW', 'Herboristería / Minería', 'Subida de profesión', 30.00),
-    ('profesiones', 'WoW', 'Sastrería', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Cocina', 'Subida de profesión', 30.00),
-    ('profesiones', 'WoW', 'Pesca', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Peletería', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Encantamiento', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Herrería', 'Subida de profesión', 50.00),
-    ('profesiones', 'WoW', 'Ingeniería', 'Subida de profesión', 55.00),
-    ('profesiones', 'WoW', 'Alquimia', 'Subida de profesión', 40.00),
-    ('profesiones', 'WoW', 'Inscripción / Crafting', 'Subida de profesión', 50.00),
-    ('profesiones', 'WoW', 'Desuello', 'Subida de profesión', 30.00)
-) as src(category, game, name, description, price)
+    ('boosteo'::text, 'WoW Privado'::text, 'Boosting Epic 1-70'::text, 'Boosteo manual, niveles personalizados, soporte por región.', 280.00::numeric, 'https://i.imgur.com/ynvAS9B.png'::text),
+    ('profesiones', 'WoW', 'Alchemy Epic 1-375', 'Subida manual de Alquimia 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Blacksmithing Epic 1-375', 'Subida manual de Herrería 1-375.', 50.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Cooking Epic 1-375', 'Subida manual de Cocina 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Enchanting Epic 1-375', 'Subida manual de Encantamiento 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Fishing Epic 1-375', 'Subida manual de Pesca 1-375.', 40.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Herbalism Epic 1-375', 'Subida manual de Herboristería 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Jewelcrafting Epic 1-375', 'Subida manual de Joyería 1-375.', 50.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Mining Epic 1-375', 'Subida manual de Minería 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png'),
+    ('profesiones', 'WoW', 'Skinning Epic 1-375', 'Subida manual de Desuello 1-375.', 30.00, 'https://i.imgur.com/ynvAS9B.png')
+) as src(category, game, name, description, price, image)
 where not exists (
   select 1
   from public.services s

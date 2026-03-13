@@ -2953,6 +2953,9 @@
         <a href="#sell" class="nav-btn">
             <i class="fas fa-dollar-sign"></i> VENDER
         </a>
+        <a href="#services" class="nav-btn">
+            <i class="fas fa-hammer"></i> SERVICIOS
+        </a>
         <a href="#references" class="nav-btn">
             <i class="fas fa-star"></i> REFERENCIAS
         </a>
@@ -3019,6 +3022,10 @@
             <a href="#sell" class="quick-action-btn">
                 <i class="fas fa-dollar-sign" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
                 <span>Vender Oro</span>
+            </a>
+            <a href="#services" class="quick-action-btn">
+                <i class="fas fa-hammer" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
+                <span>Servicios</span>
             </a>
         </div>
     </div>
@@ -3179,6 +3186,17 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Services Section -->
+<div class="container" id="services">
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Servicios WoW</h2>
+            <div class="stats-badge"><i class="fas fa-hammer"></i> <span id="services-count">0</span> servicios</div>
+        </div>
+        <div class="products-grid" id="services-grid"></div>
     </div>
 </div>
 
@@ -4388,6 +4406,7 @@
         renderAccounts();
         renderGold();
         renderReferences();
+        renderServices();
         updateGoldOrderForm();
 
         // Configurar navegación suave
@@ -4691,12 +4710,24 @@
                     };
                 }
 
+                if (table === 'services') {
+                    return {
+                        category: r.category || 'servicios',
+                        game: r.game || 'WoW',
+                        name: (r.name || '').trim(),
+                        description: r.description || null,
+                        price: Number.isFinite(Number(r.price)) ? Number(r.price) : 0,
+                        image: r.image || null
+                    };
+                }
+
                 return r;
             }).filter((r) => {
                 if (table === 'gold') return Boolean(r.game && r.server);
                 if (table === 'game_servers') return Boolean(r.game && r.name);
                 if (table === 'gold_categories') return Boolean(r.game);
                 if (table === 'accounts') return Boolean(r.name);
+                if (table === 'services') return Boolean(r.name);
                 return true;
             });
 
@@ -5134,8 +5165,8 @@
 
         if (!amountSelect || !priceEl) return;
 
-        const selectedId = parseInt(amountSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(amountSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
@@ -5258,8 +5289,6 @@
             packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
             packageSelect.disabled = true;
             if (priceInput) priceInput.value = '';
-            if (stockInput) stockInput.value = 0;
-            if (statusSelect) statusSelect.value = 'available';
             return;
         }
         gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
@@ -5301,8 +5330,8 @@
         };
 
         const updateEditFields = () => {
-            const selectedId = parseInt(packageSelect.value, 10);
-            const item = gold.find(entry => entry.id === selectedId);
+            const selectedId = String(packageSelect.value || '');
+            const item = gold.find(entry => String(entry.id) === selectedId);
             if (!item) return;
             if (priceInput) priceInput.value = item.price;
         };
@@ -5323,8 +5352,8 @@
             return;
         }
 
-        const selectedId = parseInt(packageSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(packageSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
         if (!item) return;
 
         const newPrice = priceInput?.value.trim() || '';
@@ -5346,8 +5375,8 @@
             showMessage('Selecciona un paquete válido', 'error');
             return;
         }
-        const selectedId = parseInt(packageSelect.value, 10);
-        const index = gold.findIndex(entry => entry.id === selectedId);
+        const selectedId = String(packageSelect.value || '');
+        const index = gold.findIndex(entry => String(entry.id) === selectedId);
         if (index === -1) return;
 
         if (!confirm('¿Eliminar este paquete de oro?')) return;
@@ -5778,6 +5807,35 @@
         // Esta función ahora solo se usa para el panel de administración
     }
 
+    function renderServices() {
+        const grid = document.getElementById('services-grid');
+        const countEl = document.getElementById('services-count');
+        if (!grid) return;
+
+        if (countEl) countEl.textContent = String(services.length);
+
+        if (!Array.isArray(services) || services.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding:50px; background: var(--panel); border-radius: 12px; border:2px dashed var(--wow-gold-dark); color: var(--text-gray);">
+                    No hay servicios publicados por ahora.
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = services.map(service => `
+            <div class="product-card" style="padding: 0; overflow: hidden;">
+                <img src="${service.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${service.name}" style="width:100%;height:280px;object-fit:cover;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'">
+                <div style="padding: 20px;">
+                    <h3 style="color: var(--wow-gold); margin-bottom:8px;">${service.name}</h3>
+                    <div style="color: var(--text-gray); font-size: .95rem; margin-bottom:8px;">${service.game || 'WoW'} • ${(service.category || 'servicios').toUpperCase()}</div>
+                    <p style="color: var(--text-gray); min-height: 48px;">${service.description || ''}</p>
+                    <div style="color: var(--text); font-weight: 800; font-size: 1.2rem; margin-top:10px;">$${service.price}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function renderReferences() {
         const container = document.getElementById('references-list');
 
@@ -6116,10 +6174,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editAccount(${account.id})" data-tooltip="Editar cuenta">
+                                <button class="btn-primary" onclick="editAccount('${account.id}')" data-tooltip="Editar cuenta">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteAccount(${account.id})" data-tooltip="Eliminar cuenta">
+                                <button class="btn-danger" onclick="deleteAccount('${account.id}')" data-tooltip="Eliminar cuenta">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6291,10 +6349,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editGoldCategory(${category.id})" data-tooltip="Editar juego">
+                                <button class="btn-primary" onclick="editGoldCategory('${category.id}')" data-tooltip="Editar juego">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteGoldCategory(${category.id})" data-tooltip="Eliminar juego">
+                                <button class="btn-danger" onclick="deleteGoldCategory('${category.id}')" data-tooltip="Eliminar juego">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6384,7 +6442,7 @@
                                     ${servers.map(server => `
                                         <span style="background: rgba(200, 170, 109, 0.12); color: var(--wow-gold-light); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem;">
                                             ${server.name}
-                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer(${server.id})" data-tooltip="Eliminar servidor">
+                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer('${server.id}')" data-tooltip="Eliminar servidor">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </span>
@@ -6455,7 +6513,7 @@
     }
 
     function deleteGameServer(id) {
-        const serverIndex = gameServers.findIndex(server => server.id === id);
+        const serverIndex = gameServers.findIndex(server => String(server.id) === String(id));
         if (serverIndex === -1) return;
 
         if (!confirm('¿Eliminar este servidor?')) return;
@@ -6497,6 +6555,10 @@
                         <label class="form-label">Precio (USD)</label>
                         <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Imagen (URL)</label>
+                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500">
+                    </div>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
@@ -6509,7 +6571,7 @@
                 ${services.map(service => `
                     <div style="background: var(--panel); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--wow-gold); display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
                         <div>
-                            <div style="color: var(--wow-gold); font-weight:700; margin-bottom:8px;">${service.name} • $${service.price}</div>
+                            <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;"><img src="${service.image || "https://i.imgur.com/ynvAS9B.png"}" alt="${service.name}" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"><div style="color: var(--wow-gold); font-weight:700;">${service.name} • $${service.price}</div></div>
                             <div style="color: var(--text); margin-bottom:6px;">${service.game || 'Sin juego'} · ${(service.category || '').toUpperCase()}</div>
                             <div style="color: var(--text-gray);">${service.description || 'Sin descripción'}</div>
                         </div>
@@ -6527,13 +6589,16 @@
         const name = document.getElementById('admin-service-name')?.value.trim();
         const price = document.getElementById('admin-service-price')?.value.trim();
         const description = document.getElementById('admin-service-description')?.value.trim() || '';
+        const image = document.getElementById('admin-service-image')?.value.trim() || null;
 
         if (!name) return showMessage('El nombre del servicio es obligatorio', 'error');
         if (!price || !price.match(/^\$?\d+(\.\d{1,2})?$/)) return showMessage('Precio inválido. Usa 99 o 99.99', 'error');
 
-        services.push({ id: Date.now(), category, game, name, description, price: price.replace('$','') });
+        const serviceId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        services.push({ id: serviceId, category, game, name, description, image, price: price.replace('$','') });
         persistToDatabase('epicgoldshop_services', services);
         switchAdminTab('services');
+        renderServices();
         showMessage('✅ Servicio agregado con éxito', 'success');
     }
 
@@ -6542,6 +6607,7 @@
         services = services.filter(service => String(service.id) !== String(id));
         persistToDatabase('epicgoldshop_services', services);
         switchAdminTab('services');
+        renderServices();
         showMessage('✅ Servicio eliminado', 'success');
     }
 
@@ -6590,7 +6656,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn-danger" onclick="deleteReference(${ref.id})" data-tooltip="Eliminar referencia">
+                                <button class="btn-danger" onclick="deleteReference('${ref.id}')" data-tooltip="Eliminar referencia">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6930,7 +6996,7 @@
 }
 
     function editGoldCategory(id) {
-    const category = goldCategories.find(c => c.id === id);
+    const category = goldCategories.find(c => String(c.id) === String(id));
     if (!category) return;
 
     editingGoldCategoryId = id;
@@ -6993,7 +7059,7 @@
         }
 
         if (editingGoldCategoryId) {
-            const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
+            const index = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
             if (index !== -1) {
                 goldCategories[index] = {
                     ...goldCategories[index],
@@ -7039,7 +7105,7 @@
     function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        const index = goldCategories.findIndex(c => c.id === id);
+        const index = goldCategories.findIndex(c => String(c.id) === String(id));
         if (index !== -1) {
             goldCategories.splice(index, 1);
         persistToDatabase('epicgoldshop_gold_categories', goldCategories);
@@ -7094,7 +7160,7 @@
     }
 
     function editAccount(id) {
-        const account = accounts.find(a => a.id === id);
+        const account = accounts.find(a => String(a.id) === String(id));
         if (!account) return;
 
         editingAccountId = id;
@@ -7207,7 +7273,7 @@
         const tags = generateTags(description, category, name);
 
         if (editingAccountId) {
-            const index = accounts.findIndex(a => a.id === editingAccountId);
+            const index = accounts.findIndex(a => String(a.id) === String(editingAccountId));
             if (index !== -1) {
                 accounts[index] = {
                     ...accounts[index],
@@ -7281,7 +7347,7 @@
     function deleteAccount(id) {
         if (!confirm('¿Estás seguro de eliminar esta cuenta? Esta acción no se puede deshacer.')) return;
 
-        const index = accounts.findIndex(a => a.id === id);
+        const index = accounts.findIndex(a => String(a.id) === String(id));
         if (index !== -1) {
             accounts.splice(index, 1);
         persistToDatabase('epicgoldshop_accounts', accounts);
@@ -7295,7 +7361,7 @@
     function deleteReference(id) {
         if (!confirm('¿Estás seguro de eliminar esta referencia? Esta acción no se puede deshacer.')) return;
 
-        const index = references.findIndex(ref => ref.id === id);
+        const index = references.findIndex(ref => String(ref.id) === String(id));
         if (index !== -1) {
             references.splice(index, 1);
         persistToDatabase('epicgoldshop_references', references);
@@ -7390,7 +7456,7 @@
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
 
         if (editingGoldId) {
-            const index = gold.findIndex(g => g.id === editingGoldId);
+            const index = gold.findIndex(g => String(g.id) === String(editingGoldId));
             if (index !== -1) {
                 gold[index] = {
                     ...gold[index],
@@ -7428,7 +7494,7 @@
     }
 
     function updateGold(id) {
-        const item = gold.find(g => g.id === id);
+        const item = gold.find(g => String(g.id) === String(id));
         if (!item) return;
 
         const newPrice = document.getElementById(`price-${id}`).value.trim();
@@ -7449,7 +7515,7 @@
     function deleteGold(id) {
         if (!confirm('¿Estás seguro de eliminar este paquete de oro?')) return;
 
-        const index = gold.findIndex(g => g.id === id);
+        const index = gold.findIndex(g => String(g.id) === String(id));
         if (index !== -1) {
             gold.splice(index, 1);
         persistToDatabase('epicgoldshop_gold', gold);
