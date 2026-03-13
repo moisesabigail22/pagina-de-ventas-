@@ -2953,6 +2953,9 @@
         <a href="#sell" class="nav-btn">
             <i class="fas fa-dollar-sign"></i> VENDER
         </a>
+        <a href="#services" class="nav-btn">
+            <i class="fas fa-hammer"></i> SERVICIOS
+        </a>
         <a href="#references" class="nav-btn">
             <i class="fas fa-star"></i> REFERENCIAS
         </a>
@@ -3019,6 +3022,10 @@
             <a href="#sell" class="quick-action-btn">
                 <i class="fas fa-dollar-sign" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
                 <span>Vender Oro</span>
+            </a>
+            <a href="#services" class="quick-action-btn">
+                <i class="fas fa-hammer" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
+                <span>Servicios</span>
             </a>
         </div>
     </div>
@@ -3182,6 +3189,17 @@
     </div>
 </div>
 
+<!-- Services Section -->
+<div class="container" id="services">
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Servicios WoW</h2>
+            <div class="stats-badge"><i class="fas fa-hammer"></i> <span id="services-count">0</span> servicios</div>
+        </div>
+        <div class="products-grid" id="services-grid"></div>
+    </div>
+</div>
+
 <!-- References Section -->
 <div class="container" id="references">
     <div class="section">
@@ -3308,25 +3326,28 @@
 
         <div class="admin-container">
             <div class="admin-tabs">
-                <button class="admin-tab active" onclick="switchAdminTab('account-categories')">
+                <button class="admin-tab active" onclick="switchAdminTab('account-categories', this)">
                     <i class="fas fa-tags"></i> Categorías de Cuentas
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('accounts')">
+                <button class="admin-tab" onclick="switchAdminTab('accounts', this)">
                     <i class="fas fa-gamepad"></i> Cuentas
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('gold-categories')">
+                <button class="admin-tab" onclick="switchAdminTab('gold-categories', this)">
                     <i class="fas fa-tags"></i> Categorías de Juegos (Oro)
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('servers')">
+                <button class="admin-tab" onclick="switchAdminTab('servers', this)">
                     <i class="fas fa-server"></i> Servidores (Juegos)
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('gold')">
+                <button class="admin-tab" onclick="switchAdminTab('gold', this)">
                     <i class="fas fa-coins"></i> Oro
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('references')">
+                <button class="admin-tab" onclick="switchAdminTab('services', this)">
+                    <i class="fas fa-hammer"></i> Servicios
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('references', this)">
                     <i class="fas fa-star"></i> Referencias
                 </button>
-                <button class="admin-tab" onclick="switchAdminTab('settings')">
+                <button class="admin-tab" onclick="switchAdminTab('settings', this)">
                     <i class="fas fa-cog"></i> Configuración
                 </button>
             </div>
@@ -3451,7 +3472,10 @@
 
             <div class="form-group">
                 <label class="form-label">Servidor</label>
-                <input type="text" id="account-server" placeholder="Ej: Nordanaar, Americas, etc." maxlength="50">
+                <select id="account-server-select">
+                    <option value="">Selecciona un servidor</option>
+                </select>
+                <input type="text" id="account-server-custom" placeholder="Otro servidor..." maxlength="50" style="display: none; margin-top: 10px;">
             </div>
 
             <div class="form-group">
@@ -3613,26 +3637,6 @@
             </div>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label class="form-label">Tiempo de Entrega</label>
-                <input type="text" id="gold-delivery" placeholder="Ej: 5-15 minutos, Inmediato" maxlength="30">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Stock Disponible</label>
-                <input type="number" id="gold-stock" placeholder="0" min="0" value="10">
-            </div>
-
-            <div class="form-group">
-                <label class="form-label">Estado</label>
-                <select id="gold-status">
-                    <option value="available">Disponible</option>
-                    <option value="limited">Stock Limitado</option>
-                    <option value="soldout">Agotado</option>
-                </select>
-            </div>
-        </div>
 
         <div style="display: flex; gap: 20px; margin-top: 40px;">
             <button class="btn-secondary" style="flex: 1; padding: 20px;" onclick="closeModal()">
@@ -3755,14 +3759,6 @@
                 <div class="gold-order-summary-item">
                     <div class="gold-order-summary-label">Precio</div>
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
-                </div>
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Entrega</div>
-                    <div class="gold-order-summary-value" id="gold-order-delivery">-</div>
-                </div>
-                <div class="gold-order-summary-item">
-                    <div class="gold-order-summary-label">Disponibilidad</div>
-                    <div class="gold-order-summary-value" id="gold-order-stock">-</div>
                 </div>
                 <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
                     <i class="fas fa-shopping-cart"></i> COMPRAR ORO
@@ -4096,18 +4092,7 @@
         }
     ];
 
-    // Categorías por defecto
-    const defaultCategories = [
-        'Turtle WoW',
-        'World of Warcraft',
-        'Albion Online',
-        'Runescape',
-        'New World',
-        'Final Fantasy XIV',
-        'Elder Scrolls Online',
-        'Guild Wars 2'
-    ];
-
+    const defaultCategories = [];
 
     // Configuración de contactos
     const contactInfo = {
@@ -4118,7 +4103,7 @@
         site: SITE_URL
     };
 
-    // Cargar datos del localStorage
+    // Normalizadores de datos
     function normalizeGameServers(servers) {
         if (!Array.isArray(servers)) return [];
         return servers.map((server, index) => ({
@@ -4135,6 +4120,21 @@
     let settings = { ...contactInfo };
     let categories = [...defaultCategories];
     let gameServers = [];
+    let services = [];
+
+
+    const defaultServiceCatalog = [
+        { category: 'boosteo', game: 'WoW Privado', name: 'Boosting EPIC', description: 'Boosteo manual, niveles personalizados, soporte por región.', price: '280', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Alchemy Epic 1-375', description: 'Subida manual de Alquimia 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Blacksmithing Epic 1-375', description: 'Subida manual de Herrería 1-375.', price: '50', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Cooking Epic 1-375', description: 'Subida manual de Cocina 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Enchanting Epic 1-375', description: 'Subida manual de Encantamiento 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Fishing Epic 1-375', description: 'Subida manual de Pesca 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Herbalism Epic 1-375', description: 'Subida manual de Herboristería 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Jewelcrafting Epic 1-375', description: 'Subida manual de Joyería 1-375.', price: '50', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Mining Epic 1-375', description: 'Subida manual de Minería 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
+        { category: 'profesiones', game: 'WoW', name: 'Skinning Epic 1-375', description: 'Subida manual de Desuello 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' }
+    ];
 
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
@@ -4420,6 +4420,7 @@
         renderAccounts();
         renderGold();
         renderReferences();
+        renderServices();
         updateGoldOrderForm();
 
         // Configurar navegación suave
@@ -4536,13 +4537,14 @@
     }
 
     async function loadData() {
-        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, refsRes] = await Promise.all([
+        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, refsRes, servicesRes] = await Promise.all([
             supabaseClient.from('settings').select('*').limit(1).maybeSingle(),
             supabaseClient.from('gold_categories').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('game_servers').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('gold').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('accounts').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('customer_references').select('*').order('created_at', { ascending: true })
+            supabaseClient.from('customer_references').select('*').order('created_at', { ascending: true }),
+            supabaseClient.from('services').select('*').order('created_at', { ascending: true })
         ]);
 
         if (settingsRes.error) {
@@ -4562,7 +4564,11 @@
             connectionLog(`Error gold_categories: ${categoriesRes.error.message}`, 'error');
             goldCategories = [];
         } else {
-            goldCategories = Array.isArray(categoriesRes.data) ? categoriesRes.data : [];
+            goldCategories = Array.isArray(categoriesRes.data) ? categoriesRes.data.map(item => ({
+                ...item,
+                game: (item.game || item.name || 'Juego sin nombre').trim(),
+                name: (item.name || item.game || 'Juego sin nombre').trim()
+            })) : [];
         }
         sanitizeGoldCategoryImages();
 
@@ -4581,7 +4587,6 @@
                 ...item,
                 amount: item.amount != null ? String(item.amount) : '',
                 price: item.price != null ? String(item.price) : '',
-                status: item.status || 'available'
             })) : [];
         }
 
@@ -4608,7 +4613,20 @@
                 : [];
         }
 
-        categories = Array.from(new Set([...(goldCategories.map(c => c.game).filter(Boolean)), ...defaultCategories]));
+        if (servicesRes.error) {
+            connectionLog(`Error services: ${servicesRes.error.message}`, 'error');
+            services = [...defaultServiceCatalog];
+        } else {
+            services = Array.isArray(servicesRes.data) ? servicesRes.data.map(item => ({
+                ...item,
+                price: item.price != null ? String(item.price) : '0'
+            })) : [];
+            if (services.length === 0) {
+                services = [...defaultServiceCatalog];
+            }
+        }
+
+        categories = Array.from(new Set(goldCategories.map(c => c.game).filter(Boolean))).sort();
 
         if (!Array.isArray(gameServers) || gameServers.length === 0) {
             gameServers = buildGameServersFromData();
@@ -4644,7 +4662,8 @@
                 epicgoldshop_game_servers: 'game_servers',
                 epicgoldshop_gold: 'gold',
                 epicgoldshop_accounts: 'accounts',
-                epicgoldshop_references: 'customer_references'
+                epicgoldshop_references: 'customer_references',
+                epicgoldshop_services: 'services'
             };
 
             const table = tableMap[key];
@@ -4676,9 +4695,6 @@
                         server: (r.server || '').trim(),
                         amount: Number.isFinite(Number(r.amount)) ? Number(r.amount) : 0,
                         price: Number.isFinite(Number(r.price)) ? Number(r.price) : parseFloat(rawPrice || '0'),
-                        delivery: r.delivery || null,
-                        stock: r.stock != null ? String(r.stock) : null,
-                        status: r.status || null
                     };
                 }
 
@@ -4711,12 +4727,24 @@
                     };
                 }
 
+                if (table === 'services') {
+                    return {
+                        category: r.category || 'servicios',
+                        game: r.game || 'WoW',
+                        name: (r.name || '').trim(),
+                        description: r.description || null,
+                        price: Number.isFinite(Number(r.price)) ? Number(r.price) : 0,
+                        image: r.image || null
+                    };
+                }
+
                 return r;
             }).filter((r) => {
                 if (table === 'gold') return Boolean(r.game && r.server);
                 if (table === 'game_servers') return Boolean(r.game && r.name);
                 if (table === 'gold_categories') return Boolean(r.game);
                 if (table === 'accounts') return Boolean(r.name);
+                if (table === 'services') return Boolean(r.name);
                 return true;
             });
 
@@ -4816,6 +4844,10 @@
         selects.forEach(select => {
             if (select.id === 'gold-category') return;
             const currentValue = select.value;
+            if (categories.length === 0) {
+                select.innerHTML = '<option value="">Sin categorías disponibles</option>';
+                return;
+            }
             select.innerHTML = categories.map(cat =>
                 `<option value="${cat}" ${cat === currentValue ? 'selected' : ''}>${cat}</option>`
             ).join('');
@@ -4840,6 +4872,10 @@
 
         if (document.getElementById('gold-category-modal')?.style.display === 'flex') {
             updateGoldCategoryServerOptions();
+        }
+
+        if (document.getElementById('account-modal')?.style.display === 'flex') {
+            updateAccountServerOptions(getSelectedAccountServer());
         }
     }
 
@@ -4891,6 +4927,94 @@
     function getSelectedGoldServer() {
         const serverSelect = document.getElementById('gold-server-select');
         const customInput = document.getElementById('gold-server-custom');
+
+        if (!serverSelect) return '';
+        if (serverSelect.value === 'custom') {
+            return customInput ? customInput.value.trim() : '';
+        }
+        return serverSelect.value.trim();
+    }
+
+    function getGameMatchesForCategory(category) {
+        const safeCategory = (category || '').trim().toLowerCase();
+        if (!safeCategory) return [];
+
+        return getGoldCategoryGames().filter(game => {
+            const safeGame = game.toLowerCase();
+            return safeCategory.includes(safeGame) || safeGame.includes(safeCategory);
+        });
+    }
+
+    function updateAccountServerOptions(preferredServer = '') {
+        const categorySelect = document.getElementById('account-category');
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
+
+        if (!categorySelect || !serverSelect) return;
+
+        const selectedCategory = categorySelect.value;
+        const matchingGames = getGameMatchesForCategory(selectedCategory);
+        const serverPool = matchingGames.length > 0
+            ? gameServers.filter(server => matchingGames.includes(server.game))
+            : gameServers;
+
+        const uniqueServers = Array.from(new Set(serverPool.map(server => server.name)))
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+
+        serverSelect.innerHTML = `
+            <option value="">Selecciona un servidor</option>
+            ${uniqueServers.map(serverName => `<option value="${serverName}">${serverName}</option>`).join('')}
+            <option value="custom">Otro...</option>
+        `;
+
+        const serverExists = preferredServer && uniqueServers.includes(preferredServer);
+        if (serverExists) {
+            serverSelect.value = preferredServer;
+            if (customInput) {
+                customInput.value = '';
+                customInput.style.display = 'none';
+            }
+            return;
+        }
+
+        if (preferredServer) {
+            serverSelect.value = 'custom';
+            if (customInput) {
+                customInput.value = preferredServer;
+                customInput.style.display = 'block';
+            }
+            return;
+        }
+
+        serverSelect.value = '';
+        if (customInput) {
+            customInput.value = '';
+            customInput.style.display = uniqueServers.length === 0 ? 'block' : 'none';
+        }
+
+        if (uniqueServers.length === 0) {
+            serverSelect.value = 'custom';
+        }
+    }
+
+    function toggleAccountServerCustom() {
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
+        if (!serverSelect || !customInput) return;
+
+        if (serverSelect.value === 'custom') {
+            customInput.style.display = 'block';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+            customInput.value = '';
+        }
+    }
+
+    function getSelectedAccountServer() {
+        const serverSelect = document.getElementById('account-server-select');
+        const customInput = document.getElementById('account-server-custom');
 
         if (!serverSelect) return '';
         if (serverSelect.value === 'custom') {
@@ -5054,19 +5178,15 @@
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
-        const deliveryEl = document.getElementById('gold-order-delivery');
-        const stockEl = document.getElementById('gold-order-stock');
         const cta = document.getElementById('gold-order-cta');
 
-        if (!amountSelect || !priceEl || !deliveryEl || !stockEl) return;
+        if (!amountSelect || !priceEl) return;
 
-        const selectedId = parseInt(amountSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(amountSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
-            deliveryEl.textContent = '-';
-            stockEl.textContent = '-';
             if (cta) {
                 cta.setAttribute('aria-disabled', 'true');
                 cta.style.pointerEvents = 'none';
@@ -5077,8 +5197,6 @@
         }
 
         priceEl.textContent = item.price;
-        deliveryEl.textContent = item.delivery || 'Por confirmar';
-        stockEl.textContent = item.stock ? `${item.stock} disponibles` : 'Consultar stock';
         if (cta) {
             cta.setAttribute('aria-disabled', 'false');
             cta.style.pointerEvents = 'auto';
@@ -5133,7 +5251,6 @@
     function setupAdminGoldPriceForm() {
         const gameSelect = document.getElementById('admin-gold-price-game');
         const serverSelect = document.getElementById('admin-gold-price-server');
-        const deliveryInput = document.getElementById('admin-gold-price-delivery');
 
         if (!gameSelect || !serverSelect) return;
 
@@ -5171,9 +5288,6 @@
         gameSelect.addEventListener('change', updateServers);
         updateServers();
 
-        if (deliveryInput && !deliveryInput.value) {
-            deliveryInput.value = '5-15 minutos';
-        }
     }
 
     function setupAdminGoldEditForm() {
@@ -5181,8 +5295,6 @@
         const serverSelect = document.getElementById('admin-gold-edit-server');
         const packageSelect = document.getElementById('admin-gold-edit-package');
         const priceInput = document.getElementById('admin-gold-edit-price');
-        const stockInput = document.getElementById('admin-gold-edit-stock');
-        const statusSelect = document.getElementById('admin-gold-edit-status');
 
         if (!gameSelect || !serverSelect || !packageSelect) return;
 
@@ -5194,8 +5306,6 @@
             packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
             packageSelect.disabled = true;
             if (priceInput) priceInput.value = '';
-            if (stockInput) stockInput.value = 0;
-            if (statusSelect) statusSelect.value = 'available';
             return;
         }
         gameSelect.innerHTML = games.map(game => `<option value="${game}">${game}</option>`).join('');
@@ -5212,8 +5322,6 @@
                 packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
                 packageSelect.disabled = true;
                 if (priceInput) priceInput.value = '';
-                if (stockInput) stockInput.value = 0;
-                if (statusSelect) statusSelect.value = 'available';
                 return;
             }
             serverSelect.disabled = false;
@@ -5229,8 +5337,6 @@
                 packageSelect.innerHTML = '<option value="">Sin paquetes</option>';
                 packageSelect.disabled = true;
                 if (priceInput) priceInput.value = '';
-                if (stockInput) stockInput.value = 0;
-                if (statusSelect) statusSelect.value = 'available';
                 return;
             }
             packageSelect.disabled = false;
@@ -5241,12 +5347,10 @@
         };
 
         const updateEditFields = () => {
-            const selectedId = parseInt(packageSelect.value, 10);
-            const item = gold.find(entry => entry.id === selectedId);
+            const selectedId = String(packageSelect.value || '');
+            const item = gold.find(entry => String(entry.id) === selectedId);
             if (!item) return;
             if (priceInput) priceInput.value = item.price;
-            if (stockInput) stockInput.value = item.stock ?? 0;
-            if (statusSelect) statusSelect.value = item.status;
         };
 
         gameSelect.addEventListener('change', updateServers);
@@ -5259,16 +5363,14 @@
     function saveAdminGoldEdit() {
         const packageSelect = document.getElementById('admin-gold-edit-package');
         const priceInput = document.getElementById('admin-gold-edit-price');
-        const stockInput = document.getElementById('admin-gold-edit-stock');
-        const statusSelect = document.getElementById('admin-gold-edit-status');
 
         if (!packageSelect || !packageSelect.value) {
             showMessage('Selecciona un paquete válido', 'error');
             return;
         }
 
-        const selectedId = parseInt(packageSelect.value, 10);
-        const item = gold.find(entry => entry.id === selectedId);
+        const selectedId = String(packageSelect.value || '');
+        const item = gold.find(entry => String(entry.id) === selectedId);
         if (!item) return;
 
         const newPrice = priceInput?.value.trim() || '';
@@ -5278,8 +5380,6 @@
         }
 
         item.price = newPrice.startsWith('$') ? newPrice : `$${newPrice}`;
-        item.stock = parseInt(stockInput?.value, 10) || 0;
-        item.status = statusSelect?.value || 'available';
         persistToDatabase('epicgoldshop_gold', gold);
         updateGoldOrderForm();
         showMessage('✅ Precio actualizado correctamente', 'success');
@@ -5292,8 +5392,8 @@
             showMessage('Selecciona un paquete válido', 'error');
             return;
         }
-        const selectedId = parseInt(packageSelect.value, 10);
-        const index = gold.findIndex(entry => entry.id === selectedId);
+        const selectedId = String(packageSelect.value || '');
+        const index = gold.findIndex(entry => String(entry.id) === selectedId);
         if (index === -1) return;
 
         if (!confirm('¿Eliminar este paquete de oro?')) return;
@@ -5310,9 +5410,6 @@
         const server = document.getElementById('admin-gold-price-server')?.value;
         const amount = document.getElementById('admin-gold-price-amount')?.value.trim();
         const price = document.getElementById('admin-gold-price-price')?.value.trim();
-        const delivery = document.getElementById('admin-gold-price-delivery')?.value.trim() || 'Por confirmar';
-        const stock = parseInt(document.getElementById('admin-gold-price-stock')?.value, 10) || 0;
-        const status = document.getElementById('admin-gold-price-status')?.value || 'available';
 
         if (!game) {
             showMessage('Selecciona un juego válido', 'error');
@@ -5346,10 +5443,7 @@
             game,
             server,
             amount,
-            price: formattedPrice,
-            delivery,
-            stock,
-            status
+            price: formattedPrice
         });
         persistToDatabase('epicgoldshop_gold', gold);
         updateGoldOrderForm();
@@ -5442,6 +5536,20 @@
         if (goldCategorySelect) {
             goldCategorySelect.addEventListener('change', function() {
                 updateGoldServerOptions();
+            });
+        }
+
+        const accountCategorySelect = document.getElementById('account-category');
+        if (accountCategorySelect) {
+            accountCategorySelect.addEventListener('change', function() {
+                updateAccountServerOptions();
+            });
+        }
+
+        const accountServerSelect = document.getElementById('account-server-select');
+        if (accountServerSelect) {
+            accountServerSelect.addEventListener('change', function() {
+                toggleAccountServerCustom();
             });
         }
 
@@ -5716,6 +5824,35 @@
         // Esta función ahora solo se usa para el panel de administración
     }
 
+    function renderServices() {
+        const grid = document.getElementById('services-grid');
+        const countEl = document.getElementById('services-count');
+        if (!grid) return;
+
+        if (countEl) countEl.textContent = String(services.length);
+
+        if (!Array.isArray(services) || services.length === 0) {
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align:center; padding:50px; background: var(--panel); border-radius: 12px; border:2px dashed var(--wow-gold-dark); color: var(--text-gray);">
+                    No hay servicios publicados por ahora.
+                </div>
+            `;
+            return;
+        }
+
+        grid.innerHTML = services.map(service => `
+            <div class="product-card" style="padding: 0; overflow: hidden;">
+                <img src="${service.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${service.name}" style="width:100%;height:280px;object-fit:cover;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'">
+                <div style="padding: 20px;">
+                    <h3 style="color: var(--wow-gold); margin-bottom:8px;">${service.name}</h3>
+                    <div style="color: var(--text-gray); font-size: .95rem; margin-bottom:8px;">${service.game || 'WoW'} • ${(service.category || 'servicios').toUpperCase()}</div>
+                    <p style="color: var(--text-gray); min-height: 48px;">${service.description || ''}</p>
+                    <div style="color: var(--text); font-weight: 800; font-size: 1.2rem; margin-top:10px;">$${service.price}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
     function renderReferences() {
         const container = document.getElementById('references-list');
 
@@ -5902,7 +6039,6 @@
             }
 
             isAdmin = true;
-            sessionStorage.setItem('isAdmin', 'true');
 
             message.textContent = '✓ Acceso concedido. Redirigiendo...';
             message.className = 'message success';
@@ -5940,7 +6076,6 @@
         if (!confirm('¿Estás seguro de cerrar sesión del panel de administración?')) return;
 
         isAdmin = false;
-        sessionStorage.removeItem('isAdmin');
 
         document.getElementById('admin-section').style.display = 'none';
         updateBodyScrollLock();
@@ -5957,25 +6092,19 @@
     }
 
     function checkAdminSession() {
-        const savedAdmin = sessionStorage.getItem('isAdmin');
-        if (savedAdmin === 'true') {
-            isAdmin = true;
-            document.getElementById('acceso-btn').innerHTML = '<i class="fas fa-user-shield"></i> PANEL ADMIN';
-        }
+        // Sesión no persistente: siempre requiere login por seguridad.
+        isAdmin = false;
     }
 
-    function switchAdminTab(tab) {
+    function switchAdminTab(tab, clickedBtn = null) {
         document.querySelectorAll('.admin-tab').forEach(t => {
             t.classList.remove('active');
         });
 
-        if (event && event.target) {
-            event.target.classList.add('active');
+        if (clickedBtn) {
+            clickedBtn.classList.add('active');
         } else {
-            const tabBtn = Array.from(document.querySelectorAll('.admin-tab')).find(btn =>
-                btn.textContent.includes(tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase()) ||
-                btn.onclick?.toString().includes(`'${tab}'`)
-            );
+            const tabBtn = document.querySelector(`.admin-tab[onclick*=\"switchAdminTab('${tab}'\"]`);
             if (tabBtn) tabBtn.classList.add('active');
         }
 
@@ -5992,6 +6121,9 @@
                 content.innerHTML = renderAdminGold();
                 setupAdminGoldPriceForm();
                 setupAdminGoldEditForm();
+                break;
+            case 'services':
+                content.innerHTML = renderAdminServices();
                 break;
             case 'gold-categories':
                 content.innerHTML = renderAdminGoldCategories();
@@ -6059,10 +6191,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editAccount(${account.id})" data-tooltip="Editar cuenta">
+                                <button class="btn-primary" onclick="editAccount('${account.id}')" data-tooltip="Editar cuenta">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteAccount(${account.id})" data-tooltip="Eliminar cuenta">
+                                <button class="btn-danger" onclick="deleteAccount('${account.id}')" data-tooltip="Eliminar cuenta">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6117,22 +6249,6 @@
                         <label class="form-label">Precio (USD)</label>
                         <input type="text" id="admin-gold-price-price" placeholder="Ej: $24.99" maxlength="20">
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Entrega</label>
-                        <input type="text" id="admin-gold-price-delivery" placeholder="Ej: 5-15 minutos" maxlength="30">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Stock</label>
-                        <input type="number" id="admin-gold-price-stock" placeholder="0" min="0" value="10">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Estado</label>
-                        <select id="admin-gold-price-status">
-                            <option value="available">Disponible</option>
-                            <option value="limited">Stock Limitado</option>
-                            <option value="soldout">Agotado</option>
-                        </select>
-                    </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 15px;">
                     <button class="btn-primary" onclick="addGoldPriceFromAdmin()">
@@ -6164,18 +6280,6 @@
                     <div class="form-group">
                         <label class="form-label">Precio (USD)</label>
                         <input type="text" id="admin-gold-edit-price" placeholder="Ej: $24.99">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Stock</label>
-                        <input type="number" id="admin-gold-edit-stock" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Estado</label>
-                        <select id="admin-gold-edit-status">
-                            <option value="available">Disponible</option>
-                            <option value="limited">Stock Limitado</option>
-                            <option value="soldout">Agotado</option>
-                        </select>
                     </div>
                 </div>
 
@@ -6239,7 +6343,7 @@
                                         <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
-                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name}</h4>
+                                        <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name || category.game || "Juego sin nombre"}</h4>
                                         <div style="color: var(--text-gray); font-size: 0.95rem;">
                                             <i class="fas fa-gamepad"></i> ${category.game} ${category.server ? '• ' + category.server : ''}
                                         </div>
@@ -6262,10 +6366,10 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 12px; margin-left: 20px; flex-shrink: 0;">
-                                <button class="btn-primary" onclick="editGoldCategory(${category.id})" data-tooltip="Editar juego">
+                                <button class="btn-primary" onclick="editGoldCategory('${category.id}')" data-tooltip="Editar juego">
                                     <i class="fas fa-edit"></i> Editar
                                 </button>
-                                <button class="btn-danger" onclick="deleteGoldCategory(${category.id})" data-tooltip="Eliminar juego">
+                                <button class="btn-danger" onclick="deleteGoldCategory('${category.id}')" data-tooltip="Eliminar juego">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6355,7 +6459,7 @@
                                     ${servers.map(server => `
                                         <span style="background: rgba(200, 170, 109, 0.12); color: var(--wow-gold-light); padding: 6px 12px; border-radius: 20px; font-size: 0.9rem;">
                                             ${server.name}
-                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer(${server.id})" data-tooltip="Eliminar servidor">
+                                            <button class="btn-danger" style="margin-left: 8px; padding: 2px 8px; font-size: 0.7rem;" onclick="deleteGameServer('${server.id}')" data-tooltip="Eliminar servidor">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </span>
@@ -6426,7 +6530,7 @@
     }
 
     function deleteGameServer(id) {
-        const serverIndex = gameServers.findIndex(server => server.id === id);
+        const serverIndex = gameServers.findIndex(server => String(server.id) === String(id));
         if (serverIndex === -1) return;
 
         if (!confirm('¿Eliminar este servidor?')) return;
@@ -6437,6 +6541,106 @@
         updateGoldCategoryServerOptions();
         switchAdminTab('servers');
         showMessage('✅ Servidor eliminado', 'success');
+    }
+
+    function renderAdminServices() {
+        return `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
+                <h3 style="color: var(--wow-gold); font-size: 1.8rem;">Servicios (Admin)</h3>
+                <div class="stats-badge"><i class="fas fa-list"></i> ${services.length} servicios</div>
+            </div>
+
+            <div style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
+                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;"><i class="fas fa-plus"></i> Agregar servicio</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Categoría</label>
+                        <select id="admin-service-category">
+                            <option value="boosteo">Boosteo</option>
+                            <option value="profesiones">Profesiones</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Juego</label>
+                        <input type="text" id="admin-service-game" placeholder="Ej: WoW Privado" maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" id="admin-service-name" placeholder="Ej: Boosteo cualquier clase" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Precio (USD)</label>
+                        <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Imagen (URL)</label>
+                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Imagen (archivo)</label>
+                        <input type="file" id="admin-service-image-file" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción</label>
+                    <textarea id="admin-service-description" placeholder="Descripción del servicio" maxlength="300"></textarea>
+                </div>
+                <button class="btn-primary" onclick="addAdminService()"><i class="fas fa-save"></i> Guardar servicio</button>
+            </div>
+
+            <div style="max-height: 520px; overflow-y: auto; padding-right: 10px;">
+                ${services.map(service => `
+                    <div style="background: var(--panel); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--wow-gold); display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
+                        <div>
+                            <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;"><img src="${service.image || "https://i.imgur.com/ynvAS9B.png"}" alt="${service.name}" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"><div style="color: var(--wow-gold); font-weight:700;">${service.name} • $${service.price}</div></div>
+                            <div style="color: var(--text); margin-bottom:6px;">${service.game || 'Sin juego'} · ${(service.category || '').toUpperCase()}</div>
+                            <div style="color: var(--text-gray);">${service.description || 'Sin descripción'}</div>
+                        </div>
+                        <button class="btn-danger" onclick="deleteAdminService('${service.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                `).join('')}
+                ${services.length === 0 ? `<div style="text-align:center;color:var(--text-gray);padding:30px;">No hay servicios cargados.</div>` : ''}
+            </div>
+        `;
+    }
+
+    async function addAdminService() {
+        const category = document.getElementById('admin-service-category')?.value || 'boosteo';
+        const game = document.getElementById('admin-service-game')?.value.trim() || 'WoW';
+        const name = document.getElementById('admin-service-name')?.value.trim();
+        const price = document.getElementById('admin-service-price')?.value.trim();
+        const description = document.getElementById('admin-service-description')?.value.trim() || '';
+        const imageUrl = document.getElementById('admin-service-image')?.value.trim() || '';
+        const imageFile = document.getElementById('admin-service-image-file')?.files?.[0] || null;
+
+        if (!name) return showMessage('El nombre del servicio es obligatorio', 'error');
+        if (!price || !price.match(/^\$?\d+(\.\d{1,2})?$/)) return showMessage('Precio inválido. Usa 99 o 99.99', 'error');
+
+        let image = imageUrl || null;
+        if (imageFile) {
+            try {
+                image = await readFileAsDataUrl(imageFile);
+            } catch (error) {
+                showMessage('No se pudo cargar la imagen del archivo', 'error');
+                return;
+            }
+        }
+
+        const serviceId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        services.push({ id: serviceId, category, game, name, description, image, price: price.replace('$','') });
+        persistToDatabase('epicgoldshop_services', services);
+        switchAdminTab('services');
+        renderServices();
+        showMessage('✅ Servicio agregado con éxito', 'success');
+    }
+
+    function deleteAdminService(id) {
+        if (!confirm('¿Eliminar este servicio?')) return;
+        services = services.filter(service => String(service.id) !== String(id));
+        persistToDatabase('epicgoldshop_services', services);
+        switchAdminTab('services');
+        renderServices();
+        showMessage('✅ Servicio eliminado', 'success');
     }
 
     function renderAdminReferences() {
@@ -6484,7 +6688,7 @@
                                 </div>
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <button class="btn-danger" onclick="deleteReference(${ref.id})" data-tooltip="Eliminar referencia">
+                                <button class="btn-danger" onclick="deleteReference('${ref.id}')" data-tooltip="Eliminar referencia">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </div>
@@ -6824,7 +7028,7 @@
 }
 
     function editGoldCategory(id) {
-    const category = goldCategories.find(c => c.id === id);
+    const category = goldCategories.find(c => String(c.id) === String(id));
     if (!category) return;
 
     editingGoldCategoryId = id;
@@ -6833,7 +7037,7 @@
     document.getElementById('gold-category-modal-title').textContent = 'EDITAR JUEGO';
     document.getElementById('save-gold-category-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR JUEGO';
 
-    document.getElementById('gold-category-name').value = category.name;
+    document.getElementById('gold-category-name').value = category.name || category.game || '';
     document.getElementById('gold-category-description').value = category.description;
     document.getElementById('gold-category-image').value = category.image || '';
     document.getElementById('gold-category-image-file').value = '';
@@ -6887,7 +7091,7 @@
         }
 
         if (editingGoldCategoryId) {
-            const index = goldCategories.findIndex(c => c.id === editingGoldCategoryId);
+            const index = goldCategories.findIndex(c => String(c.id) === String(editingGoldCategoryId));
             if (index !== -1) {
                 goldCategories[index] = {
                     ...goldCategories[index],
@@ -6909,7 +7113,7 @@
             };
             goldCategories.push(newCategory);
 
-            showMessage('✅ Categoría de oro agregada exitosamente', 'success');
+            showMessage('✅ Agregado con éxito', 'success');
         }
 
         if (!categories.includes(game)) {
@@ -6933,7 +7137,7 @@
     function deleteGoldCategory(id) {
         if (!confirm('¿Estás seguro de eliminar esta categoría de oro? Esta acción no se puede deshacer.')) return;
 
-        const index = goldCategories.findIndex(c => c.id === id);
+        const index = goldCategories.findIndex(c => String(c.id) === String(id));
         if (index !== -1) {
             goldCategories.splice(index, 1);
         persistToDatabase('epicgoldshop_gold_categories', goldCategories);
@@ -6955,13 +7159,18 @@
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> GUARDAR CUENTA';
 
         document.getElementById('account-name').value = '';
-        document.getElementById('account-server').value = '';
         document.getElementById('account-description').value = '';
+        const accountServerCustomInput = document.getElementById('account-server-custom');
+        if (accountServerCustomInput) {
+            accountServerCustomInput.value = '';
+            accountServerCustomInput.style.display = 'none';
+        }
         document.getElementById('account-price').value = '';
         document.getElementById('account-image-url').value = '';
 
         // Actualizar select de categorías
         updateCategorySelects();
+        updateAccountServerOptions();
 
         const preview = document.getElementById('account-image-preview');
         preview.src = '';
@@ -6983,7 +7192,7 @@
     }
 
     function editAccount(id) {
-        const account = accounts.find(a => a.id === id);
+        const account = accounts.find(a => String(a.id) === String(id));
         if (!account) return;
 
         editingAccountId = id;
@@ -6994,7 +7203,6 @@
         document.getElementById('save-account-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR CUENTA';
 
         document.getElementById('account-name').value = account.name;
-        document.getElementById('account-server').value = account.server || '';
         document.getElementById('account-description').value = account.description;
         document.getElementById('account-price').value = account.price;
         document.getElementById('account-image-url').value = account.image;
@@ -7002,6 +7210,7 @@
         // Actualizar select de categorías
         updateCategorySelects();
         document.getElementById('account-category').value = account.category;
+        updateAccountServerOptions(account.server || '');
 
         const preview = document.getElementById('account-image-preview');
         preview.src = account.image;
@@ -7025,7 +7234,7 @@
     async function saveAccount() {
         const name = document.getElementById('account-name').value.trim();
         const category = document.getElementById('account-category').value;
-        const server = document.getElementById('account-server').value.trim();
+        const server = getSelectedAccountServer();
         const description = document.getElementById('account-description').value.trim();
         const price = document.getElementById('account-price').value.trim();
         const imageUrl = document.getElementById('account-image-url').value.trim();
@@ -7044,6 +7253,20 @@
             message.className = 'message error';
             message.style.display = 'block';
             document.getElementById('account-description').focus();
+            return;
+        }
+
+        if (!server) {
+            message.textContent = 'Selecciona un servidor válido';
+            message.className = 'message error';
+            message.style.display = 'block';
+            const accountServerSelect = document.getElementById('account-server-select');
+            const accountServerCustomInput = document.getElementById('account-server-custom');
+            if (accountServerSelect && accountServerSelect.value === 'custom' && accountServerCustomInput) {
+                accountServerCustomInput.focus();
+            } else if (accountServerSelect) {
+                accountServerSelect.focus();
+            }
             return;
         }
 
@@ -7082,7 +7305,7 @@
         const tags = generateTags(description, category, name);
 
         if (editingAccountId) {
-            const index = accounts.findIndex(a => a.id === editingAccountId);
+            const index = accounts.findIndex(a => String(a.id) === String(editingAccountId));
             if (index !== -1) {
                 accounts[index] = {
                     ...accounts[index],
@@ -7156,7 +7379,7 @@
     function deleteAccount(id) {
         if (!confirm('¿Estás seguro de eliminar esta cuenta? Esta acción no se puede deshacer.')) return;
 
-        const index = accounts.findIndex(a => a.id === id);
+        const index = accounts.findIndex(a => String(a.id) === String(id));
         if (index !== -1) {
             accounts.splice(index, 1);
         persistToDatabase('epicgoldshop_accounts', accounts);
@@ -7170,7 +7393,7 @@
     function deleteReference(id) {
         if (!confirm('¿Estás seguro de eliminar esta referencia? Esta acción no se puede deshacer.')) return;
 
-        const index = references.findIndex(ref => ref.id === id);
+        const index = references.findIndex(ref => String(ref.id) === String(id));
         if (index !== -1) {
             references.splice(index, 1);
         persistToDatabase('epicgoldshop_references', references);
@@ -7196,9 +7419,6 @@
         document.getElementById('gold-server-custom').style.display = 'none';
         document.getElementById('gold-amount').value = '';
         document.getElementById('gold-price').value = '';
-        document.getElementById('gold-delivery').value = '5-15 minutos';
-        document.getElementById('gold-stock').value = '10';
-        document.getElementById('gold-status').value = 'available';
 
         // Actualizar select de categorías
         updateCategorySelects();
@@ -7217,9 +7437,6 @@
         const server = getSelectedGoldServer();
         const amount = document.getElementById('gold-amount').value.trim();
         const price = document.getElementById('gold-price').value.trim();
-        const delivery = document.getElementById('gold-delivery').value.trim();
-        const stock = parseInt(document.getElementById('gold-stock').value) || 0;
-        const status = document.getElementById('gold-status').value;
         const message = document.getElementById('gold-message');
 
         if (!game) {
@@ -7270,26 +7487,15 @@
 
         const formattedPrice = price.startsWith('$') ? price : `$${price}`;
 
-        if (!delivery) {
-            message.textContent = 'El tiempo de entrega es obligatorio';
-            message.className = 'message error';
-            message.style.display = 'block';
-            document.getElementById('gold-delivery').focus();
-            return;
-        }
-
         if (editingGoldId) {
-            const index = gold.findIndex(g => g.id === editingGoldId);
+            const index = gold.findIndex(g => String(g.id) === String(editingGoldId));
             if (index !== -1) {
                 gold[index] = {
                     ...gold[index],
                     game,
                     server,
                     amount,
-                    price: formattedPrice,
-                    delivery,
-                    stock,
-                    status
+                    price: formattedPrice
                 };
 
                 showMessage('✅ Oro actualizado exitosamente', 'success');
@@ -7300,10 +7506,7 @@
                 game,
                 server,
                 amount,
-                price: formattedPrice,
-                delivery,
-                stock,
-                status
+                price: formattedPrice
             };
             gold.push(newGold);
 
@@ -7323,12 +7526,10 @@
     }
 
     function updateGold(id) {
-        const item = gold.find(g => g.id === id);
+        const item = gold.find(g => String(g.id) === String(id));
         if (!item) return;
 
         const newPrice = document.getElementById(`price-${id}`).value.trim();
-        const newStock = parseInt(document.getElementById(`stock-${id}`).value);
-        const newStatus = document.getElementById(`status-${id}`).value;
 
         if (!newPrice.match(/^\$?\d+(\.\d{2})?$/)) {
             showMessage('Formato de precio inválido. Usa: $99.99', 'error');
@@ -7338,8 +7539,6 @@
         const formattedPrice = newPrice.startsWith('$') ? newPrice : `$${newPrice}`;
 
         item.price = formattedPrice;
-        item.stock = isNaN(newStock) ? 0 : newStock;
-        item.status = newStatus;
         persistToDatabase('epicgoldshop_gold', gold);
         updateGoldOrderForm();
         showMessage('✅ Oro actualizado exitosamente', 'success');
@@ -7348,7 +7547,7 @@
     function deleteGold(id) {
         if (!confirm('¿Estás seguro de eliminar este paquete de oro?')) return;
 
-        const index = gold.findIndex(g => g.id === id);
+        const index = gold.findIndex(g => String(g.id) === String(id));
         if (index !== -1) {
             gold.splice(index, 1);
         persistToDatabase('epicgoldshop_gold', gold);
