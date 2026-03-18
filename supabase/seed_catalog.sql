@@ -215,50 +215,51 @@ begin
 end $$;
 
 -- SERVICIOS
-with source(category, game, name, description, price) as (
+with source(category, game, name, description, price, image) as (
   values
-    ('Boosteo', 'WoW Privado', 'Boosteo cualquier clase', 'Subida de personaje para cualquier clase en WoW privado.', 140),
-    ('Profesiones', 'WoW', 'Herboristería / Minería', 'Subida completa de profesión', 30),
-    ('Profesiones', 'WoW', 'Sastrería', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Cocina', 'Subida completa de profesión', 30),
-    ('Profesiones', 'WoW', 'Pesca', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Peletería', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Encantamiento', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Herrería', 'Subida completa de profesión', 50),
-    ('Profesiones', 'WoW', 'Ingeniería', 'Subida completa de profesión', 55),
-    ('Profesiones', 'WoW', 'Alquimia', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Crafting', 'Subida completa de profesión', 50),
-    ('Profesiones', 'WoW', 'Desuello', 'Subida completa de profesión', 30),
-    ('PVP', 'WoW', 'PVP Rank Boosting', 'Servicio por rango', 15)
+    ('Boosteo', 'WoW Privado', 'Boosteo cualquier clase', 'Subida de personaje para cualquier clase en WoW privado.', 140, null),
+    ('Profesiones', 'WoW', 'Herboristería / Minería', 'Subida completa de profesión', 30, null),
+    ('Profesiones', 'WoW', 'Sastrería', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Cocina', 'Subida completa de profesión', 30, null),
+    ('Profesiones', 'WoW', 'Pesca', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Peletería', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Encantamiento', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Herrería', 'Subida completa de profesión', 50, null),
+    ('Profesiones', 'WoW', 'Ingeniería', 'Subida completa de profesión', 55, null),
+    ('Profesiones', 'WoW', 'Alquimia', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Crafting', 'Subida completa de profesión', 50, null),
+    ('Profesiones', 'WoW', 'Desuello', 'Subida completa de profesión', 30, null),
+    ('PVP', 'WoW', 'PVP Rank Boosting', 'Servicio por rango', 15, null)
 )
 update public.services sv
 set
   description = s.description,
   price = s.price,
+  image = coalesce(s.image, sv.image),
   updated_at = now()
 from source s
 where coalesce(sv.category, '') = coalesce(s.category, '')
   and coalesce(sv.game, '') = coalesce(s.game, '')
   and sv.name = s.name;
 
-with source(category, game, name, description, price) as (
+with source(category, game, name, description, price, image) as (
   values
-    ('Boosteo', 'WoW Privado', 'Boosteo cualquier clase', 'Subida de personaje para cualquier clase en WoW privado.', 140),
-    ('Profesiones', 'WoW', 'Herboristería / Minería', 'Subida completa de profesión', 30),
-    ('Profesiones', 'WoW', 'Sastrería', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Cocina', 'Subida completa de profesión', 30),
-    ('Profesiones', 'WoW', 'Pesca', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Peletería', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Encantamiento', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Herrería', 'Subida completa de profesión', 50),
-    ('Profesiones', 'WoW', 'Ingeniería', 'Subida completa de profesión', 55),
-    ('Profesiones', 'WoW', 'Alquimia', 'Subida completa de profesión', 40),
-    ('Profesiones', 'WoW', 'Crafting', 'Subida completa de profesión', 50),
-    ('Profesiones', 'WoW', 'Desuello', 'Subida completa de profesión', 30),
-    ('PVP', 'WoW', 'PVP Rank Boosting', 'Servicio por rango', 15)
+    ('Boosteo', 'WoW Privado', 'Boosteo cualquier clase', 'Subida de personaje para cualquier clase en WoW privado.', 140, null),
+    ('Profesiones', 'WoW', 'Herboristería / Minería', 'Subida completa de profesión', 30, null),
+    ('Profesiones', 'WoW', 'Sastrería', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Cocina', 'Subida completa de profesión', 30, null),
+    ('Profesiones', 'WoW', 'Pesca', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Peletería', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Encantamiento', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Herrería', 'Subida completa de profesión', 50, null),
+    ('Profesiones', 'WoW', 'Ingeniería', 'Subida completa de profesión', 55, null),
+    ('Profesiones', 'WoW', 'Alquimia', 'Subida completa de profesión', 40, null),
+    ('Profesiones', 'WoW', 'Crafting', 'Subida completa de profesión', 50, null),
+    ('Profesiones', 'WoW', 'Desuello', 'Subida completa de profesión', 30, null),
+    ('PVP', 'WoW', 'PVP Rank Boosting', 'Servicio por rango', 15, null)
 )
-insert into public.services (category, game, name, description, price)
-select s.category, s.game, s.name, s.description, s.price
+insert into public.services (category, game, name, description, price, image)
+select s.category, s.game, s.name, s.description, s.price, s.image
 from source s
 where not exists (
   select 1

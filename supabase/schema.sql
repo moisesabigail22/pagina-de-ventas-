@@ -71,9 +71,13 @@ create table if not exists public.services (
   name text not null,
   description text,
   price numeric(12,2) not null default 0,
+  image text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.services
+  add column if not exists image text;
 
 -- Compatibilidad: migra datos de la tabla antigua "references" si existe.
 do $$
