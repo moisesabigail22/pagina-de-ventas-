@@ -40,11 +40,13 @@ create table if not exists public.gold (
   server text not null,
   amount integer not null default 0,
   price numeric(12,2) not null default 0,
-  delivery text,
-  stock text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.gold
+  drop column if exists delivery,
+  drop column if exists stock;
 
 create table if not exists public.accounts (
   id uuid primary key default gen_random_uuid(),

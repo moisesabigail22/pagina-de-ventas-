@@ -105,10 +105,10 @@ def build_sql(payload: dict[str, Any]) -> str:
             if isinstance(amount, str) and amount.isdigit():
                 amount = int(amount)
             values.append(
-                f"({sql_quote(r.get('game'))}, {sql_quote(r.get('server'))}, {sql_quote(amount)}, {sql_quote(r.get('price'))}, {sql_quote(r.get('delivery'))}, {sql_quote(r.get('stock'))})"
+                f"({sql_quote(r.get('game'))}, {sql_quote(r.get('server'))}, {sql_quote(amount)}, {sql_quote(r.get('price'))})"
             )
         lines.append(
-            "insert into public.gold (game, server, amount, price, delivery, stock) values\n  "
+            "insert into public.gold (game, server, amount, price) values\n  "
             + ",\n  ".join(values)
             + ";"
         )

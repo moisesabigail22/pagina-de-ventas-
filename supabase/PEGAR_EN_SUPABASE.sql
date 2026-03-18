@@ -44,11 +44,13 @@ create table if not exists public.gold (
   server text not null,
   amount integer not null default 0,
   price numeric(12,2) not null default 0,
-  delivery text,
-  stock text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.gold
+  drop column if exists delivery,
+  drop column if exists stock;
 
 create table if not exists public.accounts (
   id uuid primary key default gen_random_uuid(),
@@ -146,14 +148,12 @@ from tmp_backup_payload t,
 jsonb_array_elements(coalesce((t.payload->>'epicgoldshop_game_servers')::jsonb, '[]'::jsonb)) x;
 
 -- gold
-insert into public.gold (game, server, amount, price, delivery, stock)
+insert into public.gold (game, server, amount, price)
 select
   x->>'game',
   x->>'server',
   coalesce(nullif(x->>'amount','')::integer, 0),
-  coalesce(nullif(x->>'price','')::numeric, 0),
-  x->>'delivery',
-  x->>'stock'
+  coalesce(nullif(x->>'price','')::numeric, 0)
 from tmp_backup_payload t,
 jsonb_array_elements(coalesce((t.payload->>'epicgoldshop_gold')::jsonb, '[]'::jsonb)) x;
 

@@ -43,7 +43,7 @@ with source(name, game, server, description, image) as (
   values
     ('WoW Turtle', 'WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
     ('WoW Privado', 'WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
-    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
+    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con precio verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
 )
 update public.gold_categories gc
 set
@@ -58,7 +58,7 @@ with source(name, game, server, description, image) as (
   values
     ('WoW Turtle', 'WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
     ('WoW Privado', 'WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
-    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
+    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con precio verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
 )
 insert into public.gold_categories (name, game, server, description, image)
 select coalesce(s.name, s.game), s.game, s.server, s.description, s.image
@@ -105,51 +105,49 @@ begin
   limit 1;
 
   if amount_type = 'text' then
-    with source(game, server, amount_text, price, delivery, stock) as (
+    with source(game, server, amount_text, price) as (
       values
-        ('WoW Turtle', 'Ambershire', '100', 3.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Nordanaar', '100', 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Telabim', '100', 4.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'South Sea', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Bronzebeard', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Warmane', '1000', 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00, '15-40 minutos', 'Disponible')
+        ('WoW Turtle', 'Ambershire', '100', 3.50),
+        ('WoW Turtle', 'Nordanaar', '100', 2.50),
+        ('WoW Turtle', 'Telabim', '100', 4.50),
+        ('WoW Turtle', 'South Sea', '100', 3.00),
+        ('WoW Privado', 'Bronzebeard', '100', 3.00),
+        ('WoW Privado', 'Warmane', '1000', 2.50),
+        ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00),
+        ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00),
+        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80),
+        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60),
+        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40),
+        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00),
+        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00)
     )
     update public.gold g
     set
       price = s.price,
-      delivery = s.delivery,
-      stock = s.stock,
       updated_at = now()
     from source s
     where g.game = s.game
       and g.server = s.server
       and g.amount = s.amount_text;
 
-    with source(game, server, amount_text, price, delivery, stock) as (
+    with source(game, server, amount_text, price) as (
       values
-        ('WoW Turtle', 'Ambershire', '100', 3.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Nordanaar', '100', 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Telabim', '100', 4.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'South Sea', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Bronzebeard', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Warmane', '1000', 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00, '15-40 minutos', 'Disponible')
+        ('WoW Turtle', 'Ambershire', '100', 3.50),
+        ('WoW Turtle', 'Nordanaar', '100', 2.50),
+        ('WoW Turtle', 'Telabim', '100', 4.50),
+        ('WoW Turtle', 'South Sea', '100', 3.00),
+        ('WoW Privado', 'Bronzebeard', '100', 3.00),
+        ('WoW Privado', 'Warmane', '1000', 2.50),
+        ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00),
+        ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00),
+        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80),
+        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60),
+        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40),
+        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00),
+        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00)
     )
-    insert into public.gold (game, server, amount, price, delivery, stock)
-    select s.game, s.server, s.amount_text, s.price, s.delivery, s.stock
+    insert into public.gold (game, server, amount, price)
+    select s.game, s.server, s.amount_text, s.price
     from source s
     where not exists (
       select 1
@@ -159,51 +157,49 @@ begin
         and g.amount = s.amount_text
     );
   else
-    with source(game, server, amount_int, price, delivery, stock) as (
+    with source(game, server, amount_int, price) as (
       values
-        ('WoW Turtle', 'Ambershire', 100, 3.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Nordanaar', 100, 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Telabim', 100, 4.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'South Sea', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Bronzebeard', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Warmane', 1000, 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00, '15-40 minutos', 'Disponible')
+        ('WoW Turtle', 'Ambershire', 100, 3.50),
+        ('WoW Turtle', 'Nordanaar', 100, 2.50),
+        ('WoW Turtle', 'Telabim', 100, 4.50),
+        ('WoW Turtle', 'South Sea', 100, 3.00),
+        ('WoW Privado', 'Bronzebeard', 100, 3.00),
+        ('WoW Privado', 'Warmane', 1000, 2.50),
+        ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00),
+        ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00),
+        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80),
+        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60),
+        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40),
+        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00),
+        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00)
     )
     update public.gold g
     set
       price = s.price,
-      delivery = s.delivery,
-      stock = s.stock,
       updated_at = now()
     from source s
     where g.game = s.game
       and g.server = s.server
       and g.amount = s.amount_int;
 
-    with source(game, server, amount_int, price, delivery, stock) as (
+    with source(game, server, amount_int, price) as (
       values
-        ('WoW Turtle', 'Ambershire', 100, 3.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Nordanaar', 100, 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'Telabim', 100, 4.50, '5-20 minutos', 'Disponible'),
-        ('WoW Turtle', 'South Sea', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Bronzebeard', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Warmane', 1000, 2.50, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00, '5-20 minutos', 'Disponible'),
-        ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00, '5-20 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00, '15-40 minutos', 'Disponible'),
-        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00, '15-40 minutos', 'Disponible')
+        ('WoW Turtle', 'Ambershire', 100, 3.50),
+        ('WoW Turtle', 'Nordanaar', 100, 2.50),
+        ('WoW Turtle', 'Telabim', 100, 4.50),
+        ('WoW Turtle', 'South Sea', 100, 3.00),
+        ('WoW Privado', 'Bronzebeard', 100, 3.00),
+        ('WoW Privado', 'Warmane', 1000, 2.50),
+        ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00),
+        ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00),
+        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80),
+        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60),
+        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40),
+        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00),
+        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00)
     )
-    insert into public.gold (game, server, amount, price, delivery, stock)
-    select s.game, s.server, s.amount_int, s.price, s.delivery, s.stock
+    insert into public.gold (game, server, amount, price)
+    select s.game, s.server, s.amount_int, s.price
     from source s
     where not exists (
       select 1
