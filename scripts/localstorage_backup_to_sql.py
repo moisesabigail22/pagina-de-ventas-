@@ -78,10 +78,10 @@ def build_sql(payload: dict[str, Any]) -> str:
         values = []
         for r in gold_categories:
             values.append(
-                f"({sql_quote(r.get('game'))}, {sql_quote(r.get('server'))}, {sql_quote(r.get('description'))}, {sql_quote(r.get('image'))})"
+                f"({sql_quote(r.get('name') or r.get('game'))}, {sql_quote(r.get('game'))}, {sql_quote(r.get('server'))}, {sql_quote(r.get('description'))}, {sql_quote(r.get('image'))})"
             )
         lines.append(
-            "insert into public.gold_categories (game, server, description, image) values\n  "
+            "insert into public.gold_categories (name, game, server, description, image) values\n  "
             + ",\n  ".join(values)
             + ";"
         )

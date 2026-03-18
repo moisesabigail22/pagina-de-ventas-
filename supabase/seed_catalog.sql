@@ -39,28 +39,29 @@ from (
 where not exists (select 1 from public.settings);
 
 -- CATEGORÍAS DE ORO
-with source(game, server, description, image) as (
+with source(name, game, server, description, image) as (
   values
-    ('WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
-    ('WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
-    ('WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
+    ('WoW Turtle', 'WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
+    ('WoW Privado', 'WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
+    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
 )
 update public.gold_categories gc
 set
+  name = coalesce(s.name, s.game),
   description = s.description,
   image = s.image,
   updated_at = now()
 from source s
 where gc.game = s.game and coalesce(gc.server, '') = coalesce(s.server, '');
 
-with source(game, server, description, image) as (
+with source(name, game, server, description, image) as (
   values
-    ('WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
-    ('WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
-    ('WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
+    ('WoW Turtle', 'WoW Turtle', 'Nordanaar', 'Gold para Turtle WoW en servidores Ambershire, Nordanaar, Telabim y South Sea.', 'https://i.imgur.com/wwQK4J5.jpeg'),
+    ('WoW Privado', 'WoW Privado', 'Warmane', 'Gold para servidores privados incluyendo Bronzebeard, Warmane y Project Epoch.', 'https://i.imgur.com/E3a0Q5L.jpeg'),
+    ('WoW Oficial', 'WoW Oficial', 'Nightslayer A/H', 'Gold para servidor oficial con stock verificado.', 'https://i.imgur.com/5Yh4leB.jpeg')
 )
-insert into public.gold_categories (game, server, description, image)
-select s.game, s.server, s.description, s.image
+insert into public.gold_categories (name, game, server, description, image)
+select coalesce(s.name, s.game), s.game, s.server, s.description, s.image
 from source s
 where not exists (
   select 1

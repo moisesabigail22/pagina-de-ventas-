@@ -3780,6 +3780,7 @@
     let editingAccountId = null;
     let editingGoldId = null;
     let editingGoldCategoryId = null;
+    let editingServiceId = null;
     let currentImageData = null;
     let currentFilter = 'all';
     let isDropdownOpen = false;
@@ -4940,8 +4941,10 @@
                 }
 
                 if (table === 'gold_categories') {
+                    const gameName = (r.game || r.name || '').trim();
                     return {
-                        game: (r.game || '').trim(),
+                        name: (r.name || gameName).trim() || null,
+                        game: gameName,
                         server: (r.server || '').trim(),
                         description: r.description || null,
                         image: r.image || null
@@ -6777,6 +6780,62 @@
         showMessage('✅ Servidor eliminado', 'success');
     }
 
+    function resetAdminServiceForm() {
+        editingServiceId = null;
+        const categoryInput = document.getElementById('admin-service-category');
+        const gameInput = document.getElementById('admin-service-game');
+        const nameInput = document.getElementById('admin-service-name');
+        const priceInput = document.getElementById('admin-service-price');
+        const imageInput = document.getElementById('admin-service-image');
+        const imageFileInput = document.getElementById('admin-service-image-file');
+        const descriptionInput = document.getElementById('admin-service-description');
+        const title = document.getElementById('admin-service-form-title');
+        const saveBtn = document.getElementById('admin-service-save-btn');
+        const cancelBtn = document.getElementById('admin-service-cancel-btn');
+
+        if (categoryInput) categoryInput.value = 'boosteo';
+        if (gameInput) gameInput.value = '';
+        if (nameInput) nameInput.value = '';
+        if (priceInput) priceInput.value = '';
+        if (imageInput) imageInput.value = '';
+        if (imageFileInput) imageFileInput.value = '';
+        if (descriptionInput) descriptionInput.value = '';
+        if (title) title.innerHTML = '<i class="fas fa-plus"></i> Agregar servicio';
+        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar servicio';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    function editAdminService(id) {
+        const service = services.find(item => String(item.id) === String(id));
+        if (!service) return showMessage('No se encontró el servicio a editar', 'error');
+
+        editingServiceId = String(id);
+        const categoryInput = document.getElementById('admin-service-category');
+        const gameInput = document.getElementById('admin-service-game');
+        const nameInput = document.getElementById('admin-service-name');
+        const priceInput = document.getElementById('admin-service-price');
+        const imageInput = document.getElementById('admin-service-image');
+        const imageFileInput = document.getElementById('admin-service-image-file');
+        const descriptionInput = document.getElementById('admin-service-description');
+        const title = document.getElementById('admin-service-form-title');
+        const saveBtn = document.getElementById('admin-service-save-btn');
+        const cancelBtn = document.getElementById('admin-service-cancel-btn');
+
+        if (categoryInput) categoryInput.value = service.category || 'boosteo';
+        if (gameInput) gameInput.value = service.game || '';
+        if (nameInput) nameInput.value = service.name || '';
+        if (priceInput) priceInput.value = String(service.price || '');
+        if (imageInput) imageInput.value = service.image?.startsWith('data:image/') ? '' : (service.image || '');
+        if (imageFileInput) imageFileInput.value = '';
+        if (descriptionInput) descriptionInput.value = service.description || '';
+        if (title) title.innerHTML = '<i class="fas fa-edit"></i> Editar servicio';
+        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> Actualizar servicio';
+        if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+
+        const formCard = document.getElementById('admin-service-form-card');
+        if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function renderAdminServices() {
         return `
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; gap: 20px;">
@@ -6784,31 +6843,31 @@
                 <div class="stats-badge"><i class="fas fa-list"></i> ${services.length} servicios</div>
             </div>
 
-            <div style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
-                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;"><i class="fas fa-plus"></i> Agregar servicio</h4>
+            <div id="admin-service-form-card" style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
+                <h4 id="admin-service-form-title" style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;"><i class="fas fa-plus"></i> ${editingServiceId ? 'Editar servicio' : 'Agregar servicio'}</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Categoría</label>
                         <select id="admin-service-category">
-                            <option value="boosteo">Boosteo</option>
-                            <option value="profesiones">Profesiones</option>
+                            <option value="boosteo" ${editingServiceId && services.find(s => String(s.id) === String(editingServiceId))?.category === 'boosteo' ? 'selected' : ''}>Boosteo</option>
+                            <option value="profesiones" ${editingServiceId && services.find(s => String(s.id) === String(editingServiceId))?.category === 'profesiones' ? 'selected' : ''}>Profesiones</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Juego</label>
-                        <input type="text" id="admin-service-game" placeholder="Ej: WoW Privado" maxlength="60">
+                        <input type="text" id="admin-service-game" placeholder="Ej: WoW Privado" maxlength="60" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.game || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nombre</label>
-                        <input type="text" id="admin-service-name" placeholder="Ej: Boosteo cualquier clase" maxlength="100">
+                        <input type="text" id="admin-service-name" placeholder="Ej: Boosteo cualquier clase" maxlength="100" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.name || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Precio (USD)</label>
-                        <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20">
+                        <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.price || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Imagen (URL)</label>
-                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500">
+                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500" value="${editingServiceId ? ((services.find(s => String(s.id) === String(editingServiceId))?.image || '').startsWith('data:image/') ? '' : (services.find(s => String(s.id) === String(editingServiceId))?.image || '')) : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Imagen (archivo)</label>
@@ -6817,9 +6876,12 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
-                    <textarea id="admin-service-description" placeholder="Descripción del servicio" maxlength="300"></textarea>
+                    <textarea id="admin-service-description" placeholder="Descripción del servicio" maxlength="300">${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.description || '') : ''}</textarea>
                 </div>
-                <button class="btn-primary" onclick="addAdminService()"><i class="fas fa-save"></i> Guardar servicio</button>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button id="admin-service-save-btn" class="btn-primary" onclick="saveAdminService()"><i class="fas fa-save"></i> ${editingServiceId ? 'Actualizar servicio' : 'Guardar servicio'}</button>
+                    <button id="admin-service-cancel-btn" class="btn-danger" onclick="resetAdminServiceForm()" style="display:${editingServiceId ? 'inline-flex' : 'none'};"><i class="fas fa-times"></i> Cancelar edición</button>
+                </div>
             </div>
 
             <div style="max-height: 520px; overflow-y: auto; padding-right: 10px;">
@@ -6830,7 +6892,10 @@
                             <div style="color: var(--text); margin-bottom:6px;">${service.game || 'Sin juego'} · ${(service.category || '').toUpperCase()}</div>
                             <div style="color: var(--text-gray);">${service.description || 'Sin descripción'}</div>
                         </div>
-                        <button class="btn-danger" onclick="deleteAdminService('${service.id}')"><i class="fas fa-trash"></i></button>
+                        <div style="display:flex; gap:10px; flex-shrink:0;">
+                            <button class="btn-primary" onclick="editAdminService('${service.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-danger" onclick="deleteAdminService('${service.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
                 `).join('')}
                 ${services.length === 0 ? `<div style="text-align:center;color:var(--text-gray);padding:30px;">No hay servicios cargados.</div>` : ''}
@@ -6838,7 +6903,7 @@
         `;
     }
 
-    async function addAdminService() {
+    async function saveAdminService() {
         const category = document.getElementById('admin-service-category')?.value || 'boosteo';
         const game = document.getElementById('admin-service-game')?.value.trim() || 'WoW';
         const name = document.getElementById('admin-service-name')?.value.trim();
@@ -6850,7 +6915,8 @@
         if (!name) return showMessage('El nombre del servicio es obligatorio', 'error');
         if (!price || !price.match(/^\$?\d+(\.\d{1,2})?$/)) return showMessage('Precio inválido. Usa 99 o 99.99', 'error');
 
-        let image = imageUrl || null;
+        const existingService = services.find(service => String(service.id) === String(editingServiceId));
+        let image = imageUrl || existingService?.image || null;
         if (imageFile) {
             try {
                 image = await readFileAsDataUrl(imageFile);
@@ -6860,17 +6926,29 @@
             }
         }
 
-        const serviceId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-        services.push(...normalizeServiceCatalog([{ id: serviceId, category, game, name, description, image, price: price.replace('$','') }]));
+        const serviceId = existingService?.id || ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+        const normalizedService = normalizeServiceCatalog([{ id: serviceId, category, game, name, description, image, price: price.replace('$','') }])[0];
+
+        if (existingService) {
+            const index = services.findIndex(service => String(service.id) === String(editingServiceId));
+            if (index !== -1) services[index] = normalizedService;
+        } else {
+            services.push(normalizedService);
+        }
+
         persistToDatabase('epicgoldshop_services', services);
+        resetAdminServiceForm();
         switchAdminTab('services');
         renderServices();
-        showMessage('✅ Servicio agregado con éxito', 'success');
+        showMessage(existingService ? '✅ Servicio actualizado con éxito' : '✅ Servicio agregado con éxito', 'success');
     }
 
     function deleteAdminService(id) {
         if (!confirm('¿Eliminar este servicio?')) return;
         services = services.filter(service => String(service.id) !== String(id));
+        if (String(editingServiceId) === String(id)) {
+            editingServiceId = null;
+        }
         persistToDatabase('epicgoldshop_services', services);
         switchAdminTab('services');
         renderServices();

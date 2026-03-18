@@ -15,6 +15,7 @@ create table if not exists public.settings (
 
 create table if not exists public.gold_categories (
   id uuid primary key default gen_random_uuid(),
+  name text,
   game text not null,
   server text,
   description text,
@@ -22,6 +23,9 @@ create table if not exists public.gold_categories (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.gold_categories
+  add column if not exists name text;
 
 create table if not exists public.game_servers (
   id uuid primary key default gen_random_uuid(),
