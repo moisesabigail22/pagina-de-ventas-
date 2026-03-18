@@ -48,6 +48,7 @@ def normalize_references(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def build_sql(payload: dict[str, Any]) -> str:
     settings = parse_json_field(payload, "epicgoldshop_settings", {})
+    account_categories = parse_json_field(payload, "epicgoldshop_categories", [])
     gold_categories = parse_json_field(payload, "epicgoldshop_gold_categories", [])
     game_servers = parse_json_field(payload, "epicgoldshop_game_servers", [])
     gold = parse_json_field(payload, "epicgoldshop_gold", [])
@@ -62,6 +63,7 @@ def build_sql(payload: dict[str, Any]) -> str:
     lines.append("delete from public.gold_categories;")
     lines.append("delete from public.game_servers;")
     lines.append("delete from public.accounts;")
+    lines.append("delete from public.account_categories;")
     lines.append("delete from public.customer_references;")
     lines.append("delete from public.settings;")
     if services:
@@ -118,10 +120,10 @@ def build_sql(payload: dict[str, Any]) -> str:
         values = []
         for r in services:
             values.append(
-                f"({sql_quote(r.get('category'))}, {sql_quote(r.get('game'))}, {sql_quote(r.get('name'))}, {sql_quote(r.get('description'))}, {sql_quote(r.get('price'))})"
+                f"({sql_quote(r.get('category'))}, {sql_quote(r.get('game'))}, {sql_quote(r.get('name'))}, {sql_quote(r.get('description'))}, {sql_quote(r.get('price'))}, {sql_quote(r.get('image'))})"
             )
         lines.append(
-            "insert into public.services (category, game, name, description, price) values\n  "
+            "insert into public.services (category, game, name, description, price, image) values\n  "
             + ",\n  ".join(values)
             + ";"
         )
@@ -139,6 +141,33 @@ def build_sql(payload: dict[str, Any]) -> str:
             "insert into public.accounts (type, category, server, name, description, price, image, tags) values\n  "
             + ",\n  ".join(values)
             + ";"
+        )
+
+    normalized_account_categories = []
+    for row in account_categories:
+        if isinstance(row, str):
+            category_name = row.strip()
+        elif isinstance(row, dict):
+            category_name = str(row.get("name") or row.get("category") or "").strip()
+        else:
+            category_name = ""
+        if category_name:
+            normalized_account_categories.append(category_name)
+
+    for row in accounts:
+        category_name = str(row.get("category") or "").strip()
+        if category_name:
+            normalized_account_categories.append(category_name)
+
+    normalized_account_categories = sorted(set(normalized_account_categories))
+
+    if normalized_account_categories:
+        lines.append("\n-- account_categories")
+        values = [f"({sql_quote(category_name)})" for category_name in normalized_account_categories]
+        lines.append(
+            "insert into public.account_categories (name) values\n  "
+            + ",\n  ".join(values)
+            + "\non conflict (name) do nothing;"
         )
 
     if references:
@@ -164,6 +193,7 @@ union all select 'game_servers', count(*) from public.game_servers
 union all select 'gold', count(*) from public.gold
 union all select 'services', count(*) from public.services
 union all select 'accounts', count(*) from public.accounts
+union all select 'account_categories', count(*) from public.account_categories
 union all select 'customer_references', count(*) from public.customer_references
 order by table_name;
 """.strip()

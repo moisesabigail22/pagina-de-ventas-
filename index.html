@@ -4086,6 +4086,119 @@
         }));
     }
 
+    function normalizeAccountCategories(categoryRows = [], accountRows = []) {
+        const categoriesFromTable = Array.isArray(categoryRows)
+            ? categoryRows
+                .map((row) => {
+                    if (typeof row === 'string') return row.trim();
+                    return (row?.name || row?.category || '').trim();
+                })
+                .filter(Boolean)
+            : [];
+
+        const categoriesFromAccounts = Array.isArray(accountRows)
+            ? accountRows
+                .map((account) => (account?.category || '').trim())
+                .filter(Boolean)
+            : [];
+
+        return Array.from(new Set([...categoriesFromTable, ...categoriesFromAccounts]))
+            .sort((leftCategory, rightCategory) => leftCategory.localeCompare(rightCategory, 'es', { sensitivity: 'base' }));
+    }
+
+    function normalizeReferenceRecords(rows = []) {
+        if (!Array.isArray(rows)) return [];
+
+        return rows.map((reference) => {
+            const userName = String(reference.name || reference.userName || 'Cliente').trim() || 'Cliente';
+            const possibleDate = reference.created_at || reference.date || null;
+            const parsedDate = possibleDate ? new Date(possibleDate) : null;
+            const hasValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime());
+
+            return {
+                id: reference.id,
+                userName,
+                userInitial: userName.charAt(0).toUpperCase(),
+                rating: Number.isFinite(Number(reference.rating)) ? Number(reference.rating) : 5,
+                text: reference.comment || reference.text || '',
+                image: reference.image || null,
+                date: hasValidDate
+                    ? parsedDate.toLocaleDateString('es-ES')
+                    : (typeof reference.date === 'string' ? reference.date : '')
+            };
+        });
+    }
+
+    async function loadReferenceRows() {
+        const primaryResult = await supabaseClient
+            .from('customer_references')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (!primaryResult.error && Array.isArray(primaryResult.data) && primaryResult.data.length > 0) {
+            return {
+                rows: primaryResult.data,
+                source: 'customer_references'
+            };
+        }
+
+        const legacyResult = await supabaseClient
+            .from('references')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (!legacyResult.error && Array.isArray(legacyResult.data) && legacyResult.data.length > 0) {
+            connectionLog('Usando tabla legacy "references" para cargar referencias existentes.', 'warning');
+            return {
+                rows: legacyResult.data,
+                source: 'references'
+            };
+        }
+
+        if (!primaryResult.error) {
+            return {
+                rows: primaryResult.data || [],
+                source: 'customer_references',
+                error: null
+            };
+        }
+
+        if (!legacyResult.error) {
+            return {
+                rows: legacyResult.data || [],
+                source: 'references',
+                error: null
+            };
+        }
+
+        return {
+            rows: [],
+            source: 'customer_references',
+            error: primaryResult.error || legacyResult.error || null
+        };
+    }
+
+    async function resolveReferencesTable() {
+        const primaryProbe = await supabaseClient
+            .from('customer_references')
+            .select('id', { count: 'exact', head: true });
+
+        if (!primaryProbe.error) {
+            return 'customer_references';
+        }
+
+        const legacyProbe = await supabaseClient
+            .from('references')
+            .select('id', { count: 'exact', head: true });
+
+        if (!legacyProbe.error) {
+            connectionLog('Persistiendo referencias en la tabla legacy "references".', 'warning');
+            return 'references';
+        }
+
+        throw primaryProbe.error || legacyProbe.error || new Error('No se encontró tabla de referencias en la base de datos');
+    }
+
     let accounts = [];
     let gold = [];
     let goldCategories = [];
@@ -4744,13 +4857,14 @@
     }
 
     async function loadData() {
-        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, refsRes, servicesRes] = await Promise.all([
+        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes] = await Promise.all([
             supabaseClient.from('settings').select('*').limit(1).maybeSingle(),
             supabaseClient.from('gold_categories').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('game_servers').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('gold').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('accounts').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('customer_references').select('*').order('created_at', { ascending: true }),
+            supabaseClient.from('account_categories').select('*').order('name', { ascending: true }),
+            loadReferenceRows(),
             supabaseClient.from('services').select('*').order('created_at', { ascending: true })
         ]);
 
@@ -4804,20 +4918,17 @@
             accounts = Array.isArray(accountsRes.data) ? accountsRes.data : [];
         }
 
+        if (accountCategoriesRes.error) {
+            connectionLog(`Error account_categories: ${accountCategoriesRes.error.message}. Se usarán categorías derivadas de cuentas.`, 'warning');
+        }
+
+        categories = normalizeAccountCategories(accountCategoriesRes.data, accounts);
+
         if (refsRes.error) {
-            connectionLog(`Error customer_references: ${refsRes.error.message}`, 'error');
+            connectionLog(`Error referencias (${refsRes.source || 'customer_references'}): ${refsRes.error.message}`, 'error');
             references = [];
         } else {
-            references = Array.isArray(refsRes.data)
-                ? refsRes.data.map(r => ({
-                    id: r.id,
-                    userName: r.name || 'Cliente',
-                    userInitial: (r.name || 'C').charAt(0).toUpperCase(),
-                    rating: r.rating || 5,
-                    text: r.comment || '',
-                    date: r.created_at ? new Date(r.created_at).toLocaleDateString('es-ES') : ''
-                }))
-                : [];
+            references = normalizeReferenceRecords(refsRes.rows);
         }
 
         if (servicesRes.error) {
@@ -4832,8 +4943,6 @@
                 services = normalizeServiceCatalog(defaultServiceCatalog);
             }
         }
-
-        categories = Array.from(new Set(goldCategories.map(c => c.game).filter(Boolean))).sort();
 
         if (!Array.isArray(gameServers) || gameServers.length === 0) {
             gameServers = buildGameServersFromData();
@@ -4869,17 +4978,15 @@
                 epicgoldshop_game_servers: 'game_servers',
                 epicgoldshop_gold: 'gold',
                 epicgoldshop_accounts: 'accounts',
-                epicgoldshop_references: 'customer_references',
+                epicgoldshop_categories: 'account_categories',
                 epicgoldshop_services: 'services'
             };
 
-            const table = tableMap[key];
-            if (!table || !Array.isArray(parsed)) return;
+            if (key === 'epicgoldshop_references') {
+                const table = await resolveReferencesTable();
+                const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                if (delRes.error) throw delRes.error;
 
-            const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
-            if (delRes.error) throw delRes.error;
-
-            if (table === 'customer_references') {
                 const rows = parsed.map((r) => ({
                     name: r.name || r.userName || 'Cliente',
                     comment: r.comment || r.text || '',
@@ -4893,6 +5000,12 @@
                 connectionLog(`${table} sincronizado (${rows.length} filas)`, 'success');
                 return;
             }
+
+            const table = tableMap[key];
+            if (!table || !Array.isArray(parsed)) return;
+
+            const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            if (delRes.error) throw delRes.error;
 
             const rows = parsed.map((r) => {
                 if (table === 'gold') {
@@ -4936,6 +5049,16 @@
                     };
                 }
 
+                if (table === 'account_categories') {
+                    const categoryName = typeof r === 'string'
+                        ? r.trim()
+                        : (r.name || r.category || '').trim();
+
+                    return {
+                        name: categoryName || null
+                    };
+                }
+
                 if (table === 'services') {
                     return {
                         category: r.category || 'servicios',
@@ -4953,6 +5076,7 @@
                 if (table === 'game_servers') return Boolean(r.game && r.name);
                 if (table === 'gold_categories') return Boolean(r.game);
                 if (table === 'accounts') return Boolean(r.name);
+                if (table === 'account_categories') return Boolean(r.name);
                 if (table === 'services') return Boolean(r.name);
                 return true;
             });
@@ -7437,11 +7561,6 @@
             showMessage('✅ Agregado con éxito', 'success');
         }
 
-        if (!categories.includes(game)) {
-            categories.push(game);
-            categories.sort();
-        persistToDatabase('epicgoldshop_categories', categories);
-        }
         persistToDatabase('epicgoldshop_gold_categories', goldCategories);
         syncGameImagesFromCategories();
         closeModal();

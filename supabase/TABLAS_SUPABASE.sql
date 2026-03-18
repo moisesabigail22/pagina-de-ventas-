@@ -62,6 +62,13 @@ create table if not exists public.accounts (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.account_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.customer_references (
   id uuid primary key default gen_random_uuid(),
   name text not null,

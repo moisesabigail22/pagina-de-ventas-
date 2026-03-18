@@ -66,6 +66,13 @@ create table if not exists public.accounts (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.account_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.customer_references (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -113,6 +120,7 @@ truncate table
   public.gold_categories,
   public.game_servers,
   public.accounts,
+  public.account_categories,
   public.customer_references,
   public.settings,
   public.services
@@ -171,6 +179,20 @@ select
 from tmp_backup_payload t,
 jsonb_array_elements(coalesce((t.payload->>'epicgoldshop_accounts')::jsonb, '[]'::jsonb)) x;
 
+-- account_categories
+insert into public.account_categories (name)
+select distinct trim(value #>> '{}')
+from tmp_backup_payload t,
+jsonb_array_elements(coalesce((t.payload->>'epicgoldshop_categories')::jsonb, '[]'::jsonb)) value
+where coalesce(trim(value #>> '{}'), '') <> '';
+
+insert into public.account_categories (name)
+select distinct trim(x->>'category')
+from tmp_backup_payload t,
+jsonb_array_elements(coalesce((t.payload->>'epicgoldshop_accounts')::jsonb, '[]'::jsonb)) x
+where coalesce(trim(x->>'category'), '') <> ''
+on conflict (name) do nothing;
+
 -- customer_references (soporta name/comment o userName/text)
 insert into public.customer_references (name, comment, rating, image)
 select
@@ -203,6 +225,7 @@ union all select 'gold_categories', count(*) from public.gold_categories
 union all select 'game_servers', count(*) from public.game_servers
 union all select 'gold', count(*) from public.gold
 union all select 'accounts', count(*) from public.accounts
+union all select 'account_categories', count(*) from public.account_categories
 union all select 'customer_references', count(*) from public.customer_references
 union all select 'services', count(*) from public.services
 order by table_name;
@@ -227,6 +250,10 @@ for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage accounts" on public.accounts;
 create policy "anon manage accounts" on public.accounts
+for all to anon using (true) with check (true);
+
+drop policy if exists "anon manage account_categories" on public.account_categories;
+create policy "anon manage account_categories" on public.account_categories
 for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage services" on public.services;

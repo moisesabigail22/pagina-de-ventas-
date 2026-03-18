@@ -61,6 +61,13 @@ create table if not exists public.accounts (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.account_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create table if not exists public.customer_references (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -101,9 +108,17 @@ begin
   end if;
 end $$;
 
+-- Compatibilidad: crea categorías de cuentas a partir de las cuentas ya existentes.
+insert into public.account_categories (name)
+select distinct trim(a.category)
+from public.accounts a
+where coalesce(trim(a.category), '') <> ''
+on conflict (name) do nothing;
+
 create index if not exists idx_gold_game_server on public.gold(game, server);
 create index if not exists idx_game_servers_game on public.game_servers(game);
 create index if not exists idx_accounts_category on public.accounts(category);
+create index if not exists idx_account_categories_name on public.account_categories(name);
 create unique index if not exists uq_gold_categories_game_server on public.gold_categories(game, server);
 create unique index if not exists uq_game_servers_game_name on public.game_servers(game, name);
 create unique index if not exists uq_gold_game_server_amount on public.gold(game, server, amount);
@@ -139,6 +154,11 @@ create trigger trg_accounts_updated_at
 before update on public.accounts
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_account_categories_updated_at on public.account_categories;
+create trigger trg_account_categories_updated_at
+before update on public.account_categories
+for each row execute function public.set_updated_at();
+
 drop trigger if exists trg_services_updated_at on public.services;
 create trigger trg_services_updated_at
 before update on public.services
@@ -150,6 +170,7 @@ alter table public.gold_categories enable row level security;
 alter table public.game_servers enable row level security;
 alter table public.gold enable row level security;
 alter table public.accounts enable row level security;
+alter table public.account_categories enable row level security;
 alter table public.customer_references enable row level security;
 alter table public.services enable row level security;
 
@@ -172,6 +193,10 @@ for select to anon using (true);
 
 drop policy if exists "public read accounts" on public.accounts;
 create policy "public read accounts" on public.accounts
+for select to anon using (true);
+
+drop policy if exists "public read account_categories" on public.account_categories;
+create policy "public read account_categories" on public.account_categories
 for select to anon using (true);
 
 drop policy if exists "public read customer_references" on public.customer_references;
@@ -202,6 +227,10 @@ for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage accounts" on public.accounts;
 create policy "anon manage accounts" on public.accounts
+for all to anon using (true) with check (true);
+
+drop policy if exists "anon manage account_categories" on public.account_categories;
+create policy "anon manage account_categories" on public.account_categories
 for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage services" on public.services;
