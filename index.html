@@ -1105,9 +1105,12 @@
 
         .gold-order-option-cover {
             width: 100%;
-            height: 180px;
-            object-fit: cover;
+            height: 200px;
+            object-fit: contain;
+            object-position: center;
             display: block;
+            padding: 16px;
+            background: linear-gradient(180deg, rgba(5,5,5,.92), rgba(12,28,44,.96));
             border-bottom: 1px solid rgba(200, 170, 109, 0.35);
         }
 
@@ -5281,7 +5284,6 @@
 
             return `
             <button class="gold-order-option" type="button" data-game="${game}">
-                <span class="gold-order-option-badge">Compra rápida</span>
                 <img class="gold-order-option-cover" src="${image}" alt="${game}" loading="lazy" onerror="this.onerror=null;this.src='${getGameImage(game)}';">
                 <div class="gold-order-option-content">
                     <div class="gold-order-option-title">${game}</div>
@@ -6053,7 +6055,12 @@
                     <h3 style="color: var(--wow-gold); margin-bottom:8px;">${service.name}</h3>
                     <div style="color: var(--text-gray); font-size: .95rem; margin-bottom:8px;">${service.game || 'WoW'} • ${(service.category || 'servicios').toUpperCase()}</div>
                     <p style="color: var(--text-gray); min-height: 48px;">${service.description || ''}</p>
-                    <div style="color: var(--text); font-weight: 800; font-size: 1.2rem; margin-top:10px;">$${service.price}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:14px;">
+                        <div style="color: var(--text); font-weight: 800; font-size: 1.2rem;">$${service.price}</div>
+                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" style="padding: 12px 22px; font-size: 1rem;">
+                            <i class="fab fa-discord"></i> CONTACTAR
+                        </a>
+                    </div>
                 </div>
             </div>
         `).join('');
