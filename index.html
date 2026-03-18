@@ -5331,6 +5331,32 @@
             showGoldOrderStep('details');
         }
     }
+    function parseGoldOrderAmount(value) {
+        const normalizedValue = String(value || '')
+            .trim()
+            .replace(/,/g, '')
+            .toUpperCase();
+
+        if (!normalizedValue) {
+            return 0;
+        }
+
+        const amount = parseFloat(normalizedValue);
+        if (Number.isNaN(amount)) {
+            return 0;
+        }
+
+        if (normalizedValue.endsWith('K')) {
+            return amount * 1000;
+        }
+
+        if (normalizedValue.endsWith('M')) {
+            return amount * 1000000;
+        }
+
+        return amount;
+    }
+
     function updateGoldOrderAmountOptions() {
         const detailContainer = document.getElementById('gold-order-step-details');
         const amountSelect = document.getElementById('gold-order-amount');
@@ -5350,7 +5376,9 @@
             return;
         }
 
-        const packages = gold.filter(item => item.game === selectedGame && item.server === selectedServer);
+        const packages = gold
+            .filter(item => item.game === selectedGame && item.server === selectedServer)
+            .sort((leftPackage, rightPackage) => parseGoldOrderAmount(leftPackage.amount) - parseGoldOrderAmount(rightPackage.amount));
         if (packages.length === 0) {
             amountSelect.innerHTML = '<option value="">Sin paquetes disponibles</option>';
             amountSelect.value = '';
