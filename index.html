@@ -5701,7 +5701,8 @@
                 throw invokeError;
             }
 
-            showGoldOrderMessage('✅ Ticket enviado correctamente. Te estamos llevando a Discord.', 'success');
+            const createdChannelLabel = data && data.channel_name ? ` Canal creado: #${data.channel_name}.` : '';
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Te estamos llevando a Discord.`, 'success');
             window.open((data && data.discord_url) || settings.discord || DISCORD_LINK, '_blank', 'noopener,noreferrer');
         } catch (submitError) {
             console.error(submitError);
