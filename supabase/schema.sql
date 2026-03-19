@@ -61,6 +61,9 @@ create table if not exists public.accounts (
   updated_at timestamptz not null default now()
 );
 
+alter table if exists public.accounts
+  add column if not exists image text;
+
 create table if not exists public.account_categories (
   id uuid primary key default gen_random_uuid(),
   name text not null unique,
