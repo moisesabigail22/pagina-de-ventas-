@@ -70,18 +70,6 @@ where not exists (
 );
 
 -- SERVIDORES
-delete from public.game_servers wrong
-using public.game_servers correct
-where wrong.name = 'South Sea'
-  and wrong.game <> 'WoW Turtle'
-  and correct.name = 'South Sea'
-  and correct.game = 'WoW Turtle';
-
-update public.game_servers
-set game = 'WoW Turtle'
-where name = 'South Sea'
-  and game <> 'WoW Turtle';
-
 with source(game, name) as (
   values
     ('WoW Turtle', 'Ambershire'),
@@ -104,21 +92,6 @@ where not exists (
 );
 
 -- ORO (compatibilidad: amount puede ser INTEGER o TEXT según esquema previo)
-delete from public.gold wrong
-using public.gold correct
-where wrong.server = 'South Sea'
-  and wrong.game <> 'WoW Turtle'
-  and correct.server = 'South Sea'
-  and correct.game = 'WoW Turtle'
-  and correct.amount::text = wrong.amount::text;
-
-update public.gold
-set
-  game = 'WoW Turtle',
-  updated_at = now()
-where server = 'South Sea'
-  and game <> 'WoW Turtle';
-
 do $$
 declare
   amount_type text;
