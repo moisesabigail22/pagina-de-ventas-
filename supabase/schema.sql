@@ -95,6 +95,16 @@ create table if not exists public.services (
 alter table if exists public.services
   add column if not exists image text;
 
+create table if not exists public.payment_methods (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  image text,
+  info_type text not null default 'payment_id',
+  info_value text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 -- Compatibilidad: migra datos de la tabla antigua "references" si existe.
 do $$
 begin
@@ -127,6 +137,7 @@ create unique index if not exists uq_game_servers_game_name on public.game_serve
 create unique index if not exists uq_gold_game_server_amount on public.gold(game, server, amount);
 create unique index if not exists uq_services_category_game_name on public.services(category, game, name);
 create unique index if not exists uq_settings_singleton on public.settings((true));
+create unique index if not exists uq_payment_methods_name_info on public.payment_methods(name, info_type, info_value);
 
 -- Trigger genérico para updated_at
 create or replace function public.set_updated_at()
@@ -167,6 +178,11 @@ create trigger trg_services_updated_at
 before update on public.services
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_payment_methods_updated_at on public.payment_methods;
+create trigger trg_payment_methods_updated_at
+before update on public.payment_methods
+for each row execute function public.set_updated_at();
+
 -- RLS base: activado (las políticas de acceso se afinan en siguiente fase)
 alter table public.settings enable row level security;
 alter table public.gold_categories enable row level security;
@@ -176,6 +192,7 @@ alter table public.accounts enable row level security;
 alter table public.account_categories enable row level security;
 alter table public.customer_references enable row level security;
 alter table public.services enable row level security;
+alter table public.payment_methods enable row level security;
 
 -- Lectura pública temporal (catálogo)
 drop policy if exists "public read settings" on public.settings;
@@ -210,6 +227,10 @@ drop policy if exists "public read services" on public.services;
 create policy "public read services" on public.services
 for select to anon using (true);
 
+drop policy if exists "public read payment_methods" on public.payment_methods;
+create policy "public read payment_methods" on public.payment_methods
+for select to anon using (true);
+
 
 -- Escritura desde el panel actual (cliente con anon key)
 drop policy if exists "anon manage settings" on public.settings;
@@ -238,6 +259,10 @@ for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage services" on public.services;
 create policy "anon manage services" on public.services
+for all to anon using (true) with check (true);
+
+drop policy if exists "anon manage payment_methods" on public.payment_methods;
+create policy "anon manage payment_methods" on public.payment_methods
 for all to anon using (true) with check (true);
 
 drop policy if exists "anon manage customer_references" on public.customer_references;

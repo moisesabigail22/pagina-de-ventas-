@@ -12,7 +12,9 @@ type GoldTicketPayload = {
   faction?: string;
   character?: string;
   trade?: string;
-  discord_user_id?: string;
+  payment_method_name?: string;
+  payment_method_label?: string;
+  payment_method_value?: string;
   custom_amount?: boolean;
   source?: string;
   created_at?: string;
@@ -94,7 +96,8 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
       { name: 'Facción', value: payload.faction, inline: true },
       { name: 'Trade', value: payload.trade, inline: true },
       { name: 'Personaje', value: payload.character, inline: true },
-      { name: 'Usuario Discord', value: `<@${payload.discord_user_id}> (${payload.discord_user_id})`, inline: false },
+      { name: 'Método de pago', value: payload.payment_method_name, inline: true },
+      { name: payload.payment_method_label, value: payload.payment_method_value, inline: true },
       { name: 'Tipo', value: payload.custom_amount ? 'Cantidad específica' : 'Paquete estándar', inline: true },
       { name: 'Origen', value: payload.source, inline: true }
     ],
@@ -143,11 +146,6 @@ async function createGuildChannel(
     DISCORD_PERMISSION_READ_HISTORY |
     DISCORD_PERMISSION_MANAGE_CHANNELS
   ).toString();
-  const customerAllow = (
-    DISCORD_PERMISSION_VIEW_CHANNEL |
-    DISCORD_PERMISSION_SEND_MESSAGES |
-    DISCORD_PERMISSION_READ_HISTORY
-  ).toString();
 
   const permissionOverwrites: DiscordPermissionOverwrite[] = [
     {
@@ -166,15 +164,6 @@ async function createGuildChannel(
       deny: '0'
     });
   });
-
-  if (payload.discord_user_id) {
-    permissionOverwrites.push({
-      id: payload.discord_user_id,
-      type: 1,
-      allow: customerAllow,
-      deny: '0'
-    });
-  }
 
   return await discordApi<DiscordChannelResponse>(`/guilds/${guildId}/channels`, token, {
     method: 'POST',
@@ -241,7 +230,7 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     channel_id: channel.id,
     channel_name: channel.name || channelName,
     discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
-    customer_visibility: payload.discord_user_id ? 'granted' : 'missing_discord_user_id'
+    customer_visibility: 'admins_only'
   };
 }
 
@@ -261,16 +250,11 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'discord_user_id'] as const;
+  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'payment_method_name', 'payment_method_label', 'payment_method_value'] as const;
   for (const field of requiredFields) {
     if (!payload[field] || !String(payload[field]).trim()) {
       return jsonResponse({ error: `Missing field: ${field}` }, 400);
     }
-  }
-
-  const discordUserId = normalizeDiscordUserId(String(payload.discord_user_id));
-  if (!discordUserId) {
-    return jsonResponse({ error: 'Invalid discord_user_id. Provide a Discord user ID, mention, or profile link that contains the user ID.' }, 400);
   }
 
   const safePayload: Required<GoldTicketPayload> = {
@@ -281,7 +265,9 @@ Deno.serve(async (request) => {
     faction: String(payload.faction).trim(),
     character: String(payload.character).trim().slice(0, 80),
     trade: String(payload.trade).trim(),
-    discord_user_id: discordUserId,
+    payment_method_name: String(payload.payment_method_name).trim(),
+    payment_method_label: String(payload.payment_method_label).trim(),
+    payment_method_value: String(payload.payment_method_value).trim(),
     custom_amount: Boolean(payload.custom_amount),
     source: String(payload.source || 'web_gold_order').trim(),
     created_at: String(payload.created_at || new Date().toISOString())
