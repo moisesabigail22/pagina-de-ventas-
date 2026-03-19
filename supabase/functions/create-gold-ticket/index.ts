@@ -73,6 +73,15 @@ function normalizeDiscordUserId(value: string) {
   return match ? match[1] : '';
 }
 
+function parseDiscordUserIdList(value: string) {
+  return Array.from(new Set(
+    String(value || '')
+      .split(',')
+      .map((entry) => normalizeDiscordUserId(entry))
+      .filter(Boolean)
+  ));
+}
+
 function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
   return {
     title: 'Nuevo ticket de compra de oro',
@@ -122,13 +131,13 @@ async function createGuildChannel(
   token: string,
   guildId: string,
   parentId: string,
-  supportRoleId: string,
+  adminUserIds: DiscordSnowflake[],
   channelName: string,
   payload: Required<GoldTicketPayload>
 ) {
   const everyoneAllow = '0';
   const everyoneDeny = DISCORD_PERMISSION_VIEW_CHANNEL.toString();
-  const supportAllow = (
+  const adminAllow = (
     DISCORD_PERMISSION_VIEW_CHANNEL |
     DISCORD_PERMISSION_SEND_MESSAGES |
     DISCORD_PERMISSION_READ_HISTORY |
@@ -146,14 +155,17 @@ async function createGuildChannel(
       type: 0,
       allow: everyoneAllow,
       deny: everyoneDeny
-    },
-    {
-      id: supportRoleId,
-      type: 0,
-      allow: supportAllow,
-      deny: '0'
     }
   ];
+
+  adminUserIds.forEach((adminUserId) => {
+    permissionOverwrites.push({
+      id: adminUserId,
+      type: 1,
+      allow: adminAllow,
+      deny: '0'
+    });
+  });
 
   if (payload.discord_user_id) {
     permissionOverwrites.push({
@@ -218,27 +230,31 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const guildId = getEnv('DISCORD_GUILD_ID');
   const categoryId = getEnv('DISCORD_WEB_CATEGORY_ID');
   const logChannelId = getEnv('DISCORD_WEB_LOG_CHANNEL_ID');
-  const supportRoleId = getEnv('DISCORD_WEB_SUPPORT_ROLE_ID');
+  const adminUserIds = parseDiscordUserIdList(getEnv('DISCORD_WEB_ADMIN_IDS'));
   const ticketPrefix = getEnv('DISCORD_TICKET_PREFIX', 'ticket-oro');
 
   const missingSecrets = [
     ['DISCORD_BOT_TOKEN', botToken],
     ['DISCORD_GUILD_ID', guildId],
-    ['DISCORD_WEB_CATEGORY_ID', categoryId],
-    ['DISCORD_WEB_LOG_CHANNEL_ID', logChannelId],
-    ['DISCORD_WEB_SUPPORT_ROLE_ID', supportRoleId]
+    ['DISCORD_WEB_CATEGORY_ID', categoryId]
   ].filter(([, value]) => !value).map(([name]) => name);
 
   if (missingSecrets.length > 0) {
     throw new Error(`Missing Discord bot secrets: ${missingSecrets.join(', ')}`);
   }
 
+  if (adminUserIds.length === 0) {
+    throw new Error('Missing Discord admin visibility config: set DISCORD_WEB_ADMIN_IDS with one or more admin user IDs.');
+  }
+
   const channelName = buildTicketName(ticketPrefix, payload.character);
-  const channel = await createGuildChannel(botToken, guildId, categoryId, supportRoleId, channelName, payload);
+  const channel = await createGuildChannel(botToken, guildId, categoryId, adminUserIds, channelName, payload);
   const embed = buildDiscordEmbed(payload);
+  const adminMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
+  const openingMessage = adminMentions || 'Nuevo pedido desde la web.';
 
   await postChannelMessage(botToken, channel.id, {
-    content: `<@&${supportRoleId}> Nuevo pedido desde la web.`,
+    content: openingMessage,
     embeds: [embed]
   });
 

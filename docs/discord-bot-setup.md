@@ -6,7 +6,7 @@ Esta guía es para el caso en que quieres que:
 - presione **Comprar**,
 - complete el formulario,
 - y se cree un **ticket privado en Discord**
-- visible **solo para tu staff y para ese comprador**.
+- visible **solo para tus usuarios admin y para ese comprador**.
 
 > **Importante:** este flujo **NO debe usar webhook**. Debe usar tu **bot propio** porque el código crea permisos privados por usuario dentro de Discord. En el código actual eso depende de `DISCORD_TICKET_MODE` y de los `permission_overwrites` que se agregan al canal. Si usas webhook, el comprador no se agrega automáticamente al ticket privado.
 
@@ -23,7 +23,7 @@ Cuando el usuario compra oro en la web:
 4. La función convierte ese valor a un **Discord user ID real**.
 5. La función crea un canal privado en tu servidor.
 6. La función deja acceso a:
-   - tu rol de soporte,
+   - tus usuarios admin configurados,
    - y el usuario de Discord indicado en el formulario.
 7. La función devuelve la URL del canal para abrir Discord directamente.
 
@@ -79,13 +79,17 @@ En tu servidor de Discord:
 Guarda el **ID de la categoría**.
 Ese valor será `DISCORD_WEB_CATEGORY_ID`.
 
-## Paso 4: crear o elegir el rol de soporte
+## Paso 4: definir qué admins verán los tickets
 
-1. Crea un rol, por ejemplo:
-   - `Soporte Web`
-2. Asigna ese rol a tus moderadores o vendedores.
-3. Guarda el **ID del rol**.
-Ese valor será `DISCORD_WEB_SUPPORT_ROLE_ID`.
+1. Decide qué usuarios concretos de Discord verán los tickets privados.
+2. Copia el **ID de usuario** de cada admin.
+3. Guarda esos IDs separados por coma en el secret `DISCORD_WEB_ADMIN_IDS`.
+
+Ejemplo:
+
+```
+123456789012345678,234567890123456789
+```
 
 ## Paso 5: crear un canal de logs opcional
 
@@ -96,7 +100,7 @@ Crea un canal donde quieras que el bot publique aviso de nuevos tickets, por eje
 Guarda el **ID del canal**.
 Ese valor será `DISCORD_WEB_LOG_CHANNEL_ID`.
 
-> Si no quieres logs separados, puedes usar otro canal privado para staff.
+> Si no quieres logs separados, puedes usar otro canal privado solo para admins.
 
 ## Paso 6: obtener los IDs que te pide el sistema
 
@@ -104,14 +108,14 @@ Necesitas estos IDs:
 
 - **Guild ID** → `DISCORD_GUILD_ID`
 - **Category ID** → `DISCORD_WEB_CATEGORY_ID`
-- **Support Role ID** → `DISCORD_WEB_SUPPORT_ROLE_ID`
+- **Admin User IDs** → `DISCORD_WEB_ADMIN_IDS` (lista separada por comas)
 - **Log Channel ID** → `DISCORD_WEB_LOG_CHANNEL_ID`
 
 Para obtenerlos:
 
 1. En Discord abre **Configuración avanzada**.
 2. Activa **Modo desarrollador**.
-3. Haz clic derecho sobre servidor / categoría / rol / canal.
+3. Haz clic derecho sobre servidor / categoría / usuario admin / canal.
 4. Usa **Copiar ID**.
 
 ## Paso 7: configurar los secrets en Supabase
@@ -124,7 +128,7 @@ supabase secrets set DISCORD_BOT_TOKEN="TU_BOT_TOKEN"
 supabase secrets set DISCORD_GUILD_ID="TU_GUILD_ID"
 supabase secrets set DISCORD_WEB_CATEGORY_ID="TU_CATEGORY_ID"
 supabase secrets set DISCORD_WEB_LOG_CHANNEL_ID="TU_LOG_CHANNEL_ID"
-supabase secrets set DISCORD_WEB_SUPPORT_ROLE_ID="TU_SUPPORT_ROLE_ID"
+supabase secrets set DISCORD_WEB_ADMIN_IDS="ID_ADMIN_1,ID_ADMIN_2"
 supabase secrets set DISCORD_TICKET_PREFIX="Ticket Oro"
 ```
 
@@ -148,7 +152,7 @@ Para tickets privados por usuario, **no** debes depender del modo webhook.
 La function `create-gold-ticket` usa dos caminos:
 
 - `webhook` → crea publicación/hilo, pero **no agrega automáticamente al comprador** al ticket privado.
-- `bot` → crea un canal privado y le da permisos al usuario de Discord indicado.
+- `bot` → crea un canal privado y le da permisos a los admins configurados y al usuario de Discord indicado.
 
 Para tu caso, el valor correcto es:
 
@@ -179,7 +183,7 @@ Cuando llega el pedido:
 1. El bot crea un canal nuevo dentro de la categoría configurada.
 2. El canal queda oculto para `@everyone`.
 3. El canal queda visible para:
-   - tu rol de soporte,
+   - tus usuarios admin configurados,
    - y el usuario de Discord del comprador.
 4. El bot publica el embed con:
    - juego,
@@ -203,7 +207,7 @@ Haz esta prueba de punta a punta:
 4. En el campo de Discord pega la mención o link de ese usuario.
 5. Envía el ticket.
 6. Verifica que:
-   - el staff vea el canal,
+   - los admins configurados vean el canal,
    - el usuario de prueba vea el canal,
    - otro usuario normal del servidor **no** lo vea.
 
@@ -216,7 +220,8 @@ Revisa:
 - que el usuario sí esté dentro de tu servidor,
 - que el bot tenga permisos para crear canales,
 - que el ID copiado pertenezca al usuario correcto,
-- que el rol del bot esté por encima o con permisos suficientes.
+- que los IDs puestos en `DISCORD_WEB_ADMIN_IDS` sean los correctos,
+- que el bot tenga permisos suficientes.
 
 ### 2. El sistema abre Discord pero no muestra el canal
 Puede pasar si:
@@ -240,14 +245,14 @@ Por eso el formulario ahora acepta mejor:
 - [ ] Bot creado en Discord Developer Portal.
 - [ ] Bot invitado a tu servidor.
 - [ ] Categoría privada para tickets creada.
-- [ ] Rol de soporte creado.
+- [ ] IDs de los admins copiados.
 - [ ] Canal de logs creado.
 - [ ] IDs copiados con modo desarrollador.
 - [ ] Secrets cargados en Supabase.
 - [ ] `DISCORD_TICKET_MODE=bot` configurado.
 - [ ] Function `create-gold-ticket` desplegada.
 - [ ] Prueba real hecha con un usuario dentro del servidor.
-- [ ] Confirmado que solo staff + comprador ven el ticket.
+- [ ] Confirmado que solo admins configurados + comprador ven el ticket.
 
 ## Recomendación práctica
 
