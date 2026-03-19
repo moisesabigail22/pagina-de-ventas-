@@ -195,36 +195,6 @@ async function postChannelMessage(token: string, channelId: string, body: Record
   });
 }
 
-async function createWebhookTicket(webhookUrl: string, ticketPrefix: string, payload: Required<GoldTicketPayload>) {
-  const safeCharacter = String(payload.character).trim().slice(0, 40);
-  const threadName = `${ticketPrefix} • ${safeCharacter}`;
-  const discordBody = {
-    content: `Nueva solicitud de oro para **${payload.character}**`,
-    thread_name: threadName,
-    embeds: [buildDiscordEmbed(payload)]
-  };
-
-  const discordResponse = await fetch(webhookUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(discordBody)
-  });
-
-  if (!discordResponse.ok) {
-    const errorText = await discordResponse.text();
-    throw new Error(`Discord webhook failed: ${errorText}`);
-  }
-
-  return {
-    ok: true,
-    mode: 'webhook',
-    thread_name: threadName,
-    customer_visibility: 'not_supported_in_webhook_mode'
-  };
-}
-
 async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const botToken = getEnv('DISCORD_BOT_TOKEN');
   const guildId = getEnv('DISCORD_GUILD_ID');
@@ -317,26 +287,14 @@ Deno.serve(async (request) => {
     created_at: String(payload.created_at || new Date().toISOString())
   };
 
-  const webhookUrl = getEnv('DISCORD_WEBHOOK_URL');
-  const ticketMode = getEnv('DISCORD_TICKET_MODE', webhookUrl ? 'webhook' : 'channel').toLowerCase();
-
   try {
-    if (ticketMode === 'webhook') {
-      if (!webhookUrl) {
-        return jsonResponse({ error: 'Missing DISCORD_WEBHOOK_URL secret' }, 500);
-      }
-
-      const ticketPrefix = getEnv('DISCORD_TICKET_PREFIX', 'Ticket Oro');
-      return jsonResponse(await createWebhookTicket(webhookUrl, ticketPrefix, safePayload));
-    }
-
     return jsonResponse(await createBotTicket(safePayload));
   } catch (error) {
     console.error(error);
     return jsonResponse({
       error: 'Ticket creation failed',
       details: error instanceof Error ? error.message : String(error),
-      mode: ticketMode
+      mode: 'bot'
     }, 502);
   }
 });

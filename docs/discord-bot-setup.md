@@ -8,7 +8,7 @@ Esta guía es para el caso en que quieres que:
 - y se cree un **ticket privado en Discord**
 - visible **solo para tus usuarios admin y para ese comprador**.
 
-> **Importante:** este flujo **NO debe usar webhook**. Debe usar tu **bot propio** porque el código crea permisos privados por usuario dentro de Discord. En el código actual eso depende de `DISCORD_TICKET_MODE` y de los `permission_overwrites` que se agregan al canal. Si usas webhook, el comprador no se agrega automáticamente al ticket privado.
+> **Importante:** este flujo ahora quedó **solo con bot propio**. Ya no dependas de webhook para oro. La function `create-gold-ticket` crea el canal privado usando tu bot y los `permission_overwrites` para admins configurados + comprador.
 
 ## Cómo funciona el flujo actual
 
@@ -120,10 +120,20 @@ Para obtenerlos:
 
 ## Paso 7: configurar los secrets en Supabase
 
+Dónde pegas esos comandos:
+
+1. Abre una terminal en tu PC o servidor donde tengas instalado **Supabase CLI**.
+2. Ve a la carpeta de este proyecto.
+3. Si todavía no has vinculado el proyecto, ejecuta `supabase link --project-ref TU_PROJECT_REF`.
+4. Luego pega ahí mismo los comandos `supabase secrets set ...`.
+
+Si prefieres no usar terminal, también puedes poner esos mismos secrets desde el panel de Supabase en:
+
+**Project Settings → Edge Functions / Secrets**.
+
 Para tickets privados con bot propio, configura estos secrets:
 
 ```bash
-supabase secrets set DISCORD_TICKET_MODE=bot
 supabase secrets set DISCORD_BOT_TOKEN="TU_BOT_TOKEN"
 supabase secrets set DISCORD_GUILD_ID="TU_GUILD_ID"
 supabase secrets set DISCORD_WEB_CATEGORY_ID="TU_CATEGORY_ID"
@@ -145,20 +155,17 @@ supabase functions deploy create-account-ticket
 supabase functions deploy create-service-ticket
 ```
 
-## Paso 9: verificar que NO estás usando webhook
+## Paso 9: desactivar webhook y dejar solo tu bot
 
-Para tickets privados por usuario, **no** debes depender del modo webhook.
+Para oro, la function ya quedó preparada para trabajar **solo con tu bot**.
 
-La function `create-gold-ticket` usa dos caminos:
+Entonces:
 
-- `webhook` → crea publicación/hilo, pero **no agrega automáticamente al comprador** al ticket privado.
-- `bot` → crea un canal privado y le da permisos a los admins configurados y al usuario de Discord indicado.
+- no necesitas `DISCORD_WEBHOOK_URL`,
+- no necesitas `DISCORD_TICKET_MODE`,
+- y no necesitas configurar nada de webhook para este flujo.
 
-Para tu caso, el valor correcto es:
-
-```bash
-DISCORD_TICKET_MODE=bot
-```
+Con que cargues los secrets del bot y despliegues la function, el flujo de oro ya usará únicamente tu bot.
 
 ## Paso 10: qué debe hacer el usuario en la web
 
@@ -216,7 +223,6 @@ Haz esta prueba de punta a punta:
 ### 1. El ticket se crea pero el comprador no lo ve
 Revisa:
 
-- que `DISCORD_TICKET_MODE=bot`,
 - que el usuario sí esté dentro de tu servidor,
 - que el bot tenga permisos para crear canales,
 - que el ID copiado pertenezca al usuario correcto,
@@ -249,7 +255,6 @@ Por eso el formulario ahora acepta mejor:
 - [ ] Canal de logs creado.
 - [ ] IDs copiados con modo desarrollador.
 - [ ] Secrets cargados en Supabase.
-- [ ] `DISCORD_TICKET_MODE=bot` configurado.
 - [ ] Function `create-gold-ticket` desplegada.
 - [ ] Prueba real hecha con un usuario dentro del servidor.
 - [ ] Confirmado que solo admins configurados + comprador ven el ticket.
