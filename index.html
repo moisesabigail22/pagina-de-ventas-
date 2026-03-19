@@ -3909,11 +3909,8 @@
                 </div>
                 <div style="display:flex; gap:12px; flex-wrap:wrap; width:100%;">
                     <button class="btn-buy gold-order-cta" id="gold-order-submit" type="button" onclick="submitGoldOrderTicket()">
-                        <i class="fas fa-ticket-alt"></i> ENVIAR Y ABRIR TICKET
+                        <i class="fas fa-ticket-alt"></i> CREAR TICKET
                     </button>
-                    <a class="btn-secondary gold-order-cta" id="gold-order-cta" href="https://discord.gg/Smk5T3se3H" target="_blank">
-                        <i class="fab fa-discord"></i> IR A DISCORD
-                    </a>
                 </div>
             </div>
             <div class="message" id="gold-order-message" style="display:none; margin-top:16px;"></div>
@@ -5910,7 +5907,7 @@
             return;
         }
 
-        showGoldOrderMessage('Enviando solicitud a Discord...', 'info');
+        showGoldOrderMessage('Creando ticket...', 'info');
 
         try {
             const { data, error: invokeError } = await supabaseClient.functions.invoke('create-gold-ticket', {
@@ -5922,11 +5919,18 @@
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Canal creado: #${data.channel_name}.` : '';
-            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Te estamos llevando a Discord.`, 'success');
-            window.open((data && data.discord_url) || settings.discord || DISCORD_LINK, '_blank', 'noopener,noreferrer');
+            const redirectMessage = data && data.discord_url
+                ? ' Se abrirá Discord para continuar con el seguimiento.'
+                : ' Nuestro equipo verá la solicitud y te responderá por el canal configurado.';
+
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}${redirectMessage}`, 'success');
+
+            if (data && data.discord_url) {
+                window.open(data.discord_url, '_blank', 'noopener,noreferrer');
+            }
         } catch (submitError) {
             console.error(submitError);
-            showGoldOrderMessage('No se pudo crear el ticket automático. Usa el botón de Discord mientras se revisa la integración.', 'error');
+            showGoldOrderMessage('No se pudo crear el ticket automático. Inténtalo nuevamente en unos segundos.', 'error');
         }
     }
 
@@ -6149,7 +6153,6 @@
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
-        const cta = document.getElementById('gold-order-cta');
 
         if (!amountSelect || !priceEl) return;
 
@@ -6163,13 +6166,11 @@
             if (!customQuote) {
                 priceEl.textContent = 'Mínimo 1000';
                 setGoldOrderSubmitEnabled(false);
-                if (cta) cta.href = settings?.discord || DISCORD_LINK;
                 return;
             }
 
             priceEl.textContent = customQuote.price;
             setGoldOrderSubmitEnabled(true);
-            if (cta) cta.href = settings?.discord || DISCORD_LINK;
             return;
         }
 
@@ -6179,13 +6180,11 @@
         if (!item) {
             priceEl.textContent = '-';
             setGoldOrderSubmitEnabled(false);
-            if (cta) cta.href = settings?.discord || DISCORD_LINK;
             return;
         }
 
         priceEl.textContent = item.price;
         setGoldOrderSubmitEnabled(true);
-        if (cta) cta.href = settings?.discord || DISCORD_LINK;
     }
 
     function updateGoldOrderForm() {
