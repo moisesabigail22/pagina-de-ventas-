@@ -3042,6 +3042,21 @@
             color: var(--wow-blue-dark);
         }
 
+        #google_translate_element {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
+
+        .goog-te-banner-frame.skiptranslate,
+        iframe.skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
     </style>
 </head>
 <body>
@@ -3064,6 +3079,8 @@
         </div>
     </div>
 </div>
+
+<div id="google_translate_element" aria-hidden="true"></div>
 
 <!-- Fondo WoW -->
 <div class="wow-bg"></div>
@@ -5983,6 +6000,41 @@
         }
     }
 
+    function googleTranslateElementInit() {
+        if (!window.google?.translate?.TranslateElement) return;
+        new window.google.translate.TranslateElement({
+            pageLanguage: 'es',
+            includedLanguages: 'es,en',
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    function setGoogleTranslateLanguage(lang = 'es') {
+        const combo = document.querySelector('.goog-te-combo');
+        if (!combo) {
+            return false;
+        }
+
+        if (combo.value !== lang) {
+            combo.value = lang;
+            combo.dispatchEvent(new Event('change'));
+        }
+
+        return true;
+    }
+
+    function syncGoogleTranslate(lang = 'es', attempts = 0) {
+        if (setGoogleTranslateLanguage(lang)) {
+            return;
+        }
+
+        if (attempts >= 10) {
+            return;
+        }
+
+        setTimeout(() => syncGoogleTranslate(lang, attempts + 1), 400);
+    }
+
     function applyEntryLanguage(lang = 'es') {
         currentLanguage = lang === 'en' ? 'en' : 'es';
         const copy = ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es;
@@ -6030,6 +6082,7 @@
 
     function enterStore(lang = 'es') {
         applyEntryLanguage(lang);
+        syncGoogleTranslate(lang);
         const gate = document.getElementById('entry-gate');
         if (gate) gate.classList.add('hidden');
         document.body.style.overflow = 'auto';
@@ -6743,10 +6796,8 @@
         }
 
         container.innerHTML = filteredAccounts.map(account => `
-            <div class="product-card">
-                <div class="product-image-container" data-category="${account.category}">
-                    <!-- La imagen se carga dinámicamente con el sistema de caché -->
-                </div>
+            <div class="product-card" style="padding: 0; overflow: hidden;">
+                <div style="width:100%;height:420px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(5,5,5,.92), rgba(12,28,44,.96));padding:16px;"><img src="${account.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${account.name}" style="width:100%;height:100%;object-fit:contain;object-position:center;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"></div>
                 <div class="product-content">
                     <div class="product-category">
                         <i class="fas fa-gamepad"></i> ${account.category} ${account.server ? '• ' + account.server : ''}
@@ -6770,13 +6821,6 @@
             </div>
         `).join('');
 
-        // Cargar imágenes con el sistema mejorado
-        filteredAccounts.forEach((account, index) => {
-            const container = document.querySelectorAll('.product-image-container')[index];
-            if (container) {
-                loadImageWithCache(account.image, account.name, container);
-            }
-        });
     }
 
     function renderGold() {
@@ -8715,6 +8759,7 @@
     window.submitAccountTicket = submitAccountTicket;
     window.submitServiceTicket = submitServiceTicket;
     window.enterStore = enterStore;
+    window.googleTranslateElementInit = googleTranslateElementInit;
 
     document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo(0, 0);
@@ -8722,5 +8767,6 @@
         init();
     });
 </script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
