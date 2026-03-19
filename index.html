@@ -3086,7 +3086,7 @@
                 <h3><i class="fas fa-coins"></i> Compra rápida de oro</h3>
                 <p>Inicia la compra y selecciona el juego en una ventana dedicada.</p>
             </div>
-            <button class="btn-primary" type="button" id="gold-order-open">
+            <button class="btn-primary" type="button" id="gold-order-open" onclick="openGoldOrderModal()">
                 <i class="fas fa-shopping-cart"></i> INICIAR COMPRA
             </button>
         </div>
@@ -4793,8 +4793,13 @@
     // ============================================
 
     async function init() {
-        supabaseReady = await checkSupabaseConnection('inicio');
-        await loadData();
+        try {
+            supabaseReady = await checkSupabaseConnection('inicio');
+            await loadData();
+        } catch (error) {
+            console.error('Error inicializando datos de Supabase:', error);
+            connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
+        }
 
         // Renderizar contenido inicial
         renderAccounts();
