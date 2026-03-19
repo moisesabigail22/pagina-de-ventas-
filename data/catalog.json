@@ -1,6 +1,6 @@
 {
   "settings": {
-    "discord": "https://discord.gg/AYJkmeZn",
+    "discord": "https://discord.gg/Smk5T3se3H",
     "whatsapp": "https://wa.me/1234567890",
     "tiktok": "https://www.tiktok.com/@farmers.de.mmorpg",
     "email": "soporte@epicgoldshop.com",
@@ -117,31 +117,37 @@
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 100,
-      "price": 5.8
+      "price": 2.5
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 200,
-      "price": 11.6
+      "price": 5.0
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 300,
-      "price": 17.4
+      "price": 7.5
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 400,
+      "price": 10.0
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 500,
-      "price": 29.0
+      "price": 12.5
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 1000,
-      "price": 58.0
+      "price": 25.0
     }
   ],
   "accounts": [],

@@ -7,7 +7,7 @@ begin;
 -- SETTINGS (mantiene 1 registro principal; actualiza si existe, inserta si no existe)
 with desired as (
   select
-    'https://discord.gg/AYJkmeZn'::text as discord,
+    'https://discord.gg/Smk5T3se3H'::text as discord,
     'https://wa.me/1234567890'::text as whatsapp,
     'https://www.tiktok.com/@farmers.de.mmorpg'::text as tiktok,
     'soporte@epicgoldshop.com'::text as email,
@@ -30,7 +30,7 @@ insert into public.settings (discord, whatsapp, tiktok, email, site)
 select d.discord, d.whatsapp, d.tiktok, d.email, d.site
 from (
   select
-    'https://discord.gg/AYJkmeZn'::text as discord,
+    'https://discord.gg/Smk5T3se3H'::text as discord,
     'https://wa.me/1234567890'::text as whatsapp,
     'https://www.tiktok.com/@farmers.de.mmorpg'::text as tiktok,
     'soporte@epicgoldshop.com'::text as email,
@@ -115,11 +115,12 @@ begin
         ('WoW Privado', 'Warmane', '1000', 2.50),
         ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00),
         ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00),
-        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80),
-        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60),
-        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40),
-        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00),
-        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00)
+        ('WoW Oficial', 'Nightslayer A/H', '100', 2.50),
+        ('WoW Oficial', 'Nightslayer A/H', '200', 5.00),
+        ('WoW Oficial', 'Nightslayer A/H', '300', 7.50),
+        ('WoW Oficial', 'Nightslayer A/H', '400', 10.00),
+        ('WoW Oficial', 'Nightslayer A/H', '500', 12.50),
+        ('WoW Oficial', 'Nightslayer A/H', '1000', 25.00)
     )
     update public.gold g
     set
@@ -140,11 +141,12 @@ begin
         ('WoW Privado', 'Warmane', '1000', 2.50),
         ('WoW Privado', 'Project Epoch - Kezan', '100', 4.00),
         ('WoW Privado', 'Project Epoch - Gurubashi', '100', 3.00),
-        ('WoW Oficial', 'Nightslayer A/H', '100', 5.80),
-        ('WoW Oficial', 'Nightslayer A/H', '200', 11.60),
-        ('WoW Oficial', 'Nightslayer A/H', '300', 17.40),
-        ('WoW Oficial', 'Nightslayer A/H', '500', 29.00),
-        ('WoW Oficial', 'Nightslayer A/H', '1000', 58.00)
+        ('WoW Oficial', 'Nightslayer A/H', '100', 2.50),
+        ('WoW Oficial', 'Nightslayer A/H', '200', 5.00),
+        ('WoW Oficial', 'Nightslayer A/H', '300', 7.50),
+        ('WoW Oficial', 'Nightslayer A/H', '400', 10.00),
+        ('WoW Oficial', 'Nightslayer A/H', '500', 12.50),
+        ('WoW Oficial', 'Nightslayer A/H', '1000', 25.00)
     )
     insert into public.gold (game, server, amount, price)
     select s.game, s.server, s.amount_text, s.price
@@ -167,11 +169,12 @@ begin
         ('WoW Privado', 'Warmane', 1000, 2.50),
         ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00),
         ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00),
-        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80),
-        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60),
-        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40),
-        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00),
-        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00)
+        ('WoW Oficial', 'Nightslayer A/H', 100, 2.50),
+        ('WoW Oficial', 'Nightslayer A/H', 200, 5.00),
+        ('WoW Oficial', 'Nightslayer A/H', 300, 7.50),
+        ('WoW Oficial', 'Nightslayer A/H', 400, 10.00),
+        ('WoW Oficial', 'Nightslayer A/H', 500, 12.50),
+        ('WoW Oficial', 'Nightslayer A/H', 1000, 25.00)
     )
     update public.gold g
     set
@@ -192,11 +195,12 @@ begin
         ('WoW Privado', 'Warmane', 1000, 2.50),
         ('WoW Privado', 'Project Epoch - Kezan', 100, 4.00),
         ('WoW Privado', 'Project Epoch - Gurubashi', 100, 3.00),
-        ('WoW Oficial', 'Nightslayer A/H', 100, 5.80),
-        ('WoW Oficial', 'Nightslayer A/H', 200, 11.60),
-        ('WoW Oficial', 'Nightslayer A/H', 300, 17.40),
-        ('WoW Oficial', 'Nightslayer A/H', 500, 29.00),
-        ('WoW Oficial', 'Nightslayer A/H', 1000, 58.00)
+        ('WoW Oficial', 'Nightslayer A/H', 100, 2.50),
+        ('WoW Oficial', 'Nightslayer A/H', 200, 5.00),
+        ('WoW Oficial', 'Nightslayer A/H', 300, 7.50),
+        ('WoW Oficial', 'Nightslayer A/H', 400, 10.00),
+        ('WoW Oficial', 'Nightslayer A/H', 500, 12.50),
+        ('WoW Oficial', 'Nightslayer A/H', 1000, 25.00)
     )
     insert into public.gold (game, server, amount, price)
     select s.game, s.server, s.amount_int, s.price
