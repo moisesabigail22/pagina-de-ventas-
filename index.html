@@ -3902,10 +3902,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">ID de usuario de Discord</label>
-                    <input type="text" id="gold-order-discord-user-id" placeholder="Ej: 123456789012345678" inputmode="numeric" autocomplete="off">
+                    <label class="form-label">Usuario de Discord para el ticket privado</label>
+                    <input type="text" id="gold-order-discord-user-id" placeholder="Pega tu ID, mención o link de perfil de Discord" autocomplete="off">
                     <small style="display:block; margin-top:8px; color:var(--text-gray);">
-                        Necesario para que el bot cree un ticket privado visible solo para soporte y tu usuario de Discord.
+                        Puedes pegar tu ID, una mención como &lt;@123...&gt; o el enlace de tu perfil. Solo escribir tu @usuario no sirve para dar permisos privados.
                     </small>
                 </div>
             </div>
@@ -5847,6 +5847,12 @@
         submitButton.style.opacity = enabled ? '1' : '0.6';
     }
 
+    function normalizeDiscordUserId(value) {
+        const raw = String(value || '').trim();
+        const match = raw.match(/(\d{17,20})/);
+        return match ? match[1] : '';
+    }
+
     function buildGoldOrderPayload() {
         const amountSelect = document.getElementById('gold-order-amount');
         const factionSelect = document.getElementById('gold-order-faction');
@@ -5860,17 +5866,11 @@
         const selectedFaction = factionSelect?.value || '';
         const characterName = characterInput?.value.trim() || '';
         const tradeType = tradeSelect?.value || '';
-        const discordUserId = discordUserIdInput?.value.trim() || '';
+        const discordUserId = normalizeDiscordUserId(discordUserIdInput?.value || '');
 
         if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !discordUserId) {
             return {
-                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade e ID de usuario de Discord.'
-            };
-        }
-
-        if (!/^\d{17,20}$/.test(discordUserId)) {
-            return {
-                error: 'Ingresa un ID de usuario de Discord válido (solo números).'
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade y un identificador válido de Discord.'
             };
         }
 

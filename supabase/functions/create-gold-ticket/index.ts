@@ -68,6 +68,11 @@ function buildTicketName(ticketPrefix: string, character: string) {
   return `${prefix}-${safeCharacter}`.slice(0, 100);
 }
 
+function normalizeDiscordUserId(value: string) {
+  const match = String(value || '').trim().match(/(\d{17,20})/);
+  return match ? match[1] : '';
+}
+
 function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
   return {
     title: 'Nuevo ticket de compra de oro',
@@ -277,9 +282,9 @@ Deno.serve(async (request) => {
     }
   }
 
-  const discordUserId = String(payload.discord_user_id).trim();
-  if (!/^\d{17,20}$/.test(discordUserId)) {
-    return jsonResponse({ error: 'Invalid discord_user_id. Expected a Discord user ID (snowflake).' }, 400);
+  const discordUserId = normalizeDiscordUserId(String(payload.discord_user_id));
+  if (!discordUserId) {
+    return jsonResponse({ error: 'Invalid discord_user_id. Provide a Discord user ID, mention, or profile link that contains the user ID.' }, 400);
   }
 
   const safePayload: Required<GoldTicketPayload> = {
