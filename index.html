@@ -3753,10 +3753,16 @@
                     <div class="gold-order-summary-label">Precio</div>
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
                 </div>
-                <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/Smk5T3se3H" target="_blank">
-                    <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                </a>
+                <div style="display:flex; gap:12px; flex-wrap:wrap; width:100%;">
+                    <button class="btn-buy gold-order-cta" id="gold-order-submit" type="button">
+                        <i class="fas fa-ticket-alt"></i> ENVIAR Y ABRIR TICKET
+                    </button>
+                    <a class="btn-secondary gold-order-cta" id="gold-order-cta" href="https://discord.gg/Smk5T3se3H" target="_blank">
+                        <i class="fab fa-discord"></i> IR A DISCORD
+                    </a>
+                </div>
             </div>
+            <div class="message" id="gold-order-message" style="display:none; margin-top:16px;"></div>
         </div>
     </div>
 </div>
@@ -5590,6 +5596,119 @@
         };
     }
 
+    function showGoldOrderMessage(text = '', type = 'info') {
+        const message = document.getElementById('gold-order-message');
+        if (!message) return;
+
+        if (!text) {
+            message.textContent = '';
+            message.className = 'message';
+            message.style.display = 'none';
+            return;
+        }
+
+        message.textContent = text;
+        message.className = `message ${type}`;
+        message.style.display = 'block';
+    }
+
+    function setGoldOrderSubmitEnabled(enabled) {
+        const submitButton = document.getElementById('gold-order-submit');
+        if (!submitButton) return;
+
+        submitButton.disabled = !enabled;
+        submitButton.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        submitButton.style.pointerEvents = enabled ? 'auto' : 'none';
+        submitButton.style.opacity = enabled ? '1' : '0.6';
+    }
+
+    function buildGoldOrderPayload() {
+        const amountSelect = document.getElementById('gold-order-amount');
+        const factionSelect = document.getElementById('gold-order-faction');
+        const characterInput = document.getElementById('gold-order-character');
+        const tradeSelect = document.getElementById('gold-order-trade');
+
+        const selectedGame = goldOrderState.game;
+        const selectedServer = goldOrderState.server;
+        const selectedAmount = amountSelect?.value || '';
+        const selectedFaction = factionSelect?.value || '';
+        const characterName = characterInput?.value.trim() || '';
+        const tradeType = tradeSelect?.value || '';
+
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType) {
+            return {
+                error: 'Completa juego, servidor, cantidad, facción, personaje y tipo de trade.'
+            };
+        }
+
+        const packages = getGoldOrderPackagesForSelection();
+        let amountLabel = '';
+        let totalPrice = '';
+
+        if (selectedAmount === 'custom') {
+            const customQuote = getGoldOrderCustomQuote(packages);
+            if (!customQuote) {
+                return {
+                    error: 'La cantidad específica debe ser mínima 1000 para poder crear el ticket.'
+                };
+            }
+
+            amountLabel = `${customQuote.amount}`;
+            totalPrice = customQuote.price;
+        } else {
+            const selectedPackage = gold.find(entry => String(entry.id) === String(selectedAmount));
+            if (!selectedPackage) {
+                return {
+                    error: 'Selecciona un paquete válido de oro.'
+                };
+            }
+
+            amountLabel = String(selectedPackage.amount);
+            totalPrice = String(selectedPackage.price);
+        }
+
+        return {
+            payload: {
+                game: selectedGame,
+                server: selectedServer,
+                amount: amountLabel,
+                price: totalPrice,
+                faction: selectedFaction,
+                character: characterName,
+                trade: tradeType,
+                custom_amount: selectedAmount === 'custom',
+                source: 'web_gold_order',
+                created_at: new Date().toISOString()
+            }
+        };
+    }
+
+    async function submitGoldOrderTicket() {
+        const { payload, error } = buildGoldOrderPayload();
+        if (error) {
+            showGoldOrderMessage(error, 'error');
+            return;
+        }
+
+        showGoldOrderMessage('Enviando solicitud a Discord...', 'info');
+
+        try {
+            const { data, error: invokeError } = await supabaseClient.functions.invoke('create-gold-ticket', {
+                body: payload
+            });
+
+            if (invokeError) {
+                throw invokeError;
+            }
+
+            showGoldOrderMessage('✅ Ticket enviado correctamente. Te estamos llevando a Discord.', 'success');
+            window.open((data && data.discord_url) || settings.discord || DISCORD_LINK, '_blank', 'noopener,noreferrer');
+        } catch (submitError) {
+            console.error(submitError);
+            showGoldOrderMessage('No se pudo crear el ticket automático. Usa el botón de Discord mientras se revisa la integración.', 'error');
+        }
+    }
+
     function updateGoldOrderAmountOptions() {
         const detailContainer = document.getElementById('gold-order-step-details');
         const amountSelect = document.getElementById('gold-order-amount');
@@ -5655,6 +5774,7 @@
 
         if (!amountSelect || !priceEl) return;
 
+        showGoldOrderMessage('');
         const packages = getGoldOrderPackagesForSelection();
         toggleGoldOrderCustomAmount(packages);
 
@@ -5663,22 +5783,14 @@
 
             if (!customQuote) {
                 priceEl.textContent = 'Mínimo 1000';
-                if (cta) {
-                    cta.setAttribute('aria-disabled', 'true');
-                    cta.style.pointerEvents = 'none';
-                    cta.style.opacity = '0.6';
-                    cta.href = settings?.discord || DISCORD_LINK;
-                }
+                setGoldOrderSubmitEnabled(false);
+                if (cta) cta.href = settings?.discord || DISCORD_LINK;
                 return;
             }
 
             priceEl.textContent = customQuote.price;
-            if (cta) {
-                cta.setAttribute('aria-disabled', 'false');
-                cta.style.pointerEvents = 'auto';
-                cta.style.opacity = '1';
-                cta.href = settings?.discord || DISCORD_LINK;
-            }
+            setGoldOrderSubmitEnabled(true);
+            if (cta) cta.href = settings?.discord || DISCORD_LINK;
             return;
         }
 
@@ -5687,22 +5799,14 @@
 
         if (!item) {
             priceEl.textContent = '-';
-            if (cta) {
-                cta.setAttribute('aria-disabled', 'true');
-                cta.style.pointerEvents = 'none';
-                cta.style.opacity = '0.6';
-                cta.href = settings?.discord || DISCORD_LINK;
-            }
+            setGoldOrderSubmitEnabled(false);
+            if (cta) cta.href = settings?.discord || DISCORD_LINK;
             return;
         }
 
         priceEl.textContent = item.price;
-        if (cta) {
-            cta.setAttribute('aria-disabled', 'false');
-            cta.style.pointerEvents = 'auto';
-            cta.style.opacity = '1';
-            cta.href = settings?.discord || DISCORD_LINK;
-        }
+        setGoldOrderSubmitEnabled(true);
+        if (cta) cta.href = settings?.discord || DISCORD_LINK;
     }
 
     function updateGoldOrderForm() {
@@ -5724,6 +5828,9 @@
         const serverSelect = document.getElementById('gold-order-server-select');
         const amountSelect = document.getElementById('gold-order-amount');
         const customAmountInput = document.getElementById('gold-order-custom-amount');
+        const factionSelect = document.getElementById('gold-order-faction');
+        const characterInput = document.getElementById('gold-order-character');
+        const tradeSelect = document.getElementById('gold-order-trade');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -5736,7 +5843,12 @@
         if (customAmountInput) {
             customAmountInput.value = '';
         }
+        if (factionSelect) factionSelect.value = '';
+        if (characterInput) characterInput.value = '';
+        if (tradeSelect) tradeSelect.value = '';
         toggleGoldOrderCustomAmount([]);
+        showGoldOrderMessage('');
+        setGoldOrderSubmitEnabled(false);
         document.getElementById('gold-order-modal-title').textContent = 'Selecciona un juego';
         showGoldOrderStep('game');
         renderGoldOrderGameList();
@@ -6101,6 +6213,13 @@
         if (goldOrderOpenBtn) {
             goldOrderOpenBtn.addEventListener('click', function() {
                 openGoldOrderModal();
+            });
+        }
+
+        const goldOrderSubmitBtn = document.getElementById('gold-order-submit');
+        if (goldOrderSubmitBtn) {
+            goldOrderSubmitBtn.addEventListener('click', function() {
+                submitGoldOrderTicket();
             });
         }
     }
