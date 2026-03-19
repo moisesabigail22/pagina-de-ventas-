@@ -1,83 +1,82 @@
-# Configuración del bot de Discord para pedidos web
+# Configuración simple de Discord para pedidos web
 
-## 1. Qué ya deberías tener
-- Un bot creado en <https://discord.com/developers/applications>.
-- El bot invitado a tu servidor.
-- Una categoría para tickets, por ejemplo `PEDIDOS WEB`.
-- Un canal privado de log, por ejemplo `#web-orders-log`.
-- Un rol de staff, por ejemplo `Soporte`.
+## Recomendación
+La forma más fácil es **NO usar bot**.
 
-## 2. Permisos que debe tener el bot
-En el servidor, el bot debe tener como mínimo:
-- Ver canales.
-- Enviar mensajes.
-- Leer historial de mensajes.
-- Gestionar canales.
-- Gestionar roles **no es obligatorio** para este flujo.
-- Gestionar hilos **no es obligatorio** si usas modo `channel`.
+Usa un **webhook de Discord** apuntando a un canal donde quieras recibir los pedidos de la web.
+Eso evita crear aplicación, bot token, roles especiales o permisos de `Manage Channels`.
 
-## 3. IDs que tienes que copiar
-Con `Developer Mode` activado en Discord, copia estos IDs:
+## Opción simple recomendada: webhook
 
-1. `GUILD_ID`: clic derecho en el servidor → `Copiar ID`.
-2. `CATEGORY_ID`: clic derecho en la categoría `PEDIDOS WEB` → `Copiar ID`.
-3. `LOG_CHANNEL_ID`: clic derecho en `#web-orders-log` → `Copiar ID`.
-4. `SUPPORT_ROLE_ID`: ajustes del servidor → roles → clic derecho sobre el rol de soporte → `Copiar ID`.
+### 1. Crea o usa un canal en Discord
+Puede ser, por ejemplo:
+- `#pedidos-web`
+- `#tickets-web`
+- `#gold-orders`
 
-## 4. Secretos de Supabase que debes cargar
-Configura estos secretos para la edge function `create-gold-ticket`:
+Si quieres que cada pedido salga como publicación separada, puedes usar un **Forum Channel**.
+Si usas un canal normal de texto, los pedidos llegarán como mensajes embebidos dentro de ese canal.
 
-- `DISCORD_BOT_TOKEN`
-- `DISCORD_GUILD_ID`
-- `DISCORD_WEB_CATEGORY_ID`
-- `DISCORD_WEB_LOG_CHANNEL_ID`
-- `DISCORD_WEB_SUPPORT_ROLE_ID`
-- `DISCORD_TICKET_MODE=channel`
-- `DISCORD_TICKET_PREFIX=ticket-oro` (opcional)
+### 2. Crea el webhook del canal
+En Discord:
+1. Entra al canal.
+2. `Editar canal`.
+3. `Integrations` o `Integraciones`.
+4. `Webhooks`.
+5. `New Webhook`.
+6. Copia la URL del webhook.
+
+La URL se verá parecida a esta:
+```text
+https://discord.com/api/webhooks/1234567890/abcdefghijklmnopqrstuvwxyz
+```
+
+## 3. Secreto que debes cargar en Supabase
+Para este flujo simple solo necesitas esto:
+
+- `DISCORD_WEBHOOK_URL`
+
+Opcionales:
+- `DISCORD_TICKET_MODE=webhook`
+- `DISCORD_TICKET_PREFIX=Ticket Oro`
 
 ### Comandos sugeridos
 ```bash
-supabase secrets set DISCORD_BOT_TOKEN=tu_token
-supabase secrets set DISCORD_GUILD_ID=tu_guild_id
-supabase secrets set DISCORD_WEB_CATEGORY_ID=tu_category_id
-supabase secrets set DISCORD_WEB_LOG_CHANNEL_ID=tu_log_channel_id
-supabase secrets set DISCORD_WEB_SUPPORT_ROLE_ID=tu_support_role_id
-supabase secrets set DISCORD_TICKET_MODE=channel
-supabase secrets set DISCORD_TICKET_PREFIX=ticket-oro
+supabase secrets set DISCORD_WEBHOOK_URL="tu_webhook_url"
+supabase secrets set DISCORD_TICKET_MODE=webhook
+supabase secrets set DISCORD_TICKET_PREFIX="Ticket Oro"
 ```
 
-## 5. Deploy de la función
-Después de cargar los secretos, despliega o vuelve a desplegar la función:
+## 4. Deploy de la función
+Después de guardar el secreto, despliega o vuelve a desplegar la función:
 
 ```bash
 supabase functions deploy create-gold-ticket
 ```
 
-## 6. Cómo funciona después de configurarlo
+## 5. Cómo funciona después de configurarlo
 Cuando un cliente envía el formulario de oro:
 1. La web llama a `create-gold-ticket`.
-2. La función crea un canal privado dentro de `PEDIDOS WEB`.
-3. El bot publica el embed con los datos del pedido.
-4. El bot deja un aviso en `#web-orders-log`.
-5. La web abre Discord con la URL del ticket creado.
+2. La función manda el pedido al webhook de Discord.
+3. Si el webhook apunta a un **forum channel**, Discord puede crear una publicación nueva con `thread_name`.
+4. Si el webhook apunta a un canal normal, Discord publica el pedido como mensaje embed.
+5. La web abre tu enlace general de Discord como fallback.
 
-## 7. Checklist rápido
-- [ ] El bot está dentro del servidor.
-- [ ] El bot puede ver la categoría de tickets.
-- [ ] El bot puede crear canales.
-- [ ] El rol de soporte existe.
-- [ ] Copiaste los 4 IDs.
-- [ ] Cargaste todos los secretos en Supabase.
-- [ ] Redeployaste la función.
-- [ ] Probaste un pedido desde la web.
+## 6. Qué tienes que hacer tú ahora
+Checklist rápido:
+- [ ] Crear o elegir el canal donde van a caer los pedidos.
+- [ ] Crear el webhook de ese canal.
+- [ ] Copiar la URL del webhook.
+- [ ] Guardarla en Supabase como `DISCORD_WEBHOOK_URL`.
+- [ ] Hacer deploy de `create-gold-ticket`.
+- [ ] Probar un pedido desde la web.
 
-## 8. Si falla
+## 7. Si falla
 Revisa en este orden:
-1. Token del bot incorrecto o vencido.
-2. `GUILD_ID`, `CATEGORY_ID`, `LOG_CHANNEL_ID` o `SUPPORT_ROLE_ID` mal copiados.
-3. El bot no tiene permiso `Manage Channels`.
-4. La categoría no permite que el bot cree canales debajo de ella.
-5. La función no fue redeployada después de cambiar secretos.
+1. La URL del webhook está mal copiada.
+2. El webhook fue borrado o regenerado en Discord.
+3. La función no fue redeployada después de cambiar secretos.
+4. El canal no acepta el tipo de publicación que esperas.
 
-## 9. Modo alternativo heredado
-La función todavía soporta `DISCORD_TICKET_MODE=webhook` para compatibilidad, pero el flujo recomendado es `channel` con bot propio.
+## 8. Opción avanzada
+La función todavía soporta modo bot/canales privados como opción avanzada con `DISCORD_TICKET_MODE=channel`, pero **no hace falta usarlo** para que esto funcione.

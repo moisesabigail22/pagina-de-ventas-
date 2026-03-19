@@ -263,8 +263,8 @@ Deno.serve(async (request) => {
     created_at: String(payload.created_at || new Date().toISOString())
   };
 
-  const ticketMode = getEnv('DISCORD_TICKET_MODE', 'channel').toLowerCase();
   const webhookUrl = getEnv('DISCORD_WEBHOOK_URL');
+  const ticketMode = getEnv('DISCORD_TICKET_MODE', webhookUrl ? 'webhook' : 'channel').toLowerCase();
 
   try {
     if (ticketMode === 'webhook') {
