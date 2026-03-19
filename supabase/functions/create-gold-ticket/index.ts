@@ -12,6 +12,7 @@ type GoldTicketPayload = {
   faction?: string;
   character?: string;
   trade?: string;
+  discord_user_id?: string;
   custom_amount?: boolean;
   source?: string;
   created_at?: string;
@@ -23,6 +24,13 @@ type DiscordChannelResponse = {
   id: DiscordSnowflake;
   guild_id?: DiscordSnowflake;
   name?: string;
+};
+
+type DiscordPermissionOverwrite = {
+  id: DiscordSnowflake;
+  type: 0 | 1;
+  allow: string;
+  deny: string;
 };
 
 const DISCORD_PERMISSION_VIEW_CHANNEL = 1n << 10n;
@@ -72,6 +80,7 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
       { name: 'Facción', value: payload.faction, inline: true },
       { name: 'Trade', value: payload.trade, inline: true },
       { name: 'Personaje', value: payload.character, inline: true },
+      { name: 'Usuario Discord', value: `<@${payload.discord_user_id}> (${payload.discord_user_id})`, inline: false },
       { name: 'Tipo', value: payload.custom_amount ? 'Cantidad específica' : 'Paquete estándar', inline: true },
       { name: 'Origen', value: payload.source, inline: true }
     ],
@@ -120,6 +129,35 @@ async function createGuildChannel(
     DISCORD_PERMISSION_READ_HISTORY |
     DISCORD_PERMISSION_MANAGE_CHANNELS
   ).toString();
+  const customerAllow = (
+    DISCORD_PERMISSION_VIEW_CHANNEL |
+    DISCORD_PERMISSION_SEND_MESSAGES |
+    DISCORD_PERMISSION_READ_HISTORY
+  ).toString();
+
+  const permissionOverwrites: DiscordPermissionOverwrite[] = [
+    {
+      id: guildId,
+      type: 0,
+      allow: everyoneAllow,
+      deny: everyoneDeny
+    },
+    {
+      id: supportRoleId,
+      type: 0,
+      allow: supportAllow,
+      deny: '0'
+    }
+  ];
+
+  if (payload.discord_user_id) {
+    permissionOverwrites.push({
+      id: payload.discord_user_id,
+      type: 1,
+      allow: customerAllow,
+      deny: '0'
+    });
+  }
 
   return await discordApi<DiscordChannelResponse>(`/guilds/${guildId}/channels`, token, {
     method: 'POST',
@@ -128,20 +166,7 @@ async function createGuildChannel(
       type: 0,
       parent_id: parentId,
       topic: `Pedido web · ${payload.character} · ${payload.game} · ${payload.server}`.slice(0, 1024),
-      permission_overwrites: [
-        {
-          id: guildId,
-          type: 0,
-          allow: everyoneAllow,
-          deny: everyoneDeny
-        },
-        {
-          id: supportRoleId,
-          type: 0,
-          allow: supportAllow,
-          deny: '0'
-        }
-      ]
+      permission_overwrites: permissionOverwrites
     })
   });
 }
@@ -178,7 +203,8 @@ async function createWebhookTicket(webhookUrl: string, ticketPrefix: string, pay
   return {
     ok: true,
     mode: 'webhook',
-    thread_name: threadName
+    thread_name: threadName,
+    customer_visibility: 'not_supported_in_webhook_mode'
   };
 }
 
@@ -223,7 +249,8 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     mode: 'bot',
     channel_id: channel.id,
     channel_name: channel.name || channelName,
-    discord_url: `https://discord.com/channels/${guildId}/${channel.id}`
+    discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
+    customer_visibility: payload.discord_user_id ? 'granted' : 'missing_discord_user_id'
   };
 }
 
@@ -243,11 +270,16 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
-  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade'] as const;
+  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'discord_user_id'] as const;
   for (const field of requiredFields) {
     if (!payload[field] || !String(payload[field]).trim()) {
       return jsonResponse({ error: `Missing field: ${field}` }, 400);
     }
+  }
+
+  const discordUserId = String(payload.discord_user_id).trim();
+  if (!/^\d{17,20}$/.test(discordUserId)) {
+    return jsonResponse({ error: 'Invalid discord_user_id. Expected a Discord user ID (snowflake).' }, 400);
   }
 
   const safePayload: Required<GoldTicketPayload> = {
@@ -258,6 +290,7 @@ Deno.serve(async (request) => {
     faction: String(payload.faction).trim(),
     character: String(payload.character).trim().slice(0, 80),
     trade: String(payload.trade).trim(),
+    discord_user_id: discordUserId,
     custom_amount: Boolean(payload.custom_amount),
     source: String(payload.source || 'web_gold_order').trim(),
     created_at: String(payload.created_at || new Date().toISOString())

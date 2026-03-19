@@ -3900,6 +3900,14 @@
                         <option value="Subasta">Subasta</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">ID de usuario de Discord</label>
+                    <input type="text" id="gold-order-discord-user-id" placeholder="Ej: 123456789012345678" inputmode="numeric" autocomplete="off">
+                    <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Necesario para que el bot cree un ticket privado visible solo para soporte y tu usuario de Discord.
+                    </small>
+                </div>
             </div>
 
             <div class="gold-order-summary">
@@ -5844,6 +5852,7 @@
         const factionSelect = document.getElementById('gold-order-faction');
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
+        const discordUserIdInput = document.getElementById('gold-order-discord-user-id');
 
         const selectedGame = goldOrderState.game;
         const selectedServer = goldOrderState.server;
@@ -5851,10 +5860,17 @@
         const selectedFaction = factionSelect?.value || '';
         const characterName = characterInput?.value.trim() || '';
         const tradeType = tradeSelect?.value || '';
+        const discordUserId = discordUserIdInput?.value.trim() || '';
 
-        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType) {
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !discordUserId) {
             return {
-                error: 'Completa juego, servidor, cantidad, facción, personaje y tipo de trade.'
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade e ID de usuario de Discord.'
+            };
+        }
+
+        if (!/^\d{17,20}$/.test(discordUserId)) {
+            return {
+                error: 'Ingresa un ID de usuario de Discord válido (solo números).'
             };
         }
 
@@ -5893,6 +5909,7 @@
                 faction: selectedFaction,
                 character: characterName,
                 trade: tradeType,
+                discord_user_id: discordUserId,
                 custom_amount: selectedAmount === 'custom',
                 source: 'web_gold_order',
                 created_at: new Date().toISOString()
@@ -5919,11 +5936,14 @@
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Canal creado: #${data.channel_name}.` : '';
+            const visibilityMessage = data && data.customer_visibility === 'granted'
+                ? ' Tu usuario de Discord ya tiene acceso al ticket privado.'
+                : ' Si el proyecto sigue en modo webhook, Discord no puede agregar automáticamente al comprador a un hilo privado; para eso debes usar modo bot.';
             const redirectMessage = data && data.discord_url
                 ? ' Se abrirá Discord para continuar con el seguimiento.'
-                : ' Nuestro equipo verá la solicitud y te responderá por el canal configurado.';
+                : '';
 
-            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}${redirectMessage}`, 'success');
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}${visibilityMessage}${redirectMessage}`, 'success');
 
             if (data && data.discord_url) {
                 window.open(data.discord_url, '_blank', 'noopener,noreferrer');
@@ -6209,6 +6229,7 @@
         const factionSelect = document.getElementById('gold-order-faction');
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
+        const discordUserIdInput = document.getElementById('gold-order-discord-user-id');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -6224,6 +6245,7 @@
         if (factionSelect) factionSelect.value = '';
         if (characterInput) characterInput.value = '';
         if (tradeSelect) tradeSelect.value = '';
+        if (discordUserIdInput) discordUserIdInput.value = '';
         toggleGoldOrderCustomAmount([]);
         showGoldOrderMessage('');
         setGoldOrderSubmitEnabled(false);
