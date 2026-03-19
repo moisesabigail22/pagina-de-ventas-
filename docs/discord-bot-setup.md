@@ -155,6 +155,8 @@ supabase functions deploy create-account-ticket
 supabase functions deploy create-service-ticket
 ```
 
+> Si cambiaste el código local pero **no** ejecutaste `supabase functions deploy create-gold-ticket`, Supabase seguirá usando la versión vieja de la function. Ese es el motivo más común cuando parece que “todavía usa webhook” aunque ya hayas cambiado los secrets.
+
 ## Paso 9: desactivar webhook y dejar solo tu bot
 
 Para oro, la function ya quedó preparada para trabajar **solo con tu bot**.
@@ -175,13 +177,10 @@ Cuando el usuario pulse **Comprar**:
 2. Selecciona servidor.
 3. Selecciona cantidad.
 4. Completa facción, personaje y tipo de trade.
-5. En el campo de Discord pega una de estas opciones:
-   - su ID,
-   - su mención,
-   - o su link de perfil.
+5. Selecciona un **método de pago** de los que configuraste en el panel admin.
 6. Pulsa **Crear ticket**.
 
-La web enviará `discord_user_id` a la function y la function extraerá el ID real del usuario.
+La web enviará el método de pago elegido al ticket para que el admin vea cómo continuar el cobro.
 
 ## Paso 11: qué crea exactamente el bot en Discord
 
@@ -190,8 +189,7 @@ Cuando llega el pedido:
 1. El bot crea un canal nuevo dentro de la categoría configurada.
 2. El canal queda oculto para `@everyone`.
 3. El canal queda visible para:
-   - tus usuarios admin configurados,
-   - y el usuario de Discord del comprador.
+   - tus usuarios admin configurados.
 4. El bot publica el embed con:
    - juego,
    - servidor,
@@ -200,51 +198,71 @@ Cuando llega el pedido:
    - facción,
    - trade,
    - personaje,
-   - usuario de Discord.
+   - método de pago,
+   - y dato del método de pago.
 5. Opcionalmente avisa en el canal de logs.
 
 ## Paso 12: prueba completa real
 
 Haz esta prueba de punta a punta:
 
-1. Usa una cuenta real de Discord de prueba.
-2. Asegúrate de que esa cuenta esté dentro de tu servidor.
-   - Esto es clave: si el usuario no está en tu servidor, Discord no podrá mostrarle el canal privado.
-3. Desde la web, crea un pedido de oro.
-4. En el campo de Discord pega la mención o link de ese usuario.
-5. Envía el ticket.
-6. Verifica que:
+1. Desde la web, crea un pedido de oro.
+2. Selecciona un método de pago válido.
+3. Envía el ticket.
+4. Verifica que:
    - los admins configurados vean el canal,
-   - el usuario de prueba vea el canal,
-   - otro usuario normal del servidor **no** lo vea.
+   - el ticket traiga el método de pago correcto,
+   - y que otro usuario normal del servidor **no** lo vea.
+
+## Paso 13: si todavía “parece webhook” aunque ya pusiste el bot
+
+Si ya configuraste los secrets del bot y aún ves el comportamiento viejo, revisa esto en este orden:
+
+1. **Redespliega la function**:
+
+   ```bash
+   supabase functions deploy create-gold-ticket
+   ```
+
+2. **Confirma que estás editando el proyecto correcto**:
+
+   ```bash
+   supabase link --project-ref TU_PROJECT_REF
+   supabase functions list
+   ```
+
+3. **Vuelve a guardar los secrets** del bot por si quedaron en otro proyecto o ambiente.
+4. **No dependas de `DISCORD_TICKET_MODE`** para oro: el código actual ya no usa ese switch.
+5. **No pongas `DISCORD_WEBHOOK_URL`** para este flujo: ya no hace falta en oro.
+6. Si el ticket sigue viéndose “viejo”, casi seguro Supabase sigue ejecutando una versión anterior de `create-gold-ticket`.
+
+## Seguridad importante
+
+Si alguna vez pegas tu `DISCORD_BOT_TOKEN` en un chat, captura o lugar público, debes **rotarlo inmediatamente** en Discord Developer Portal y luego actualizarlo en Supabase. Un token expuesto permite controlar tu bot.
 
 ## Problemas comunes
 
-### 1. El ticket se crea pero el comprador no lo ve
+### 1. El ticket no aparece en Discord
 Revisa:
 
-- que el usuario sí esté dentro de tu servidor,
-- que el bot tenga permisos para crear canales,
-- que el ID copiado pertenezca al usuario correcto,
+- que `create-gold-ticket` esté desplegada,
+- que `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_WEB_CATEGORY_ID` y `DISCORD_WEB_ADMIN_IDS` estén bien cargados,
+- que el bot siga dentro del servidor,
+- y que el bot tenga permisos para crear canales y enviar mensajes.
+
+### 2. El ticket se crea pero no lo ven los admins
+Revisa:
+
 - que los IDs puestos en `DISCORD_WEB_ADMIN_IDS` sean los correctos,
-- que el bot tenga permisos suficientes.
+- que esos usuarios pertenezcan a tu servidor,
+- y que el bot haya podido aplicar los overwrites al canal.
 
-### 2. El sistema abre Discord pero no muestra el canal
-Puede pasar si:
+### 3. El método de pago no sale en el ticket
+Revisa:
 
-- el usuario no tiene acceso al canal,
-- el usuario no pertenece al servidor,
-- el bot no pudo aplicar bien el overwrite,
-- el ticket fue creado en otro servidor distinto al esperado.
-
-### 3. El usuario escribe solo su `@usuario`
-Eso no garantiza permisos privados.
-El sistema necesita resolver un **user ID real**.
-Por eso el formulario ahora acepta mejor:
-
-- ID,
-- mención,
-- o link de perfil.
+- que ya agregaste métodos de pago desde el panel admin,
+- que el usuario seleccionó uno antes de enviar,
+- y que aplicaste la tabla `payment_methods` en Supabase.
 
 ## Checklist final
 
@@ -256,9 +274,6 @@ Por eso el formulario ahora acepta mejor:
 - [ ] IDs copiados con modo desarrollador.
 - [ ] Secrets cargados en Supabase.
 - [ ] Function `create-gold-ticket` desplegada.
-- [ ] Prueba real hecha con un usuario dentro del servidor.
-- [ ] Confirmado que solo admins configurados + comprador ven el ticket.
-
-## Recomendación práctica
-
-Si quieres que esto sea todavía más fácil para tus compradores, el siguiente paso ideal sería integrar **Discord OAuth** para que el sistema detecte automáticamente quién es el usuario y ya no tenga que pegar ni mención ni link ni ID.
+- [ ] Métodos de pago cargados desde el panel admin.
+- [ ] Prueba real hecha seleccionando un método de pago.
+- [ ] Confirmado que solo admins configurados ven el ticket.
