@@ -25,10 +25,12 @@ Si usas canales normales, llegarán como mensajes embed.
 ### Cuentas
 - Edge Function: `create-account-ticket`
 - Secret: `DISCORD_ACCOUNTS_WEBHOOK_URL`
+- Opcional: `DISCORD_ACCOUNTS_TICKET_PREFIX=Ticket Cuenta`
 
 ### Servicios
 - Edge Function: `create-service-ticket`
 - Secret: `DISCORD_SERVICES_WEBHOOK_URL`
+- Opcional: `DISCORD_SERVICES_TICKET_PREFIX=Ticket Servicio`
 
 ## Comandos sugeridos
 ```bash
@@ -36,7 +38,9 @@ supabase secrets set DISCORD_WEBHOOK_URL="tu_webhook_oro"
 supabase secrets set DISCORD_TICKET_MODE=webhook
 supabase secrets set DISCORD_TICKET_PREFIX="Ticket Oro"
 supabase secrets set DISCORD_ACCOUNTS_WEBHOOK_URL="tu_webhook_cuentas"
+supabase secrets set DISCORD_ACCOUNTS_TICKET_PREFIX="Ticket Cuenta"
 supabase secrets set DISCORD_SERVICES_WEBHOOK_URL="tu_webhook_servicios"
+supabase secrets set DISCORD_SERVICES_TICKET_PREFIX="Ticket Servicio"
 ```
 
 ## Deploy de las funciones

@@ -25,6 +25,19 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
+function sanitizeThreadSegment(value: string, fallback: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9\s-]/g, '')
+    .trim()
+    .slice(0, 45) || fallback;
+}
+
+function isHttpUrl(value: string) {
+  return /^https?:\/\//i.test(value);
+}
+
 Deno.serve(async (request) => {
   if (request.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -35,6 +48,7 @@ Deno.serve(async (request) => {
   }
 
   const webhookUrl = (Deno.env.get('DISCORD_SERVICES_WEBHOOK_URL') || '').trim();
+  const ticketPrefix = (Deno.env.get('DISCORD_SERVICES_TICKET_PREFIX') || 'Ticket Servicio').trim();
   if (!webhookUrl) {
     return jsonResponse({ error: 'Missing DISCORD_SERVICES_WEBHOOK_URL secret' }, 500);
   }
@@ -64,8 +78,12 @@ Deno.serve(async (request) => {
     created_at: String(payload.created_at || new Date().toISOString())
   };
 
+  const threadName = `${sanitizeThreadSegment(ticketPrefix, 'Ticket Servicio')} • ${sanitizeThreadSegment(safePayload.name, 'Servicio')}`.slice(0, 90);
+  const validImage = isHttpUrl(safePayload.image) ? safePayload.image : '';
+
   const discordBody = {
     content: `Nueva consulta de servicio para **${safePayload.name}**`,
+    thread_name: threadName,
     embeds: [
       {
         title: 'Nuevo ticket de servicio',
@@ -78,7 +96,7 @@ Deno.serve(async (request) => {
           { name: 'Origen', value: safePayload.source, inline: true },
           { name: 'Descripción', value: safePayload.description || 'Sin descripción', inline: false }
         ],
-        image: safePayload.image ? { url: safePayload.image } : undefined,
+        image: validImage ? { url: validImage } : undefined,
         timestamp: safePayload.created_at,
         footer: {
           text: 'Epic Gold Shop · Services'
@@ -100,5 +118,5 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'Discord webhook failed', details: errorText }, 502);
   }
 
-  return jsonResponse({ ok: true, mode: 'webhook' });
+  return jsonResponse({ ok: true, mode: 'webhook', thread_name: threadName });
 });
