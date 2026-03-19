@@ -3020,6 +3020,28 @@
             font-size: 0.95rem;
         }
 
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            margin-right: 14px;
+        }
+
+        .language-switcher button {
+            min-width: 52px;
+            border-radius: 999px;
+            border: 1px solid rgba(200, 170, 109, 0.5);
+            background: rgba(10, 25, 41, 0.82);
+            color: var(--text);
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .language-switcher button.active {
+            background: linear-gradient(135deg, var(--wow-gold), var(--wow-gold-dark));
+            color: var(--wow-blue-dark);
+        }
+
     </style>
 </head>
 <body>
@@ -3054,7 +3076,7 @@
         </div>
         <div class="logo-text-container">
             <div class="logo-text">EPIC GOLD SHOP</div>
-            <div class="logo-subtitle">Tienda Premium de Oro y Cuentas World of Warcraft</div>
+            <div class="logo-subtitle" id="logo-subtitle">Tienda Premium de Oro y Cuentas World of Warcraft</div>
         </div>
     </a>
 
@@ -3066,20 +3088,25 @@
             <i class="fas fa-coins"></i> <span id="nav-gold-label">ORO</span>
         </a>
         <a href="#sell" class="nav-btn">
-            <i class="fas fa-dollar-sign"></i> VENDER
+            <i class="fas fa-dollar-sign"></i> <span id="nav-sell-label">VENDER</span>
         </a>
         <a href="#services" class="nav-btn">
             <i class="fas fa-hammer"></i> <span id="nav-services-label">SERVICIOS</span>
         </a>
         <a href="#references" class="nav-btn">
-            <i class="fas fa-star"></i> REFERENCIAS
+            <i class="fas fa-star"></i> <span id="nav-references-label">REFERENCIAS</span>
         </a>
         <a href="#contact" class="nav-btn">
-            <i class="fas fa-headset"></i> CONTACTO
+            <i class="fas fa-headset"></i> <span id="nav-contact-label">CONTACTO</span>
         </a>
         <button class="nav-btn" id="acceso-btn" onclick="showAdmin()">
-            <i class="fas fa-key"></i> ACCESO
+            <i class="fas fa-key"></i> <span id="nav-access-label">ACCESO</span>
         </button>
+
+        <div class="language-switcher">
+            <button type="button" id="lang-es-btn" onclick="enterStore('es')">ES</button>
+            <button type="button" id="lang-en-btn" onclick="enterStore('en')">EN</button>
+        </div>
 
         <div class="social-links">
             <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="social-link" data-tooltip="Discord">
@@ -3147,7 +3174,7 @@
 <div class="container" id="products">
     <div class="section">
         <div class="section-header">
-            <h2 class="section-title">Cuentas Premium WoW - Turtle WoW - Albion Online</h2>
+            <h2 class="section-title" id="products-section-title">Cuentas Premium WoW - Turtle WoW - Albion Online</h2>
 
             <!-- Botón "bichita" desplegable de categorías - MEJORADO -->
             <div class="category-dropdown-container">
@@ -3158,7 +3185,7 @@
                 <div class="category-dropdown-menu" id="category-dropdown">
                     <div class="category-dropdown-header">
                         <i class="fas fa-filter"></i>
-                        <span>Filtrar Cuentas</span>
+                        <span id="filter-accounts-label">Filtrar Cuentas</span>
                         <button class="close-dropdown" onclick="closeCategoryDropdown()">&times;</button>
                     </div>
                     <div class="category-list" id="category-list">
@@ -3178,7 +3205,7 @@
 <div class="container" id="gold">
     <div class="section">
         <div class="section-header">
-            <h2 class="section-title">Comprar Oro - Juegos Disponibles</h2>
+            <h2 class="section-title" id="gold-section-title">Comprar Oro - Juegos Disponibles</h2>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <div class="stats-badge">
                     <i class="fas fa-bolt" style="color: var(--wow-gold);"></i>
@@ -3193,11 +3220,11 @@
 
         <div class="gold-order-panel">
             <div class="gold-order-header">
-                <h3><i class="fas fa-coins"></i> Compra rápida de oro</h3>
-                <p>Inicia la compra y selecciona el juego en una ventana dedicada.</p>
+                <h3 id="gold-panel-title"><i class="fas fa-coins"></i> Compra rápida de oro</h3>
+                <p id="gold-panel-description">Inicia la compra y selecciona el juego en una ventana dedicada.</p>
             </div>
             <button class="btn-primary" type="button" id="gold-order-open" onclick="openGoldOrderModal()">
-                <i class="fas fa-shopping-cart"></i> INICIAR COMPRA
+                <i class="fas fa-shopping-cart"></i> <span id="gold-order-open-label">INICIAR COMPRA</span>
             </button>
         </div>
 
@@ -3899,6 +3926,8 @@
         game: '',
         server: ''
     };
+    let currentLanguage = 'es';
+
 
     const ENTRY_GATE_TRANSLATIONS = {
         es: {
@@ -3910,7 +3939,24 @@
             quickServices: 'Servicios',
             navAccounts: 'CUENTAS',
             navGold: 'ORO',
-            navServices: 'SERVICIOS'
+            navSell: 'VENDER',
+            navServices: 'SERVICIOS',
+            navReferences: 'REFERENCIAS',
+            navContact: 'CONTACTO',
+            navAccess: 'ACCESO',
+            logoSubtitle: 'Tienda Premium de Oro y Cuentas World of Warcraft',
+            productsSectionTitle: 'Cuentas Premium WoW - Turtle WoW - Albion Online',
+            filterAccounts: 'Filtrar Cuentas',
+            goldSectionTitle: 'Comprar Oro - Juegos Disponibles',
+            goldPanelTitle: 'Compra rápida de oro',
+            goldPanelDescription: 'Inicia la compra y selecciona el juego en una ventana dedicada.',
+            goldOpen: 'INICIAR COMPRA',
+            accountTicket: 'ABRIR TICKET',
+            serviceTicket: 'ABRIR TICKET',
+            noAccountsTitle: 'No hay cuentas disponibles en esta categoría',
+            noAccountsText: 'Pronto agregaremos más cuentas premium. Mientras tanto, puedes revisar otras categorías o contactarnos para solicitudes especiales.',
+            viewAllAccounts: 'VER TODAS LAS CUENTAS',
+            noServices: 'No hay servicios publicados por ahora.'
         },
         en: {
             heroTitle: 'Epic Gold Shop - Buy WoW Gold Safely | Sell Your Gold',
@@ -3921,7 +3967,24 @@
             quickServices: 'Services',
             navAccounts: 'ACCOUNTS',
             navGold: 'GOLD',
-            navServices: 'SERVICES'
+            navSell: 'SELL',
+            navServices: 'SERVICES',
+            navReferences: 'REVIEWS',
+            navContact: 'CONTACT',
+            navAccess: 'ACCESS',
+            logoSubtitle: 'Premium World of Warcraft Gold and Accounts Store',
+            productsSectionTitle: 'Premium WoW Accounts - Turtle WoW - Albion Online',
+            filterAccounts: 'Filter Accounts',
+            goldSectionTitle: 'Buy Gold - Available Games',
+            goldPanelTitle: 'Fast gold checkout',
+            goldPanelDescription: 'Start the purchase and select the game in a dedicated window.',
+            goldOpen: 'START PURCHASE',
+            accountTicket: 'OPEN TICKET',
+            serviceTicket: 'OPEN TICKET',
+            noAccountsTitle: 'No accounts are available in this category',
+            noAccountsText: 'We will add more premium accounts soon. In the meantime, review other categories or contact us for custom requests.',
+            viewAllAccounts: 'VIEW ALL ACCOUNTS',
+            noServices: 'No services are published yet.'
         }
     };
 
@@ -5921,8 +5984,9 @@
     }
 
     function applyEntryLanguage(lang = 'es') {
-        const copy = ENTRY_GATE_TRANSLATIONS[lang] || ENTRY_GATE_TRANSLATIONS.es;
-        document.documentElement.lang = lang === 'en' ? 'en' : 'es';
+        currentLanguage = lang === 'en' ? 'en' : 'es';
+        const copy = ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es;
+        document.documentElement.lang = currentLanguage;
         const mappings = [
             ['hero-title', copy.heroTitle],
             ['hero-subtitle', copy.heroSubtitle],
@@ -5932,13 +5996,36 @@
             ['quick-action-services-label', copy.quickServices],
             ['nav-accounts-label', copy.navAccounts],
             ['nav-gold-label', copy.navGold],
-            ['nav-services-label', copy.navServices]
+            ['nav-sell-label', copy.navSell],
+            ['nav-services-label', copy.navServices],
+            ['nav-references-label', copy.navReferences],
+            ['nav-contact-label', copy.navContact],
+            ['nav-access-label', copy.navAccess],
+            ['logo-subtitle', copy.logoSubtitle],
+            ['products-section-title', copy.productsSectionTitle],
+            ['filter-accounts-label', copy.filterAccounts],
+            ['gold-section-title', copy.goldSectionTitle],
+            ['gold-panel-description', copy.goldPanelDescription],
+            ['gold-order-open-label', copy.goldOpen]
         ];
 
         mappings.forEach(([id, value]) => {
             const element = document.getElementById(id);
             if (element) element.textContent = value;
         });
+
+        const goldPanelTitle = document.getElementById('gold-panel-title');
+        if (goldPanelTitle) {
+            goldPanelTitle.innerHTML = `<i class="fas fa-coins"></i> ${copy.goldPanelTitle}`;
+        }
+
+        const langEsBtn = document.getElementById('lang-es-btn');
+        const langEnBtn = document.getElementById('lang-en-btn');
+        if (langEsBtn) langEsBtn.classList.toggle('active', currentLanguage === 'es');
+        if (langEnBtn) langEnBtn.classList.toggle('active', currentLanguage === 'en');
+
+        renderAccounts(currentFilter);
+        renderServices();
     }
 
     function enterStore(lang = 'es') {
@@ -6448,6 +6535,21 @@
             });
         }
 
+        document.addEventListener('click', function(event) {
+            const accountButton = event.target.closest('.account-ticket-btn');
+            if (accountButton) {
+                event.preventDefault();
+                submitAccountTicket(accountButton.dataset.accountId);
+                return;
+            }
+
+            const serviceButton = event.target.closest('.service-ticket-btn');
+            if (serviceButton) {
+                event.preventDefault();
+                submitServiceTicket(serviceButton.dataset.serviceId);
+            }
+        });
+
     }
 
     // ============================================
@@ -6630,10 +6732,10 @@
             container.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 80px 40px; color: var(--text-gray); background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold-dark);">
                     <i class="fas fa-user-slash" style="font-size: 5rem; margin-bottom: 25px; color: var(--wow-gold); opacity: 0.5;"></i>
-                    <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">No hay cuentas disponibles en esta categoría</h3>
-                    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">Pronto agregaremos más cuentas premium. Mientras tanto, puedes revisar otras categorías o contactarnos para solicitudes especiales.</p>
+                    <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noAccountsTitle}</h3>
+                    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noAccountsText}</p>
                     <button class="btn-primary" onclick="filterProducts('all')" style="margin-top: 30px;">
-                        <i class="fas fa-layer-group"></i> VER TODAS LAS CUENTAS
+                        <i class="fas fa-layer-group"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).viewAllAccounts}
                     </button>
                 </div>
             `;
@@ -6660,8 +6762,8 @@
 
                     <div class="product-details">
                         <div class="product-price">${account.price}</div>
-                        <button type="button" class="btn-buy" data-tooltip="Comprar en Discord" onclick="submitAccountTicket('${account.id}')">
-                            <i class="fas fa-shopping-cart"></i> ABRIR TICKET
+                        <button type="button" class="btn-buy account-ticket-btn" data-account-id="${account.id}" data-tooltip="Comprar en Discord">
+                            <i class="fas fa-shopping-cart"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).accountTicket}
                         </button>
                     </div>
                 </div>
@@ -6691,7 +6793,7 @@
         if (!Array.isArray(services) || services.length === 0) {
             grid.innerHTML = `
                 <div style="grid-column: 1/-1; text-align:center; padding:50px; background: var(--panel); border-radius: 12px; border:2px dashed var(--wow-gold-dark); color: var(--text-gray);">
-                    No hay servicios publicados por ahora.
+                    ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noServices}
                 </div>
             `;
             return;
@@ -6706,8 +6808,8 @@
                     <p style="color: var(--text-gray); min-height: 48px;">${service.description || ''}</p>
                     <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:14px;">
                         <div style="color: var(--text); font-weight: 800; font-size: 1.2rem;">$${service.price}</div>
-                        <button type="button" class="btn-buy" style="padding: 12px 22px; font-size: 1rem;" onclick="submitServiceTicket('${service.id}')">
-                            <i class="fas fa-ticket-alt"></i> ABRIR TICKET
+                        <button type="button" class="btn-buy service-ticket-btn" style="padding: 12px 22px; font-size: 1rem;" data-service-id="${service.id}">
+                            <i class="fas fa-ticket-alt"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).serviceTicket}
                         </button>
                     </div>
                 </div>
