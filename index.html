@@ -6031,14 +6031,22 @@
             });
 
             if (invokeError) {
-                throw invokeError;
+                const backendMessage = data && (data.details || data.error);
+                throw new Error(backendMessage || invokeError.message || 'No se pudo invocar create-gold-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
             showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Un admin revisará tu método de pago y seguirá el pedido.`, 'success');
         } catch (submitError) {
             console.error(submitError);
-            showGoldOrderMessage('No se pudo crear el ticket automático. Inténtalo nuevamente en unos segundos.', 'error');
+            const errorDetail = submitError instanceof Error
+                ? submitError.message
+                : String(submitError || 'Error desconocido');
+            showGoldOrderMessage(`No se pudo crear el ticket automático. ${errorDetail}`, 'error');
         }
     }
 
