@@ -8454,9 +8454,10 @@
         document.getElementById('payment-method-cancel-btn').style.display = 'inline-flex';
     }
 
-    function savePaymentMethod() {
+    async function savePaymentMethod() {
         const name = document.getElementById('payment-method-name')?.value.trim();
-        const image = paymentMethodImageData || document.getElementById('payment-method-image')?.value.trim() || '';
+        const imageUrl = document.getElementById('payment-method-image')?.value.trim() || '';
+        const imageFile = document.getElementById('payment-method-image-file')?.files?.[0] || null;
         const infoType = document.getElementById('payment-method-info-type')?.value || 'payment_id';
         const infoValue = document.getElementById('payment-method-info-value')?.value.trim();
 
@@ -8464,6 +8465,17 @@
         if (!infoValue) return showMessage(`La información de ${getPaymentMethodInfoLabel(infoType).toLowerCase()} es obligatoria`, 'error');
 
         const existingMethod = paymentMethods.find((entry) => String(entry.id) === String(editingPaymentMethodId));
+        let image = paymentMethodImageData || imageUrl || existingMethod?.image || '';
+        if (imageFile && !paymentMethodImageData) {
+            try {
+                image = await readFileAsDataUrl(imageFile);
+                paymentMethodImageData = image;
+            } catch (error) {
+                showMessage('No se pudo cargar la imagen del archivo', 'error');
+                return;
+            }
+        }
+
         const nextMethod = {
             id: existingMethod?.id || ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
             name,
@@ -8480,7 +8492,8 @@
         }
 
         paymentMethods = normalizePaymentMethods(paymentMethods);
-        persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        const persisted = await persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        if (!persisted) return;
         resetPaymentMethodForm();
         switchAdminTab('settings');
         updateGoldOrderPaymentMethodOptions();
