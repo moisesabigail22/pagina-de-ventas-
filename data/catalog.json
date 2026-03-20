@@ -1,6 +1,6 @@
 {
   "settings": {
-    "discord": "https://discord.gg/AYJkmeZn",
+    "discord": "https://discord.gg/Smk5T3se3H",
     "whatsapp": "https://wa.me/1234567890",
     "tiktok": "https://www.tiktok.com/@farmers.de.mmorpg",
     "email": "soporte@epicgoldshop.com",
@@ -22,7 +22,7 @@
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
-      "description": "Gold para servidor oficial con stock verificado.",
+      "description": "Gold para servidor oficial con precio verificado.",
       "image": "https://i.imgur.com/5Yh4leB.jpeg"
     }
   ],
@@ -69,105 +69,85 @@
       "game": "WoW Turtle",
       "server": "Ambershire",
       "amount": 100,
-      "price": 3.5,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 3.5
     },
     {
       "game": "WoW Turtle",
       "server": "Nordanaar",
       "amount": 100,
-      "price": 2.5,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 2.5
     },
     {
       "game": "WoW Turtle",
       "server": "Telabim",
       "amount": 100,
-      "price": 4.5,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 4.5
     },
     {
       "game": "WoW Turtle",
       "server": "South Sea",
       "amount": 100,
-      "price": 3,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 3
     },
     {
       "game": "WoW Privado",
       "server": "Bronzebeard",
       "amount": 100,
-      "price": 3,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 3
     },
     {
       "game": "WoW Privado",
       "server": "Warmane",
       "amount": 1000,
-      "price": 2.5,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 2.5
     },
     {
       "game": "WoW Privado",
       "server": "Project Epoch - Kezan",
       "amount": 100,
-      "price": 4,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 4
     },
     {
       "game": "WoW Privado",
       "server": "Project Epoch - Gurubashi",
       "amount": 100,
-      "price": 3,
-      "delivery": "5-20 minutos",
-      "stock": "Disponible"
+      "price": 3
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 100,
-      "price": 5.8,
-      "delivery": "15-40 minutos",
-      "stock": "Disponible"
+      "price": 2.5
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 200,
-      "price": 11.6,
-      "delivery": "15-40 minutos",
-      "stock": "Disponible"
+      "price": 5.0
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 300,
-      "price": 17.4,
-      "delivery": "15-40 minutos",
-      "stock": "Disponible"
+      "price": 7.5
+    },
+    {
+      "game": "WoW Oficial",
+      "server": "Nightslayer A/H",
+      "amount": 400,
+      "price": 10.0
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 500,
-      "price": 29.0,
-      "delivery": "15-40 minutos",
-      "stock": "Disponible"
+      "price": 12.5
     },
     {
       "game": "WoW Oficial",
       "server": "Nightslayer A/H",
       "amount": 1000,
-      "price": 58.0,
-      "delivery": "15-40 minutos",
-      "stock": "Disponible"
+      "price": 25.0
     }
   ],
   "accounts": [],
@@ -178,14 +158,16 @@
       "game": "WoW Privado",
       "name": "Boosteo cualquier clase",
       "description": "Subida de personaje para cualquier clase en WoW privado.",
-      "price": 140
+      "price": 140,
+      "image": "https://.../boosting-epic.jpg"
     },
     {
       "category": "Profesiones",
       "game": "WoW",
       "name": "Herboristería / Minería",
       "description": "Subida completa de profesión",
-      "price": 30
+      "price": 30,
+      "image": "https://.../profession-cover.jpg"
     },
     {
       "category": "Profesiones",

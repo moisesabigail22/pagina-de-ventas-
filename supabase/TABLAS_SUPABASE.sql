@@ -15,6 +15,7 @@ create table if not exists public.settings (
 
 create table if not exists public.gold_categories (
   id uuid primary key default gen_random_uuid(),
+  name text,
   game text not null,
   server text,
   description text,
@@ -22,6 +23,9 @@ create table if not exists public.gold_categories (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.gold_categories
+  add column if not exists name text;
 
 create table if not exists public.game_servers (
   id uuid primary key default gen_random_uuid(),
@@ -36,11 +40,13 @@ create table if not exists public.gold (
   server text not null,
   amount integer not null default 0,
   price numeric(12,2) not null default 0,
-  delivery text,
-  stock text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table if exists public.gold
+  drop column if exists delivery,
+  drop column if exists stock;
 
 create table if not exists public.accounts (
   id uuid primary key default gen_random_uuid(),
@@ -52,6 +58,16 @@ create table if not exists public.accounts (
   price text,
   image text,
   tags jsonb default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table if exists public.accounts
+  add column if not exists image text;
+
+create table if not exists public.account_categories (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -75,3 +91,14 @@ create table if not exists public.services (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create table if not exists public.payment_methods (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  image text,
+  info_type text not null default 'payment_id',
+  info_value text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+

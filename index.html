@@ -1040,18 +1040,33 @@
         }
 
         .gold-order-summary-item {
-            min-width: 160px;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .gold-order-summary-label {
             color: var(--text-gray);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         .gold-order-summary-value {
-            color: var(--wow-gold);
-            font-size: 1.4rem;
-            font-weight: 800;
+            color: var(--wow-gold-light);
+            font-size: 2.3rem;
+            font-weight: 900;
+            line-height: 1;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 2px solid rgba(200, 170, 109, 0.35);
+            background: linear-gradient(135deg, rgba(200, 170, 109, 0.16), rgba(12, 28, 44, 0.9));
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), inset 0 0 18px rgba(200, 170, 109, 0.08);
+            text-shadow: 0 0 18px rgba(247, 231, 160, 0.3);
+            min-height: 72px;
+            display: flex;
+            align-items: center;
         }
 
         .gold-order-cta {
@@ -1060,24 +1075,25 @@
 
         .gold-order-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-            margin-top: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 15px;
         }
 
         .gold-order-option {
-            background: linear-gradient(160deg, rgba(10, 25, 41, 0.95) 0%, rgba(20, 44, 72, 0.92) 100%);
+            background: linear-gradient(160deg, rgba(10, 25, 41, 0.97) 0%, rgba(20, 44, 72, 0.94) 100%);
             border: 2px solid var(--wow-gold-dark);
             color: var(--text);
             padding: 0;
-            border-radius: 14px;
+            border-radius: 18px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: 700;
             text-align: left;
             overflow: hidden;
             position: relative;
-            min-height: 220px;
+            min-height: 360px;
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
         }
 
         .gold-order-option:hover {
@@ -1088,51 +1104,55 @@
 
         .gold-order-option-badge {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 16px;
+            left: 16px;
             background: linear-gradient(90deg, #a52121, #d45a00);
             color: #fff;
-            font-size: 0.72rem;
+            font-size: 0.82rem;
             font-weight: 800;
-            padding: 4px 9px;
+            padding: 6px 12px;
             border-radius: 999px;
             z-index: 2;
             text-transform: uppercase;
-            letter-spacing: 0.4px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.28);
         }
 
         .gold-order-option-cover {
             width: 100%;
-            height: 86px;
-            object-fit: cover;
+            height: 200px;
+            object-fit: contain;
+            object-position: center;
             display: block;
+            padding: 16px;
+            background: linear-gradient(180deg, rgba(5,5,5,.92), rgba(12,28,44,.96));
             border-bottom: 1px solid rgba(200, 170, 109, 0.35);
         }
 
         .gold-order-option-content {
-            padding: 12px 14px 14px;
+            padding: 20px 22px 22px;
         }
 
         .gold-order-option-title {
             color: var(--wow-gold-light);
-            font-size: 1.12rem;
-            margin-bottom: 6px;
+            font-size: 1.45rem;
+            margin-bottom: 10px;
             line-height: 1.2;
         }
 
         .gold-order-option-description {
             color: var(--text-gray);
-            font-size: 0.9rem;
-            margin-bottom: 9px;
-            line-height: 1.35;
-            min-height: 38px;
+            font-size: 1rem;
+            margin-bottom: 14px;
+            line-height: 1.55;
+            min-height: 72px;
         }
 
         .gold-order-option-meta {
             color: #7de3a7;
-            font-size: 0.88rem;
+            font-size: 1rem;
             font-weight: 700;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
         }
 
         .gold-order-step {
@@ -2217,6 +2237,23 @@
             margin: 0 auto;
         }
 
+        .customer-order-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .customer-order-pill {
+            background: rgba(200, 170, 109, 0.12);
+            border: 1px solid rgba(200, 170, 109, 0.25);
+            color: var(--wow-gold-light);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
         /* Filter Buttons */
         .filter-buttons {
             display: flex;
@@ -2924,9 +2961,50 @@
                 border-width: 3px;
             }
         }
+
+        .language-switcher {
+            display: flex;
+            gap: 10px;
+            margin-right: 14px;
+        }
+
+        .language-switcher button {
+            min-width: 52px;
+            border-radius: 999px;
+            border: 1px solid rgba(200, 170, 109, 0.5);
+            background: rgba(10, 25, 41, 0.82);
+            color: var(--text);
+            padding: 8px 14px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .language-switcher button.active {
+            background: linear-gradient(135deg, var(--wow-gold), var(--wow-gold-dark));
+            color: var(--wow-blue-dark);
+        }
+
+        #google_translate_element {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+        }
+
+        .goog-te-banner-frame.skiptranslate,
+        iframe.skiptranslate {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
     </style>
 </head>
 <body>
+
+
+<div id="google_translate_element" aria-hidden="true"></div>
 
 <!-- Fondo WoW -->
 <div class="wow-bg"></div>
@@ -2939,42 +3017,44 @@
         </div>
         <div class="logo-text-container">
             <div class="logo-text">EPIC GOLD SHOP</div>
-            <div class="logo-subtitle">Tienda Premium de Oro y Cuentas World of Warcraft</div>
+            <div class="logo-subtitle" id="logo-subtitle">Tienda Premium de Oro y Cuentas World of Warcraft</div>
         </div>
     </a>
 
     <div class="nav-container">
         <a href="#products" class="nav-btn active">
-            <i class="fas fa-user"></i> CUENTAS
+            <i class="fas fa-user"></i> <span id="nav-accounts-label">CUENTAS</span>
         </a>
         <a href="#gold" class="nav-btn">
-            <i class="fas fa-coins"></i> ORO
+            <i class="fas fa-coins"></i> <span id="nav-gold-label">ORO</span>
         </a>
         <a href="#sell" class="nav-btn">
-            <i class="fas fa-dollar-sign"></i> VENDER
+            <i class="fas fa-dollar-sign"></i> <span id="nav-sell-label">VENDER</span>
         </a>
         <a href="#services" class="nav-btn">
-            <i class="fas fa-hammer"></i> SERVICIOS
+            <i class="fas fa-hammer"></i> <span id="nav-services-label">SERVICIOS</span>
         </a>
         <a href="#references" class="nav-btn">
-            <i class="fas fa-star"></i> REFERENCIAS
+            <i class="fas fa-star"></i> <span id="nav-references-label">REFERENCIAS</span>
         </a>
         <a href="#contact" class="nav-btn">
-            <i class="fas fa-headset"></i> CONTACTO
+            <i class="fas fa-headset"></i> <span id="nav-contact-label">CONTACTO</span>
         </a>
         <button class="nav-btn" id="acceso-btn" onclick="showAdmin()">
-            <i class="fas fa-key"></i> ACCESO
+            <i class="fas fa-key"></i> <span id="nav-access-label">ACCESO</span>
         </button>
 
+        <div class="language-switcher">
+            <button type="button" id="lang-es-btn" onclick="enterStore('es')">ES</button>
+            <button type="button" id="lang-en-btn" onclick="enterStore('en')">EN</button>
+        </div>
+
         <div class="social-links">
-            <a href="https://discord.gg/AYJkmeZn" target="_blank" class="social-link" data-tooltip="Discord">
+            <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="social-link" data-tooltip="Discord">
                 <i class="fab fa-discord"></i>
             </a>
             <a href="https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv" target="_blank" class="social-link" data-tooltip="TikTok">
                 <i class="fab fa-tiktok"></i>
-            </a>
-            <a href="https://wa.me/tunumero" target="_blank" class="social-link" data-tooltip="WhatsApp">
-                <i class="fab fa-whatsapp"></i>
             </a>
         </div>
     </div>
@@ -3004,8 +3084,8 @@
         <div class="hero-logo-container">
             <img src="https://i.imgur.com/ynvAS9B.png" alt="EPIC GOLD SHOP" class="hero-logo" loading="lazy">
         </div>
-        <h1 class="hero-title">Epic Gold Shop - Compra Oro WoW Seguro | Vende Tu Oro</h1>
-        <p class="hero-subtitle">
+        <h1 class="hero-title" id="hero-title">Epic Gold Shop - Compra Oro WoW Seguro | Vende Tu Oro</h1>
+        <p class="hero-subtitle" id="hero-subtitle">
             Marketplace especializado en World of Warcraft Classic, Turtle WoW y versiones retail.
             Compra oro y cuentas premium con total seguridad, o vende tu excedente de oro directamente en nuestro Discord.
             Miles de transacciones exitosas respaldadas por nuestra comunidad.
@@ -3013,19 +3093,19 @@
         <div class="quick-actions">
             <a href="#products" class="quick-action-btn">
                 <i class="fas fa-user" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
-                <span>Ver Cuentas</span>
+                <span id="quick-action-accounts-label">Ver Cuentas</span>
             </a>
             <a href="#gold" class="quick-action-btn">
                 <i class="fas fa-coins" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
-                <span>Comprar Oro</span>
+                <span id="quick-action-gold-label">Comprar Oro</span>
             </a>
             <a href="#sell" class="quick-action-btn">
                 <i class="fas fa-dollar-sign" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
-                <span>Vender Oro</span>
+                <span id="quick-action-sell-label">Vender Oro</span>
             </a>
             <a href="#services" class="quick-action-btn">
                 <i class="fas fa-hammer" style="color: var(--wow-gold); font-size: 1.5rem;"></i>
-                <span>Servicios</span>
+                <span id="quick-action-services-label">Servicios</span>
             </a>
         </div>
     </div>
@@ -3035,7 +3115,7 @@
 <div class="container" id="products">
     <div class="section">
         <div class="section-header">
-            <h2 class="section-title">Cuentas Premium WoW - Turtle WoW - Albion Online</h2>
+            <h2 class="section-title" id="products-section-title">Cuentas Premium WoW - Turtle WoW - Albion Online</h2>
 
             <!-- Botón "bichita" desplegable de categorías - MEJORADO -->
             <div class="category-dropdown-container">
@@ -3046,7 +3126,7 @@
                 <div class="category-dropdown-menu" id="category-dropdown">
                     <div class="category-dropdown-header">
                         <i class="fas fa-filter"></i>
-                        <span>Filtrar Cuentas</span>
+                        <span id="filter-accounts-label">Filtrar Cuentas</span>
                         <button class="close-dropdown" onclick="closeCategoryDropdown()">&times;</button>
                     </div>
                     <div class="category-list" id="category-list">
@@ -3066,7 +3146,7 @@
 <div class="container" id="gold">
     <div class="section">
         <div class="section-header">
-            <h2 class="section-title">Comprar Oro - Juegos Disponibles</h2>
+            <h2 class="section-title" id="gold-section-title">Comprar Oro - Juegos Disponibles</h2>
             <div style="display: flex; align-items: center; gap: 20px;">
                 <div class="stats-badge">
                     <i class="fas fa-bolt" style="color: var(--wow-gold);"></i>
@@ -3081,11 +3161,11 @@
 
         <div class="gold-order-panel">
             <div class="gold-order-header">
-                <h3><i class="fas fa-coins"></i> Compra rápida de oro</h3>
-                <p>Inicia la compra y selecciona el juego en una ventana dedicada.</p>
+                <h3 id="gold-panel-title"><i class="fas fa-coins"></i> Compra rápida de oro</h3>
+                <p id="gold-panel-description">Inicia la compra y selecciona el juego en una ventana dedicada.</p>
             </div>
-            <button class="btn-primary" type="button" id="gold-order-open">
-                <i class="fas fa-shopping-cart"></i> INICIAR COMPRA
+            <button class="btn-primary" type="button" id="gold-order-open" onclick="openGoldOrderModal()">
+                <i class="fas fa-shopping-cart"></i> <span id="gold-order-open-label">INICIAR COMPRA</span>
             </button>
         </div>
 
@@ -3115,7 +3195,7 @@
     <div class="section">
         <div class="section-header">
             <h2 class="section-title">¿Quieres Vender Oro?</h2>
-            <a href="https://discord.gg/AYJkmeZn" target="_blank" class="btn-primary">
+            <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="btn-primary">
                 <i class="fab fa-discord"></i> UNIRME AL DISCORD
             </a>
         </div>
@@ -3169,7 +3249,7 @@
                     Únete a nuestra comunidad de más de 1,000 gamers activos.
                     Canal dedicado para ventas, precios competitivos y transacciones seguras supervisadas por moderadores.
                 </p>
-                <a href="https://discord.gg/AYJkmeZn" target="_blank" class="btn-buy" style="font-size: 1.2rem; padding: 18px 45px;">
+                <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="btn-buy" style="font-size: 1.2rem; padding: 18px 45px;">
                     <i class="fab fa-discord"></i> ENTRAR AL DISCORD PARA VENDER
                 </a>
                 <div style="margin-top: 40px; padding: 25px; background: rgba(255,255,255,0.05); border-radius: 10px; width: 100%;">
@@ -3245,7 +3325,7 @@
                     <i class="fas fa-envelope"></i> Métodos de Contacto
                 </h3>
                 <div class="contact-methods">
-                    <a href="https://discord.gg/AYJkmeZn" target="_blank" class="contact-method">
+                    <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="contact-method">
                         <div class="contact-icon">
                             <i class="fab fa-discord"></i>
                         </div>
@@ -3253,23 +3333,11 @@
                             <h4>Discord Principal</h4>
                             <p>Para compras, ventas y soporte inmediato</p>
                             <p style="color: var(--wow-gold); font-size: 1rem; margin-top: 8px;">
-                                <i class="fas fa-external-link-alt"></i> discord.gg/AYJkmeZn
+                                <i class="fas fa-external-link-alt"></i> discord.gg/Smk5T3se3H
                             </p>
                         </div>
                     </a>
 
-                    <a href="https://wa.me/tunumero" target="_blank" class="contact-method">
-                        <div class="contact-icon">
-                            <i class="fab fa-whatsapp"></i>
-                        </div>
-                        <div class="contact-details">
-                            <h4>WhatsApp</h4>
-                            <p>Atención directa para consultas rápidas</p>
-                            <p style="color: var(--wow-gold); font-size: 1rem; margin-top: 8px;">
-                                <i class="fas fa-phone"></i> +1 (234) 567-8900
-                            </p>
-                        </div>
-                    </a>
 
                     <a href="https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv" target="_blank" class="contact-method">
                         <div class="contact-icon">
@@ -3296,7 +3364,7 @@
                     Soporte directo, anuncios exclusivos, canal de ventas y comunidad amigable.
                     Todo en un solo lugar.
                 </p>
-                <a href="https://discord.gg/AYJkmeZn" target="_blank" class="btn-buy" style="font-size: 1.2rem; padding: 18px 45px;">
+                <a href="https://discord.gg/Smk5T3se3H" target="_blank" class="btn-buy" style="font-size: 1.2rem; padding: 18px 45px;">
                     <i class="fab fa-discord"></i> UNIRME A LA COMUNIDAD
                 </a>
                 <div style="margin-top: 40px; padding: 25px; background: rgba(255,255,255,0.05); border-radius: 10px; width: 100%;">
@@ -3371,14 +3439,11 @@
                 Garantizamos transacciones seguras y entrega rápida con soporte 24/7.
             </p>
             <div class="footer-social">
-                <a href="https://discord.gg/AYJkmeZn" target="_blank" data-tooltip="Discord">
+                <a href="https://discord.gg/Smk5T3se3H" target="_blank" data-tooltip="Discord">
                     <i class="fab fa-discord"></i>
                 </a>
                 <a href="https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv" target="_blank" data-tooltip="TikTok">
                     <i class="fab fa-tiktok"></i>
-                </a>
-                <a href="https://wa.me/tunumero" target="_blank" data-tooltip="WhatsApp">
-                    <i class="fab fa-whatsapp"></i>
                 </a>
             </div>
         </div>
@@ -3395,23 +3460,23 @@
         </div>
 
         <div class="footer-section">
-            <h3>Juegos Disponibles</h3>
+            <h3>Categorías Activas</h3>
             <ul class="footer-links">
-                <li><a href="#"><i class="fas fa-dragon"></i> Turtle WoW</a></li>
-                <li><a href="#"><i class="fab fa-wow"></i> World of Warcraft</a></li>
-                <li><a href="#"><i class="fas fa-shield-alt"></i> Albion Online</a></li>
-                <li><a href="#"><i class="fas fa-gamepad"></i> Runescape</a></li>
-                <li><a href="#"><i class="fas fa-plus"></i> Más juegos</a></li>
+                <li><a href="#gold"><i class="fas fa-dragon"></i> WoW Turtle</a></li>
+                <li><a href="#gold"><i class="fab fa-wow"></i> WoW Oficial</a></li>
+                <li><a href="#gold"><i class="fas fa-server"></i> WoW Privado</a></li>
+                <li><a href="#services"><i class="fas fa-hammer"></i> Servicios WoW</a></li>
+                <li><a href="#references"><i class="fas fa-star"></i> Referencias</a></li>
             </ul>
         </div>
 
         <div class="footer-section">
             <h3>Información de Contacto</h3>
+            <p><i class="fab fa-discord"></i> discord.gg/Smk5T3se3H</p>
             <p><i class="fas fa-envelope"></i> soporte@epicgoldshop.com</p>
-            <p><i class="fas fa-globe"></i> www.epicgoldshop.com</p>
             <p><i class="fas fa-clock"></i> Soporte 24/7</p>
             <p><i class="fas fa-shield-alt"></i> Transacciones Seguras</p>
-            <p><i class="fas fa-users"></i> +1,000 Miembros</p>
+            <p><i class="fas fa-users"></i> Comunidad activa</p>
         </div>
     </div>
 
@@ -3728,6 +3793,12 @@
                     <select id="gold-order-amount" disabled>
                         <option value="">Selecciona una cantidad</option>
                     </select>
+                    <div id="gold-order-custom-amount-group" style="display: none; margin-top: 12px;">
+                        <input type="number" id="gold-order-custom-amount" min="1000" step="100" placeholder="Cantidad específica (mínimo 1000)">
+                        <small id="gold-order-custom-help" style="display:block; margin-top:8px; color:var(--text-gray);">
+                            Ingresa una cantidad mínima de 1000. El total se calcula con la tarifa actual del servidor.
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -3753,6 +3824,35 @@
                         <option value="Subasta">Subasta</option>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">Método de pago</label>
+                    <select id="gold-order-payment-method">
+                        <option value="">Selecciona un método de pago</option>
+                    </select>
+                    <small id="gold-order-payment-method-info" style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Selecciona el método que prefieres para pagar tu pedido.
+                    </small>
+                    <div id="gold-order-payment-method-preview" style="display:none; margin-top:12px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Correo o Discord</label>
+                    <input type="text" id="gold-order-contact" placeholder="Ej: correo@dominio.com o @usuarioDiscord" maxlength="120">
+                    <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Déjanos tu correo o tu Discord para contactarte sobre el pedido.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Capture de la transacción</label>
+                    <input type="file" id="gold-order-proof-file" accept="image/*">
+                    <small id="gold-order-proof-info" style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Sube el comprobante de pago para adjuntarlo al ticket.
+                    </small>
+                    <div id="gold-order-proof-preview" style="display:none; margin-top:12px;"></div>
+                </div>
+
             </div>
 
             <div class="gold-order-summary">
@@ -3760,10 +3860,13 @@
                     <div class="gold-order-summary-label">Precio</div>
                     <div class="gold-order-summary-value" id="gold-order-price">-</div>
                 </div>
-                <a class="btn-buy gold-order-cta" id="gold-order-cta" href="https://discord.gg/AYJkmeZn" target="_blank">
-                    <i class="fas fa-shopping-cart"></i> COMPRAR ORO
-                </a>
+                <div style="display:flex; gap:12px; flex-wrap:wrap; width:100%;">
+                    <button class="btn-buy gold-order-cta" id="gold-order-submit" type="button" onclick="submitGoldOrderTicket()">
+                        <i class="fas fa-ticket-alt"></i> CREAR TICKET
+                    </button>
+                </div>
             </div>
+            <div class="message" id="gold-order-message" style="display:none; margin-top:16px;"></div>
         </div>
     </div>
 </div>
@@ -3780,7 +3883,12 @@
     let editingAccountId = null;
     let editingGoldId = null;
     let editingGoldCategoryId = null;
+    let editingServiceId = null;
+    let editingPaymentMethodId = null;
     let currentImageData = null;
+    let paymentMethodImageData = '';
+    let goldOrderProofData = '';
+    let goldOrderProofName = '';
     let currentFilter = 'all';
     let isDropdownOpen = false;
     let currentOptimization = 'auto';
@@ -3789,9 +3897,70 @@
         game: '',
         server: ''
     };
+    let currentLanguage = 'es';
+
+
+    const ENTRY_GATE_TRANSLATIONS = {
+        es: {
+            heroTitle: 'Epic Gold Shop - Compra Oro WoW Seguro | Vende Tu Oro',
+            heroSubtitle: 'Marketplace especializado en World of Warcraft Classic, Turtle WoW y versiones retail. Compra oro y cuentas premium con total seguridad, o vende tu excedente de oro directamente en nuestro Discord. Miles de transacciones exitosas respaldadas por nuestra comunidad.',
+            quickAccounts: 'Ver Cuentas',
+            quickGold: 'Comprar Oro',
+            quickSell: 'Vender Oro',
+            quickServices: 'Servicios',
+            navAccounts: 'CUENTAS',
+            navGold: 'ORO',
+            navSell: 'VENDER',
+            navServices: 'SERVICIOS',
+            navReferences: 'REFERENCIAS',
+            navContact: 'CONTACTO',
+            navAccess: 'ACCESO',
+            logoSubtitle: 'Tienda Premium de Oro y Cuentas World of Warcraft',
+            productsSectionTitle: 'Cuentas Premium WoW - Turtle WoW - Albion Online',
+            filterAccounts: 'Filtrar Cuentas',
+            goldSectionTitle: 'Comprar Oro - Juegos Disponibles',
+            goldPanelTitle: 'Compra rápida de oro',
+            goldPanelDescription: 'Inicia la compra y selecciona el juego en una ventana dedicada.',
+            goldOpen: 'INICIAR COMPRA',
+            accountTicket: 'ABRIR TICKET',
+            serviceTicket: 'ABRIR TICKET',
+            noAccountsTitle: 'No hay cuentas disponibles en esta categoría',
+            noAccountsText: 'Pronto agregaremos más cuentas premium. Mientras tanto, puedes revisar otras categorías o contactarnos para solicitudes especiales.',
+            viewAllAccounts: 'VER TODAS LAS CUENTAS',
+            noServices: 'No hay servicios publicados por ahora.'
+        },
+        en: {
+            heroTitle: 'Epic Gold Shop - Buy WoW Gold Safely | Sell Your Gold',
+            heroSubtitle: 'Marketplace specialized in World of Warcraft Classic, Turtle WoW and retail versions. Buy gold and premium accounts securely, or sell your extra gold directly in our Discord community.',
+            quickAccounts: 'View Accounts',
+            quickGold: 'Buy Gold',
+            quickSell: 'Sell Gold',
+            quickServices: 'Services',
+            navAccounts: 'ACCOUNTS',
+            navGold: 'GOLD',
+            navSell: 'SELL',
+            navServices: 'SERVICES',
+            navReferences: 'REVIEWS',
+            navContact: 'CONTACT',
+            navAccess: 'ACCESS',
+            logoSubtitle: 'Premium World of Warcraft Gold and Accounts Store',
+            productsSectionTitle: 'Premium WoW Accounts - Turtle WoW - Albion Online',
+            filterAccounts: 'Filter Accounts',
+            goldSectionTitle: 'Buy Gold - Available Games',
+            goldPanelTitle: 'Fast gold checkout',
+            goldPanelDescription: 'Start the purchase and select the game in a dedicated window.',
+            goldOpen: 'START PURCHASE',
+            accountTicket: 'OPEN TICKET',
+            serviceTicket: 'OPEN TICKET',
+            noAccountsTitle: 'No accounts are available in this category',
+            noAccountsText: 'We will add more premium accounts soon. In the meantime, review other categories or contact us for custom requests.',
+            viewAllAccounts: 'VIEW ALL ACCOUNTS',
+            noServices: 'No services are published yet.'
+        }
+    };
 
     // URLs actualizadas
-    const DISCORD_LINK = "https://discord.gg/AYJkmeZn";
+    const DISCORD_LINK = "https://discord.gg/Smk5T3se3H";
     const TIKTOK_LINK = "https://www.tiktok.com/@farmers.de.mmorpg?_r=1&_t=ZS-93X7c7XttZv";
     const LOGO_URL = "https://i.imgur.com/ynvAS9B.png";
     const SITE_URL = `${window.location.origin}/`;
@@ -3823,7 +3992,10 @@
     // Imágenes para juegos (portadas reales por juego)
     const GAME_IMAGES = {
         'Turtle WoW': IMGUR_IMAGE_URLS.turtleWow2,
+        'WoW Turtle': generateGameCoverDataUrl('WoW Turtle'),
         'World of Warcraft': IMGUR_IMAGE_URLS.wowClassic,
+        'WoW Oficial': generateGameCoverDataUrl('WoW Oficial'),
+        'WoW Privado': generateGameCoverDataUrl('WoW Privado'),
         'Albion Online': IMGUR_IMAGE_URLS.albionOnline,
         'Runescape': IMGUR_IMAGE_URLS.goldCoins,
         'default': generateGameCoverDataUrl('Epic Gold Shop')
@@ -3839,7 +4011,6 @@
             name: 'Cuenta Nivel 60 Guerrero Épico',
             description: 'Guerrero nivel 60 con equipo épico completo T2.5, monturas raras (Cargador de la Muerte), 300 en herrería y minería, reputaciones máximas, 5000g disponible.',
             price: '$129.99',
-            stock: 2,
             image: IMGUR_IMAGE_URLS.turtleWow1,
             featured: true,
             tags: ['Nivel 60', 'Equipo Épico', 'Monturas', 'Profesiones', 'Reputación']
@@ -3852,7 +4023,6 @@
             name: 'Cuenta Nivel 40 Mago Avanzado',
             description: 'Mago nivel 40 con hechizos avanzados, buen equipo azul para continuar leveling, 1000g disponible, profesiones al 225, múltiples bolsas de 16 ranuras.',
             price: '$49.99',
-            stock: 5,
             image: IMGUR_IMAGE_URLS.wowMage,
             featured: false,
             tags: ['Nivel 40', 'Mago', 'Profesiones', 'Oro Inicial']
@@ -3865,7 +4035,6 @@
             name: 'Cuenta T8 Albion Premium',
             description: 'Cuenta con personaje Tier 8 completo, 15M de silver, isla personalizada nivel 6, especializaciones avanzadas en armas de fuego, múltiples sets de equipo.',
             price: '$179.99',
-            stock: 1,
             image: IMGUR_IMAGE_URLS.albionOnline,
             featured: true,
             tags: ['Tier 8', '15M Silver', 'Isla', 'Especializaciones']
@@ -3878,7 +4047,6 @@
             name: 'Cuenta Nivel 70 Dragonflight Mítico',
             description: 'Cuenta nivel máximo en Dragonflight, equipo mítico+ 480+ ilvl, múltiples personajes de nivel 70, monturas legendarias, logros completos de raid.',
             price: '$249.99',
-            stock: 1,
             image: IMGUR_IMAGE_URLS.wowRetail,
             featured: true,
             tags: ['Nivel 70', 'Mítico+', 'Monturas', 'Logros']
@@ -3891,7 +4059,6 @@
             name: 'Cuenta Nivel 80 WotLK Heroico',
             description: 'Cuenta nivel 80 en Wrath of the Lich King Classic con equipo heroico completo, montura proto-draco, profesiones 450, reputaciones con Kirin Tor máximas.',
             price: '$149.99',
-            stock: 3,
             image: IMGUR_IMAGE_URLS.wowClassic,
             featured: false,
             tags: ['Nivel 80', 'WotLK', 'Heroico', 'Montura Épica']
@@ -3904,7 +4071,6 @@
             name: 'Cuenta Nivel 30 Sacerdote',
             description: 'Sacerdote nivel 30 sombra, buen equipo verde/azul, profesiones en desarrollo, 300g disponible, ideal para jugadores que empiezan en Turtle WoW.',
             price: '$29.99',
-            stock: 8,
             image: IMGUR_IMAGE_URLS.turtleWow2,
             featured: false,
             tags: ['Nivel 30', 'Sacerdote', 'Principiantes', 'Oro Inicial']
@@ -3926,7 +4092,7 @@
             name: "Albion Online Silver",
             game: "Albion Online",
             server: "Americas",
-            description: "Silver de Albion Online con stock actualizado diariamente.",
+            description: "Silver de Albion Online con actualización diaria.",
             image: IMGUR_IMAGE_URLS.albionOnline
         },
         {
@@ -3955,9 +4121,6 @@
             server: 'Nordanaar',
             amount: '1,000',
             price: '$24.99',
-            delivery: '5-15 minutos',
-            stock: 50,
-            status: 'available'
         },
         {
             id: 2,
@@ -3965,9 +4128,6 @@
             server: 'Nordanaar',
             amount: '5,000',
             price: '$119.99',
-            delivery: '10-30 minutos',
-            stock: 25,
-            status: 'available'
         },
         {
             id: 3,
@@ -3975,9 +4135,6 @@
             server: 'Tel\'Abim',
             amount: '1,000',
             price: '$27.99',
-            delivery: '5-15 minutos',
-            stock: 40,
-            status: 'available'
         },
         {
             id: 4,
@@ -3985,9 +4142,6 @@
             server: 'Americas',
             amount: '10M',
             price: '$8.99',
-            delivery: 'Inmediato',
-            stock: 100,
-            status: 'available'
         },
         {
             id: 5,
@@ -3995,9 +4149,6 @@
             server: 'Americas',
             amount: '50M',
             price: '$39.99',
-            delivery: 'Inmediato',
-            stock: 25,
-            status: 'limited'
         },
         {
             id: 6,
@@ -4005,9 +4156,6 @@
             server: 'Retail',
             amount: '100K',
             price: '$29.99',
-            delivery: '15-30 minutos',
-            stock: 30,
-            status: 'available'
         },
         {
             id: 7,
@@ -4015,9 +4163,6 @@
             server: 'Retail',
             amount: '500K',
             price: '$129.99',
-            delivery: '30-60 minutos',
-            stock: 10,
-            status: 'limited'
         },
         {
             id: 8,
@@ -4025,9 +4170,6 @@
             server: 'OSRS',
             amount: '10M',
             price: '$14.99',
-            delivery: '5-10 minutos',
-            stock: 80,
-            status: 'available'
         },
         {
             id: 9,
@@ -4035,9 +4177,6 @@
             server: 'Nordanaar',
             amount: '10,000',
             price: '$229.99',
-            delivery: '30-60 minutos',
-            stock: 5,
-            status: 'limited'
         }
     ];
 
@@ -4097,7 +4236,7 @@
     // Configuración de contactos
     const contactInfo = {
         discord: DISCORD_LINK,
-        whatsapp: 'https://wa.me/1234567890',
+        whatsapp: '',
         tiktok: TIKTOK_LINK,
         email: 'soporte@epicgoldshop.com',
         site: SITE_URL
@@ -4113,6 +4252,280 @@
         }));
     }
 
+    function parseGoldPriceValue(value) {
+        const numericValue = String(value ?? '').replace(/[^0-9.]/g, '');
+        const parsedValue = parseFloat(numericValue);
+        return Number.isFinite(parsedValue) ? parsedValue : 0;
+    }
+
+    function formatGoldPriceValue(value) {
+        return `$${parseGoldPriceValue(value).toFixed(2)}`;
+    }
+
+    function formatGoldAmountLabel(value) {
+        const amount = parseGoldOrderAmount(value);
+        if (!amount) return String(value || '0');
+        return `${amount.toLocaleString('en-US')}g`;
+    }
+
+    function normalizeGoldCatalog(rows = []) {
+        const normalizedRows = Array.isArray(rows)
+            ? rows.map((row, index) => {
+                const normalizedServer = (row.server || '').trim();
+                const normalizedGame = normalizedServer === 'South Sea' && (row.game || '').trim() === 'WoW Privado'
+                    ? 'WoW Turtle'
+                    : (row.game || '').trim();
+
+                return {
+                    ...row,
+                    id: row.id || `gold-${index}`,
+                    game: normalizedGame,
+                    server: normalizedServer,
+                    amount: row.amount != null ? String(row.amount).replace(/,/g, '') : '',
+                    price: row.price != null ? String(row.price) : '',
+                };
+            })
+            : [];
+
+        const officialGame = 'WoW Oficial';
+        const officialServer = 'Nightslayer A/H';
+        const officialAmounts = [100, 200, 300, 400, 500, 1000];
+        const officialRatePer100 = 2.5;
+        const officialRows = normalizedRows.filter((row) => row.game === officialGame && row.server === officialServer);
+        const otherRows = normalizedRows.filter((row) => !(row.game === officialGame && row.server === officialServer));
+        const officialByAmount = new Map();
+
+        officialRows.forEach((row) => {
+            officialByAmount.set(parseGoldOrderAmount(row.amount), row);
+        });
+
+        officialAmounts.forEach((amount) => {
+            if (!officialByAmount.has(amount)) {
+                officialByAmount.set(amount, {
+                    id: `official-${officialServer}-${amount}`,
+                    game: officialGame,
+                    server: officialServer,
+                    amount: String(amount),
+                    price: formatGoldPriceValue((amount / 100) * officialRatePer100)
+                });
+            }
+        });
+
+        const normalizedOfficialRows = Array.from(officialByAmount.entries())
+            .sort((leftEntry, rightEntry) => leftEntry[0] - rightEntry[0])
+            .map(([amount, row]) => ({
+                ...row,
+                game: officialGame,
+                server: officialServer,
+                amount: String(amount),
+                price: formatGoldPriceValue((amount / 100) * officialRatePer100)
+            }));
+
+        return [...otherRows, ...normalizedOfficialRows];
+    }
+
+    function normalizeAccountCategories(categoryRows = [], accountRows = []) {
+        const categoriesFromTable = Array.isArray(categoryRows)
+            ? categoryRows
+                .map((row) => {
+                    if (typeof row === 'string') return row.trim();
+                    return (row?.name || row?.category || '').trim();
+                })
+                .filter(Boolean)
+            : [];
+
+        const categoriesFromAccounts = Array.isArray(accountRows)
+            ? accountRows
+                .map((account) => (account?.category || '').trim())
+                .filter(Boolean)
+            : [];
+
+        return Array.from(new Set([...categoriesFromTable, ...categoriesFromAccounts]))
+            .sort((leftCategory, rightCategory) => leftCategory.localeCompare(rightCategory, 'es', { sensitivity: 'base' }));
+    }
+
+    function normalizePaymentMethods(rows = []) {
+        if (!Array.isArray(rows)) return [];
+
+        return rows
+            .map((row, index) => {
+                const infoType = String(row?.info_type || row?.infoType || '').trim().toLowerCase();
+                const normalizedInfoType = infoType === 'email' ? 'email' : 'payment_id';
+                return {
+                    id: row?.id || `payment-method-${index}`,
+                    name: String(row?.name || '').trim(),
+                    image: String(row?.image || '').trim(),
+                    infoType: normalizedInfoType,
+                    infoValue: String(row?.info_value || row?.infoValue || '').trim()
+                };
+            })
+            .filter((row) => row.name && row.infoValue);
+    }
+
+    function getPaymentMethodInfoLabel(infoType = '') {
+        return infoType === 'email' ? 'Correo' : 'ID de pago';
+    }
+
+    const GOLD_CATALOG_CACHE_KEY = 'epicgoldshop_gold_catalog_cache_v2';
+
+    function readGoldCatalogCache() {
+        try {
+            const raw = window.localStorage.getItem(GOLD_CATALOG_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch (error) {
+            console.warn('No se pudo leer caché local de oro:', error);
+            return null;
+        }
+    }
+
+    function writeGoldCatalogCache(payload = {}) {
+        try {
+            window.localStorage.setItem(GOLD_CATALOG_CACHE_KEY, JSON.stringify({
+                updatedAt: new Date().toISOString(),
+                gold_categories: Array.isArray(payload.gold_categories) ? payload.gold_categories : [],
+                game_servers: Array.isArray(payload.game_servers) ? payload.game_servers : [],
+                gold: Array.isArray(payload.gold) ? payload.gold : []
+            }));
+        } catch (error) {
+            console.warn('No se pudo guardar caché local de oro:', error);
+        }
+    }
+
+    function hydrateGoldCatalogFromCache() {
+        const cachedCatalog = readGoldCatalogCache();
+        if (!cachedCatalog) return false;
+
+        goldCategories = normalizeGoldCategories(cachedCatalog.gold_categories);
+        gameServers = normalizeGameServers(cachedCatalog.game_servers);
+        gold = normalizeGoldCatalog(cachedCatalog.gold);
+        sanitizeGoldCategoryImages();
+        connectionLog('Catálogo de oro precargado desde caché local.', 'warning');
+        return goldCategories.length > 0 || gameServers.length > 0 || gold.length > 0;
+    }
+
+    function normalizeGoldCategories(rows = []) {
+        if (!Array.isArray(rows)) return [];
+
+        return rows
+            .map((item, index) => ({
+                ...item,
+                id: item.id || `gold-category-${index}`,
+                game: (item.game || item.name || 'Juego sin nombre').trim(),
+                name: (item.name || item.game || 'Juego sin nombre').trim(),
+                server: (item.server || '').trim(),
+                description: String(item.description || '').trim(),
+                image: String(item.image || '').trim()
+            }))
+            .filter((item) => item.game);
+    }
+
+    function pickGoldDataset(primaryRows, fallbackRows, normalizeRows) {
+        if (Array.isArray(primaryRows) && primaryRows.length > 0) {
+            return normalizeRows(primaryRows);
+        }
+
+        if (Array.isArray(fallbackRows) && fallbackRows.length > 0) {
+            return normalizeRows(fallbackRows);
+        }
+
+        return [];
+    }
+
+    function normalizeReferenceRecords(rows = []) {
+        if (!Array.isArray(rows)) return [];
+
+        return rows.map((reference) => {
+            const userName = String(reference.name || reference.userName || 'Cliente').trim() || 'Cliente';
+            const possibleDate = reference.created_at || reference.date || null;
+            const parsedDate = possibleDate ? new Date(possibleDate) : null;
+            const hasValidDate = parsedDate instanceof Date && !Number.isNaN(parsedDate.getTime());
+
+            return {
+                id: reference.id,
+                userName,
+                userInitial: userName.charAt(0).toUpperCase(),
+                rating: Number.isFinite(Number(reference.rating)) ? Number(reference.rating) : 5,
+                text: reference.comment || reference.text || '',
+                image: reference.image || null,
+                date: hasValidDate
+                    ? parsedDate.toLocaleDateString('es-ES')
+                    : (typeof reference.date === 'string' ? reference.date : '')
+            };
+        });
+    }
+
+    async function loadReferenceRows() {
+        const primaryResult = await supabaseClient
+            .from('customer_references')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (!primaryResult.error && Array.isArray(primaryResult.data) && primaryResult.data.length > 0) {
+            return {
+                rows: primaryResult.data,
+                source: 'customer_references'
+            };
+        }
+
+        const legacyResult = await supabaseClient
+            .from('references')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (!legacyResult.error && Array.isArray(legacyResult.data) && legacyResult.data.length > 0) {
+            connectionLog('Usando tabla legacy "references" para cargar referencias existentes.', 'warning');
+            return {
+                rows: legacyResult.data,
+                source: 'references'
+            };
+        }
+
+        if (!primaryResult.error) {
+            return {
+                rows: primaryResult.data || [],
+                source: 'customer_references',
+                error: null
+            };
+        }
+
+        if (!legacyResult.error) {
+            return {
+                rows: legacyResult.data || [],
+                source: 'references',
+                error: null
+            };
+        }
+
+        return {
+            rows: [],
+            source: 'customer_references',
+            error: primaryResult.error || legacyResult.error || null
+        };
+    }
+
+    async function resolveReferencesTable() {
+        const primaryProbe = await supabaseClient
+            .from('customer_references')
+            .select('id', { count: 'exact', head: true });
+
+        if (!primaryProbe.error) {
+            return 'customer_references';
+        }
+
+        const legacyProbe = await supabaseClient
+            .from('references')
+            .select('id', { count: 'exact', head: true });
+
+        if (!legacyProbe.error) {
+            connectionLog('Persistiendo referencias en la tabla legacy "references".', 'warning');
+            return 'references';
+        }
+
+        throw primaryProbe.error || legacyProbe.error || new Error('No se encontró tabla de referencias en la base de datos');
+    }
+
     let accounts = [];
     let gold = [];
     let goldCategories = [];
@@ -4121,20 +4534,255 @@
     let categories = [...defaultCategories];
     let gameServers = [];
     let services = [];
+    let paymentMethods = [];
 
+    const DEFAULT_LOGO_URL = 'https://i.imgur.com/ynvAS9B.png';
 
-    const defaultServiceCatalog = [
-        { category: 'boosteo', game: 'WoW Privado', name: 'Boosting EPIC', description: 'Boosteo manual, niveles personalizados, soporte por región.', price: '280', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Alchemy Epic 1-375', description: 'Subida manual de Alquimia 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Blacksmithing Epic 1-375', description: 'Subida manual de Herrería 1-375.', price: '50', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Cooking Epic 1-375', description: 'Subida manual de Cocina 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Enchanting Epic 1-375', description: 'Subida manual de Encantamiento 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Fishing Epic 1-375', description: 'Subida manual de Pesca 1-375.', price: '40', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Herbalism Epic 1-375', description: 'Subida manual de Herboristería 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Jewelcrafting Epic 1-375', description: 'Subida manual de Joyería 1-375.', price: '50', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Mining Epic 1-375', description: 'Subida manual de Minería 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' },
-        { category: 'profesiones', game: 'WoW', name: 'Skinning Epic 1-375', description: 'Subida manual de Desuello 1-375.', price: '30', image: 'https://i.imgur.com/ynvAS9B.png' }
+    function toDataUri(svg) {
+        return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function createServiceCover({ title, subtitle, accent, detail, illustration, badge = 'EPIC' }) {
+        return toDataUri(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1100" role="img" aria-label="${title}">
+                <defs>
+                    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#071b19" />
+                        <stop offset="55%" stop-color="#0b342e" />
+                        <stop offset="100%" stop-color="#24110c" />
+                    </linearGradient>
+                    <radialGradient id="glow" cx="50%" cy="35%" r="55%">
+                        <stop offset="0%" stop-color="${accent}" stop-opacity="0.42" />
+                        <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+                    </radialGradient>
+                    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#f8e6a0" />
+                        <stop offset="50%" stop-color="#d5a748" />
+                        <stop offset="100%" stop-color="#8b5c1f" />
+                    </linearGradient>
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000" flood-opacity="0.55"/>
+                    </filter>
+                </defs>
+                <rect width="800" height="1100" fill="url(#bg)"/>
+                <rect width="800" height="1100" fill="url(#glow)"/>
+                <g opacity="0.15">
+                    <circle cx="80" cy="120" r="3" fill="#ffb454"/>
+                    <circle cx="210" cy="190" r="4" fill="#ffb454"/>
+                    <circle cx="710" cy="160" r="3" fill="#ffb454"/>
+                    <circle cx="600" cy="260" r="4" fill="#ffb454"/>
+                    <circle cx="100" cy="850" r="3" fill="#ffb454"/>
+                    <circle cx="690" cy="940" r="4" fill="#ffb454"/>
+                    <circle cx="520" cy="1020" r="3" fill="#ffb454"/>
+                    <circle cx="260" cy="980" r="4" fill="#ffb454"/>
+                </g>
+                <text x="400" y="120" text-anchor="middle" font-size="56" font-weight="800" fill="url(#gold)" font-family="Georgia, serif">WORLD OF WARCRAFT</text>
+                <line x1="90" y1="210" x2="710" y2="210" stroke="#b88433" stroke-width="2" opacity="0.8"/>
+                <text x="400" y="280" text-anchor="middle" font-size="74" font-weight="900" fill="url(#gold)" font-family="Georgia, serif">${title}</text>
+                <text x="400" y="345" text-anchor="middle" font-size="46" font-weight="700" fill="#f8f0dc" font-family="Georgia, serif">${subtitle}</text>
+                <g filter="url(#shadow)">${illustration}</g>
+                <rect x="70" y="700" width="660" height="230" rx="26" fill="rgba(10,18,18,0.38)" stroke="#8b6b29" stroke-width="2"/>
+                <text x="110" y="770" font-size="34" font-weight="700" fill="#f5d88a" font-family="Arial, sans-serif">◆ Portada temática exclusiva</text>
+                <text x="110" y="825" font-size="30" fill="#f1ede0" font-family="Arial, sans-serif">◆ Servicio manual y personalizado</text>
+                <text x="110" y="880" font-size="30" fill="#f1ede0" font-family="Arial, sans-serif">◆ ${detail}</text>
+                <rect x="260" y="980" width="280" height="60" rx="14" fill="#11284a" stroke="#b88433" stroke-width="2"/>
+                <text x="400" y="1020" text-anchor="middle" font-size="34" font-weight="800" fill="#f7e7a0" font-family="Georgia, serif">${badge}</text>
+            </svg>
+        `);
+    }
+
+    const SERVICE_COVER_IMAGES = {
+        boosteo: createServiceCover({
+            title: 'BOOSTING EPIC',
+            subtitle: 'Levels and progress',
+            accent: '#ff8c42',
+            detail: 'Rutas optimizadas para cualquier clase y reino',
+            illustration: `
+                <path d="M170 610 L300 390 L365 455 L250 665 Z" fill="#7c4d25" />
+                <path d="M320 370 L445 500 L382 560 L255 432 Z" fill="#d4d9df" />
+                <circle cx="518" cy="458" r="88" fill="#7a1d19" opacity="0.92" />
+                <path d="M490 368 L555 435 L610 350 L600 450 L700 465 L604 490 L655 590 L565 525 L500 602 L520 506 L430 475 L520 455 Z" fill="#ffcf6b" opacity="0.92" />
+            `,
+            badge: 'WOW BOOST'
+        }),
+        alchemy: createServiceCover({
+            title: 'ALCHEMY',
+            subtitle: 'EPIC 1-375',
+            accent: '#a855f7',
+            detail: 'Incluye niveles a medida para tu pedido',
+            illustration: `
+                <rect x="210" y="470" width="95" height="200" rx="28" fill="#2b1f1e" />
+                <rect x="350" y="430" width="95" height="240" rx="28" fill="#2b1f1e" />
+                <rect x="490" y="455" width="95" height="215" rx="28" fill="#2b1f1e" />
+                <rect x="235" y="425" width="45" height="50" rx="10" fill="#caa56a" />
+                <rect x="375" y="385" width="45" height="50" rx="10" fill="#caa56a" />
+                <rect x="515" y="410" width="45" height="50" rx="10" fill="#caa56a" />
+                <rect x="222" y="555" width="70" height="100" rx="24" fill="#6c2bd9" opacity="0.85" />
+                <rect x="362" y="520" width="70" height="135" rx="24" fill="#b91c1c" opacity="0.82" />
+                <rect x="502" y="540" width="70" height="115" rx="24" fill="#84cc16" opacity="0.82" />
+            `
+        }),
+        blacksmithing: createServiceCover({
+            title: 'BLACKSMITHING',
+            subtitle: 'EPIC 1-375',
+            accent: '#9ca3af',
+            detail: 'Ideal para progreso completo de herrería',
+            illustration: `
+                <rect x="215" y="500" width="280" height="120" rx="18" fill="#5a5f69" />
+                <rect x="420" y="470" width="150" height="150" rx="12" fill="#444b53" />
+                <rect x="320" y="620" width="120" height="80" rx="10" fill="#30363d" />
+                <rect x="560" y="390" width="20" height="270" rx="8" fill="#7c4d25" transform="rotate(12 560 390)"/>
+                <rect x="520" y="470" width="90" height="28" rx="8" fill="#88929c" transform="rotate(12 520 470)"/>
+            `
+        }),
+        cooking: createServiceCover({
+            title: 'COOKING',
+            subtitle: 'EPIC 1-375',
+            accent: '#fb923c',
+            detail: 'Disponible para cualquier reino y facción',
+            illustration: `
+                <line x1="170" y1="430" x2="630" y2="430" stroke="#7c4d25" stroke-width="18" stroke-linecap="round"/>
+                <line x1="220" y1="430" x2="190" y2="610" stroke="#7c4d25" stroke-width="10"/>
+                <line x1="580" y1="430" x2="610" y2="610" stroke="#7c4d25" stroke-width="10"/>
+                <path d="M320 450 Q400 405 480 450 L455 570 Q400 605 345 570 Z" fill="#2c2f36" />
+                <path d="M345 568 Q400 595 455 568" stroke="#fb923c" stroke-width="10" fill="none" opacity="0.8"/>
+                <path d="M360 660 Q400 560 440 660" stroke="#ffb454" stroke-width="18" fill="none" stroke-linecap="round"/>
+                <path d="M380 660 Q400 600 420 660" stroke="#f97316" stroke-width="12" fill="none" stroke-linecap="round"/>
+            `
+        }),
+        enchanting: createServiceCover({
+            title: 'ENCHANTING',
+            subtitle: 'EPIC 1-375',
+            accent: '#60a5fa',
+            detail: 'Potencia tu profesión con subida totalmente manual',
+            illustration: `
+                <path d="M540 380 C620 360 680 420 670 500 C620 470 575 510 555 570 C510 530 480 480 500 430 Z" fill="#6b4f2d" />
+                <path d="M330 575 L470 520 L530 560 L400 655 L315 635 Z" fill="#9cc7ff" opacity="0.9"/>
+                <path d="M420 500 L470 520 L400 655 L350 632 Z" fill="#dceeff" opacity="0.95"/>
+                <circle cx="430" cy="565" r="80" fill="#60a5fa" opacity="0.18" />
+                <circle cx="430" cy="565" r="45" fill="#93c5fd" opacity="0.28" />
+            `
+        }),
+        fishing: createServiceCover({
+            title: 'FISHING',
+            subtitle: 'EPIC 1-375',
+            accent: '#fbbf24',
+            detail: 'Subida segura con rutas y zonas eficientes',
+            illustration: `
+                <path d="M255 560 C315 500 420 510 470 570 C405 635 305 635 255 560 Z" fill="#d8a34a" />
+                <circle cx="425" cy="560" r="10" fill="#111827" />
+                <path d="M235 570 L180 530 L185 610 Z" fill="#c08a31" />
+                <path d="M470 570 L540 535 L530 608 Z" fill="#c08a31" />
+                <path d="M390 510 L450 470 L425 540 Z" fill="#f6d36f" />
+                <path d="M450 650 C505 595 585 602 625 660 C565 715 490 715 450 650 Z" fill="#c5923a" opacity="0.85"/>
+            `
+        }),
+        herbalism: createServiceCover({
+            title: 'HERBALISM',
+            subtitle: 'EPIC 1-375',
+            accent: '#4ade80',
+            detail: 'Recolección manual con progreso natural',
+            illustration: `
+                <path d="M400 660 C315 610 280 510 315 435 C390 455 430 520 400 660 Z" fill="#2f8f4e" />
+                <path d="M402 660 C495 625 545 535 520 440 C440 450 390 520 402 660 Z" fill="#64c56c" />
+                <path d="M402 662 C410 585 415 510 424 430" stroke="#d6f5a3" stroke-width="8" stroke-linecap="round"/>
+                <circle cx="400" cy="600" r="120" fill="#4ade80" opacity="0.12" />
+            `
+        }),
+        jewelcrafting: createServiceCover({
+            title: 'JEWELCRAFTING',
+            subtitle: 'EPIC 1-375',
+            accent: '#22d3ee',
+            detail: 'Compatible con pedidos de joyería personalizados',
+            illustration: `
+                <polygon points="310,525 365,470 420,525 365,580" fill="#db2777" />
+                <polygon points="475,480 530,430 585,480 530,530" fill="#60a5fa" />
+                <polygon points="430,610 485,555 540,610 485,665" fill="#7c3aed" />
+                <circle cx="565" cy="395" r="36" fill="#f59e0b" opacity="0.9" />
+                <circle cx="565" cy="395" r="18" fill="#fde68a" opacity="0.95" />
+            `
+        }),
+        mining: createServiceCover({
+            title: 'MINING',
+            subtitle: 'EPIC 1-375',
+            accent: '#f97316',
+            detail: 'Perfecto para combinar con herrería o joyería',
+            illustration: `
+                <path d="M210 650 L300 540 L440 620 L560 535 L630 650 Z" fill="#2f343a" />
+                <path d="M260 620 L525 450" stroke="#7c4d25" stroke-width="18" stroke-linecap="round"/>
+                <path d="M500 420 L610 470 L540 560 L450 500 Z" fill="#8b98a7" />
+            `
+        }),
+        skinning: createServiceCover({
+            title: 'SKINNING',
+            subtitle: 'EPIC 1-375',
+            accent: '#d4a373',
+            detail: 'Rendimiento manual con rutas de farmeo estables',
+            illustration: `
+                <path d="M315 455 C400 390 525 430 560 540 C545 635 455 665 345 635 C290 585 280 500 315 455 Z" fill="#b08968" />
+                <path d="M355 495 C410 465 490 485 520 545" stroke="#e7d3b2" stroke-width="12" opacity="0.55" fill="none"/>
+                <rect x="420" y="560" width="140" height="90" rx="14" fill="#7f5539" opacity="0.85" transform="rotate(8 420 560)"/>
+            `
+        })
+    };
+
+    const serviceCatalogDefinitions = [
+        { category: 'boosteo', game: 'WoW Privado', key: 'boosteo', name: 'Boosting EPIC', description: 'Boosteo manual, niveles personalizados y soporte por región.', price: '280' },
+        { category: 'profesiones', game: 'WoW', key: 'alchemy', name: 'Alchemy EPIC 1-375', description: 'Subida manual de Alquimia del 1 al 375.', price: '40' },
+        { category: 'profesiones', game: 'WoW', key: 'blacksmithing', name: 'Blacksmithing EPIC 1-375', description: 'Subida manual de Herrería del 1 al 375.', price: '50' },
+        { category: 'profesiones', game: 'WoW', key: 'cooking', name: 'Cooking EPIC 1-375', description: 'Subida manual de Cocina del 1 al 375.', price: '30' },
+        { category: 'profesiones', game: 'WoW', key: 'enchanting', name: 'Enchanting EPIC 1-375', description: 'Subida manual de Encantamiento del 1 al 375.', price: '40' },
+        { category: 'profesiones', game: 'WoW', key: 'fishing', name: 'Fishing EPIC 1-375', description: 'Subida manual de Pesca del 1 al 375.', price: '40' },
+        { category: 'profesiones', game: 'WoW', key: 'herbalism', name: 'Herbalism EPIC 1-375', description: 'Subida manual de Herboristería del 1 al 375.', price: '30' },
+        { category: 'profesiones', game: 'WoW', key: 'jewelcrafting', name: 'Jewelcrafting EPIC 1-375', description: 'Subida manual de Joyería del 1 al 375.', price: '50' },
+        { category: 'profesiones', game: 'WoW', key: 'mining', name: 'Mining EPIC 1-375', description: 'Subida manual de Minería del 1 al 375.', price: '30' },
+        { category: 'profesiones', game: 'WoW', key: 'skinning', name: 'Skinning EPIC 1-375', description: 'Subida manual de Desuello del 1 al 375.', price: '30' }
     ];
+
+    function normalizeServiceKey(value = '') {
+        return String(value)
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .toLowerCase();
+    }
+
+    function detectServiceCoverKey(service = {}) {
+        const source = normalizeServiceKey(`${service.name || ''} ${service.description || ''} ${service.category || ''}`);
+        if (source.includes('alchemy') || source.includes('alquimia')) return 'alchemy';
+        if (source.includes('blacksmith') || source.includes('herrer')) return 'blacksmithing';
+        if (source.includes('cooking') || source.includes('cocina')) return 'cooking';
+        if (source.includes('enchant') || source.includes('encant')) return 'enchanting';
+        if (source.includes('fishing') || source.includes('pesca')) return 'fishing';
+        if (source.includes('herbal') || source.includes('herbor')) return 'herbalism';
+        if (source.includes('jewel') || source.includes('joyer')) return 'jewelcrafting';
+        if (source.includes('mining') || source.includes('miner')) return 'mining';
+        if (source.includes('skinning') || source.includes('desuello')) return 'skinning';
+        if (source.includes('boost')) return 'boosteo';
+        return 'boosteo';
+    }
+
+    const defaultServiceCatalog = serviceCatalogDefinitions.map(service => ({
+        ...service,
+        image: SERVICE_COVER_IMAGES[service.key] || DEFAULT_LOGO_URL
+    }));
+
+    function normalizeServiceCatalog(list = []) {
+        return list.map((service, index) => {
+            const coverKey = detectServiceCoverKey(service);
+            const definition = serviceCatalogDefinitions.find(item => item.key === coverKey);
+            const hasGenericLogo = !service.image || service.image === DEFAULT_LOGO_URL;
+
+            return {
+                id: service.id || `service-${coverKey}-${index}`,
+                category: service.category || definition?.category || 'boosteo',
+                game: service.game || definition?.game || 'WoW',
+                name: definition?.name || service.name || 'Servicio EPIC',
+                description: definition?.description || service.description || 'Servicio manual y personalizado.',
+                price: service.price != null ? String(service.price) : (definition?.price || '0'),
+                image: hasGenericLogo ? (SERVICE_COVER_IMAGES[coverKey] || DEFAULT_LOGO_URL) : service.image
+            };
+        });
+    }
 
     // ============================================
     // SISTEMA DE IMÁGENES MEJORADO
@@ -4413,8 +5061,7 @@
     // ============================================
 
     async function init() {
-        supabaseReady = await checkSupabaseConnection('inicio');
-        await loadData();
+        hydrateGoldCatalogFromCache();
 
         // Renderizar contenido inicial
         renderAccounts();
@@ -4451,6 +5098,21 @@
         // Inicializar dropdown de categorías
         renderCategoryDropdown();
 
+        try {
+            await loadData();
+            renderAccounts();
+            renderGold();
+            renderReferences();
+            renderServices();
+            updateGoldOrderForm();
+            updateCategorySelects();
+            renderCategoryDropdown();
+            updateAverageRating();
+        } catch (error) {
+            console.error('Error inicializando datos de Supabase:', error);
+            connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
+        }
+
         // Configurar click fuera del dropdown para cerrar
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('category-dropdown');
@@ -4464,10 +5126,6 @@
                 closeCategoryDropdown();
             }
         });
-
-        setTimeout(() => {
-            showMessage('¡Bienvenido a EPIC GOLD SHOP! 🎮✨', 'info');
-        }, 1000);
     }
 
     // Función para volver al inicio al hacer clic en el logo
@@ -4537,14 +5195,17 @@
     }
 
     async function loadData() {
-        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, refsRes, servicesRes] = await Promise.all([
+        const cachedCatalog = readGoldCatalogCache();
+        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes, paymentMethodsRes] = await Promise.all([
             supabaseClient.from('settings').select('*').limit(1).maybeSingle(),
             supabaseClient.from('gold_categories').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('game_servers').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('gold').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('accounts').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('customer_references').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('services').select('*').order('created_at', { ascending: true })
+            supabaseClient.from('account_categories').select('*').order('name', { ascending: true }),
+            loadReferenceRows(),
+            supabaseClient.from('services').select('*').order('created_at', { ascending: true }),
+            supabaseClient.from('payment_methods').select('*').order('created_at', { ascending: true })
         ]);
 
         if (settingsRes.error) {
@@ -4552,7 +5213,7 @@
         } else if (settingsRes.data) {
             settings = {
                 ...settings,
-                discord: settingsRes.data.discord || settings.discord,
+                discord: DISCORD_LINK,
                 whatsapp: settingsRes.data.whatsapp || settings.whatsapp,
                 tiktok: settingsRes.data.tiktok || settings.tiktok,
                 email: settingsRes.data.email || settings.email,
@@ -4562,33 +5223,38 @@
 
         if (categoriesRes.error) {
             connectionLog(`Error gold_categories: ${categoriesRes.error.message}`, 'error');
-            goldCategories = [];
-        } else {
-            goldCategories = Array.isArray(categoriesRes.data) ? categoriesRes.data.map(item => ({
-                ...item,
-                game: (item.game || item.name || 'Juego sin nombre').trim(),
-                name: (item.name || item.game || 'Juego sin nombre').trim()
-            })) : [];
+        }
+        goldCategories = pickGoldDataset(categoriesRes.data, cachedCatalog?.gold_categories, normalizeGoldCategories);
+        if ((!Array.isArray(categoriesRes.data) || categoriesRes.data.length === 0) && Array.isArray(cachedCatalog?.gold_categories) && cachedCatalog.gold_categories.length > 0) {
+            connectionLog('Usando gold_categories de la última caché válida.', 'warning');
         }
         sanitizeGoldCategoryImages();
 
         if (serversRes.error) {
             connectionLog(`Error game_servers: ${serversRes.error.message}`, 'error');
-            gameServers = [];
-        } else {
-            gameServers = Array.isArray(serversRes.data) ? normalizeGameServers(serversRes.data) : [];
+        }
+        gameServers = pickGoldDataset(serversRes.data, cachedCatalog?.game_servers, normalizeGameServers);
+        if ((!Array.isArray(serversRes.data) || serversRes.data.length === 0) && Array.isArray(cachedCatalog?.game_servers) && cachedCatalog.game_servers.length > 0) {
+            connectionLog('Usando game_servers de la última caché válida.', 'warning');
         }
 
         if (goldRes.error) {
             connectionLog(`Error gold: ${goldRes.error.message}`, 'error');
-            gold = [];
-        } else {
-            gold = Array.isArray(goldRes.data) ? goldRes.data.map(item => ({
-                ...item,
-                amount: item.amount != null ? String(item.amount) : '',
-                price: item.price != null ? String(item.price) : '',
-            })) : [];
         }
+        gold = pickGoldDataset(goldRes.data, cachedCatalog?.gold, normalizeGoldCatalog);
+        if ((!Array.isArray(goldRes.data) || goldRes.data.length === 0) && Array.isArray(cachedCatalog?.gold) && cachedCatalog.gold.length > 0) {
+            connectionLog('Usando gold de la última caché válida.', 'warning');
+        }
+
+        if (Array.isArray(categoriesRes.data) && categoriesRes.data.length > 0 && Array.isArray(serversRes.data) && serversRes.data.length > 0 && Array.isArray(goldRes.data) && goldRes.data.length > 0) {
+            writeGoldCatalogCache({
+                gold_categories: categoriesRes.data,
+                game_servers: serversRes.data,
+                gold: goldRes.data
+            });
+        }
+
+        supabaseReady = !settingsRes.error && !categoriesRes.error && !serversRes.error && !goldRes.error;
 
         if (accountsRes.error) {
             connectionLog(`Error accounts: ${accountsRes.error.message}`, 'error');
@@ -4597,36 +5263,38 @@
             accounts = Array.isArray(accountsRes.data) ? accountsRes.data : [];
         }
 
+        if (accountCategoriesRes.error) {
+            connectionLog(`Error account_categories: ${accountCategoriesRes.error.message}. Se usarán categorías derivadas de cuentas.`, 'warning');
+        }
+
+        categories = normalizeAccountCategories(accountCategoriesRes.data, accounts);
+
         if (refsRes.error) {
-            connectionLog(`Error customer_references: ${refsRes.error.message}`, 'error');
+            connectionLog(`Error referencias (${refsRes.source || 'customer_references'}): ${refsRes.error.message}`, 'error');
             references = [];
         } else {
-            references = Array.isArray(refsRes.data)
-                ? refsRes.data.map(r => ({
-                    id: r.id,
-                    userName: r.name || 'Cliente',
-                    userInitial: (r.name || 'C').charAt(0).toUpperCase(),
-                    rating: r.rating || 5,
-                    text: r.comment || '',
-                    date: r.created_at ? new Date(r.created_at).toLocaleDateString('es-ES') : ''
-                }))
-                : [];
+            references = normalizeReferenceRecords(refsRes.rows);
         }
 
         if (servicesRes.error) {
             connectionLog(`Error services: ${servicesRes.error.message}`, 'error');
-            services = [...defaultServiceCatalog];
+            services = normalizeServiceCatalog(defaultServiceCatalog);
         } else {
-            services = Array.isArray(servicesRes.data) ? servicesRes.data.map(item => ({
+            services = Array.isArray(servicesRes.data) ? normalizeServiceCatalog(servicesRes.data.map(item => ({
                 ...item,
                 price: item.price != null ? String(item.price) : '0'
-            })) : [];
+            }))) : [];
             if (services.length === 0) {
-                services = [...defaultServiceCatalog];
+                services = normalizeServiceCatalog(defaultServiceCatalog);
             }
         }
 
-        categories = Array.from(new Set(goldCategories.map(c => c.game).filter(Boolean))).sort();
+        if (paymentMethodsRes.error) {
+            connectionLog(`Error payment_methods: ${paymentMethodsRes.error.message}`, 'error');
+            paymentMethods = [];
+        } else {
+            paymentMethods = normalizePaymentMethods(paymentMethodsRes.data);
+        }
 
         if (!Array.isArray(gameServers) || gameServers.length === 0) {
             gameServers = buildGameServersFromData();
@@ -4634,7 +5302,7 @@
 
         updateContactLinks();
 
-        connectionLog(`Datos cargados desde DB: gold=${gold.length}, cuentas=${accounts.length}, refs=${references.length}, categorías=${goldCategories.length}`, 'success');
+        connectionLog(`Datos cargados desde DB: gold=${gold.length}, cuentas=${accounts.length}, refs=${references.length}, categorías=${goldCategories.length}, pagos=${paymentMethods.length}`, 'success');
     }
 
     async function syncToSupabaseByKey(key, rawValue) {
@@ -4662,17 +5330,16 @@
                 epicgoldshop_game_servers: 'game_servers',
                 epicgoldshop_gold: 'gold',
                 epicgoldshop_accounts: 'accounts',
-                epicgoldshop_references: 'customer_references',
-                epicgoldshop_services: 'services'
+                epicgoldshop_categories: 'account_categories',
+                epicgoldshop_services: 'services',
+                epicgoldshop_payment_methods: 'payment_methods'
             };
 
-            const table = tableMap[key];
-            if (!table || !Array.isArray(parsed)) return;
+            if (key === 'epicgoldshop_references') {
+                const table = await resolveReferencesTable();
+                const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                if (delRes.error) throw delRes.error;
 
-            const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
-            if (delRes.error) throw delRes.error;
-
-            if (table === 'customer_references') {
                 const rows = parsed.map((r) => ({
                     name: r.name || r.userName || 'Cliente',
                     comment: r.comment || r.text || '',
@@ -4686,6 +5353,12 @@
                 connectionLog(`${table} sincronizado (${rows.length} filas)`, 'success');
                 return;
             }
+
+            const table = tableMap[key];
+            if (!table || !Array.isArray(parsed)) return;
+
+            const delRes = await supabaseClient.from(table).delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            if (delRes.error) throw delRes.error;
 
             const rows = parsed.map((r) => {
                 if (table === 'gold') {
@@ -4706,8 +5379,10 @@
                 }
 
                 if (table === 'gold_categories') {
+                    const gameName = (r.game || r.name || '').trim();
                     return {
-                        game: (r.game || '').trim(),
+                        name: (r.name || gameName).trim() || null,
+                        game: gameName,
                         server: (r.server || '').trim(),
                         description: r.description || null,
                         image: r.image || null
@@ -4727,6 +5402,16 @@
                     };
                 }
 
+                if (table === 'account_categories') {
+                    const categoryName = typeof r === 'string'
+                        ? r.trim()
+                        : (r.name || r.category || '').trim();
+
+                    return {
+                        name: categoryName || null
+                    };
+                }
+
                 if (table === 'services') {
                     return {
                         category: r.category || 'servicios',
@@ -4738,13 +5423,24 @@
                     };
                 }
 
+                if (table === 'payment_methods') {
+                    return {
+                        name: (r.name || '').trim(),
+                        image: r.image || null,
+                        info_type: r.infoType === 'email' ? 'email' : 'payment_id',
+                        info_value: (r.infoValue || '').trim()
+                    };
+                }
+
                 return r;
             }).filter((r) => {
                 if (table === 'gold') return Boolean(r.game && r.server);
                 if (table === 'game_servers') return Boolean(r.game && r.name);
                 if (table === 'gold_categories') return Boolean(r.game);
                 if (table === 'accounts') return Boolean(r.name);
+                if (table === 'account_categories') return Boolean(r.name);
                 if (table === 'services') return Boolean(r.name);
+                if (table === 'payment_methods') return Boolean(r.name && r.info_value);
                 return true;
             });
 
@@ -4834,8 +5530,52 @@
     }
 
     function getGoldCategoryGames() {
-        const games = goldCategories.map(category => category.game).filter(Boolean);
-        return Array.from(new Set(games)).sort();
+        const games = [
+            ...goldCategories.map(category => (category.game || '').trim()),
+            ...gameServers.map(server => (server.game || '').trim()),
+            ...gold.map(item => (item.game || '').trim())
+        ].filter(Boolean);
+
+        return Array.from(new Set(games)).sort((leftGame, rightGame) =>
+            leftGame.localeCompare(rightGame, 'es', { sensitivity: 'base' })
+        );
+    }
+
+    function getServersForGame(game = '') {
+        const safeGame = String(game || '').trim();
+        if (!safeGame) return [];
+
+        const servers = [
+            ...gameServers
+                .filter(server => (server.game || '').trim() === safeGame)
+                .map(server => (server.name || server.server || '').trim()),
+            ...gold
+                .filter(item => (item.game || '').trim() === safeGame)
+                .map(item => (item.server || '').trim()),
+            ...goldCategories
+                .filter(category => (category.game || '').trim() === safeGame)
+                .map(category => (category.server || '').trim())
+        ].filter(Boolean);
+
+        return Array.from(new Set(servers)).sort((leftServer, rightServer) =>
+            leftServer.localeCompare(rightServer, 'es', { sensitivity: 'base' })
+        );
+    }
+
+    function refreshGoldViews() {
+        writeGoldCatalogCache({
+            gold_categories: goldCategories,
+            game_servers: gameServers,
+            gold
+        });
+        renderGold();
+        renderCategoryDropdown();
+        updateGoldServerOptions();
+        updateGoldCategoryServerOptions();
+        updateCategorySelects();
+        updateGoldOrderForm();
+        setupAdminGoldPriceForm();
+        setupAdminGoldEditForm();
     }
 
     function updateCategorySelects() {
@@ -4887,9 +5627,11 @@
         if (!categorySelect || !serverSelect) return;
 
         const selectedGame = categorySelect.value;
-        const serversForGame = gameServers
-            .filter(server => server.game === selectedGame)
-            .sort((a, b) => a.name.localeCompare(b.name));
+        const serversForGame = getServersForGame(selectedGame).map((serverName, index) => ({
+            id: `${selectedGame}-${index}`,
+            game: selectedGame,
+            name: serverName
+        }));
 
         serverSelect.innerHTML = `
             <option value="">Selecciona un servidor</option>
@@ -5036,16 +5778,79 @@
         });
     }
 
+    function updatePaymentMethodImagePreview(src = '') {
+        const preview = document.getElementById('payment-method-image-preview');
+        if (!preview) return;
+
+        const normalizedSrc = String(src || '').trim();
+        if (!normalizedSrc) {
+            preview.style.display = 'none';
+            preview.innerHTML = '';
+            return;
+        }
+
+        preview.style.display = 'block';
+        preview.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px; background:rgba(5,5,5,.72); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:12px;">
+                <img src="${normalizedSrc}" alt="Preview método de pago" style="width:64px; height:64px; object-fit:contain; background:rgba(0,0,0,.45); border-radius:8px; padding:6px;" onerror="this.onerror=null;this.src='${DEFAULT_LOGO_URL}'">
+                <div style="color:var(--text-gray); font-size:.95rem;">Vista previa de la imagen del método de pago.</div>
+            </div>
+        `;
+    }
+
+    async function handlePaymentMethodImageFileChange(event) {
+        const file = event?.target?.files?.[0];
+        if (!file) {
+            paymentMethodImageData = '';
+            updatePaymentMethodImagePreview(document.getElementById('payment-method-image')?.value || '');
+            return;
+        }
+
+        paymentMethodImageData = await readFileAsDataUrl(file);
+        updatePaymentMethodImagePreview(paymentMethodImageData);
+    }
+
+    function updateGoldOrderProofPreview(fileName = '') {
+        const preview = document.getElementById('gold-order-proof-preview');
+        if (!preview) return;
+
+        if (!fileName) {
+            preview.style.display = 'none';
+            preview.innerHTML = '';
+            return;
+        }
+
+        preview.style.display = 'block';
+        preview.innerHTML = `
+            <div style="background:rgba(5,5,5,.72); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:12px; color:var(--text);">
+                <i class="fas fa-image" style="color:var(--wow-gold); margin-right:8px;"></i>
+                Capture seleccionado: <strong>${fileName}</strong>
+            </div>
+        `;
+    }
+
+    async function handleGoldOrderProofFileChange(event) {
+        const file = event?.target?.files?.[0];
+        goldOrderProofData = '';
+        goldOrderProofName = '';
+
+        if (!file) {
+            updateGoldOrderProofPreview('');
+            return;
+        }
+
+        goldOrderProofData = await readFileAsDataUrl(file);
+        goldOrderProofName = file.name || 'capture-transaccion';
+        updateGoldOrderProofPreview(goldOrderProofName);
+    }
+
     function getGoldOrderGames() {
         return getGoldCategoryGames();
     }
 
     function getGoldOrderServers(game) {
         if (!game) return [];
-        const servers = gameServers
-            .filter(server => server.game === game)
-            .map(server => server.name);
-        return Array.from(new Set(servers)).sort();
+        return getServersForGame(game);
     }
 
     function showGoldOrderStep(step) {
@@ -5068,14 +5873,13 @@
         }
 
         list.innerHTML = games.map(game => {
-            const category = goldCategories.find(item => item.game === game) || {};
-            const image = resolveCategoryImage(category) || getGameImage(game);
+            const category = goldCategories.find(item => item.game === game) || { game, description: '' };
+            const image = getPublicCategoryImage(category) || getGameImage(game);
             const description = category.description || `Compra oro para ${game} con entrega rápida y segura.`;
             const serversCount = getGoldOrderServers(game).length;
 
             return `
             <button class="gold-order-option" type="button" data-game="${game}">
-                <span class="gold-order-option-badge">Compra rápida</span>
                 <img class="gold-order-option-cover" src="${image}" alt="${game}" loading="lazy" onerror="this.onerror=null;this.src='${getGameImage(game)}';">
                 <div class="gold-order-option-content">
                     <div class="gold-order-option-title">${game}</div>
@@ -5123,6 +5927,465 @@
             showGoldOrderStep('details');
         }
     }
+    function parseGoldOrderAmount(value) {
+        const normalizedValue = String(value || '')
+            .trim()
+            .replace(/,/g, '')
+            .toUpperCase();
+
+        if (!normalizedValue) {
+            return 0;
+        }
+
+        const amount = parseFloat(normalizedValue);
+        if (Number.isNaN(amount)) {
+            return 0;
+        }
+
+        if (normalizedValue.endsWith('K')) {
+            return amount * 1000;
+        }
+
+        if (normalizedValue.endsWith('M')) {
+            return amount * 1000000;
+        }
+
+        return amount;
+    }
+
+    function getGoldOrderPackagesForSelection() {
+        return gold
+            .filter(item => item.game === goldOrderState.game && item.server === goldOrderState.server)
+            .sort((leftPackage, rightPackage) => parseGoldOrderAmount(leftPackage.amount) - parseGoldOrderAmount(rightPackage.amount));
+    }
+
+    function toggleGoldOrderCustomAmount(packages = getGoldOrderPackagesForSelection()) {
+        const amountSelect = document.getElementById('gold-order-amount');
+        const customGroup = document.getElementById('gold-order-custom-amount-group');
+        const customInput = document.getElementById('gold-order-custom-amount');
+        const customHelp = document.getElementById('gold-order-custom-help');
+
+        if (!customGroup || !customInput) return;
+
+        const isCustomSelected = amountSelect?.value === 'custom';
+        customGroup.style.display = isCustomSelected ? 'block' : 'none';
+
+        if (!isCustomSelected) {
+            customInput.value = '';
+            if (customHelp) {
+                customHelp.textContent = 'Ingresa una cantidad mínima de 1,000g. El total se calcula con la tarifa actual del servidor.';
+            }
+            return;
+        }
+
+        const basePackage = packages[0];
+        if (customHelp && basePackage) {
+            customHelp.textContent = `Cantidad mínima: 1,000g. Tarifa actual: ${formatGoldPriceValue(basePackage.price)} por ${formatGoldAmountLabel(basePackage.amount)}.`;
+        }
+    }
+
+    function getGoldOrderCustomQuote(packages = getGoldOrderPackagesForSelection()) {
+        const customInput = document.getElementById('gold-order-custom-amount');
+        const customAmount = Number(customInput?.value || 0);
+
+        if (!customInput || !Number.isFinite(customAmount) || customAmount < 1000) {
+            return null;
+        }
+
+        const basePackage = packages.find(item => parseGoldOrderAmount(item.amount) > 0);
+        if (!basePackage) {
+            return null;
+        }
+
+        const baseAmount = parseGoldOrderAmount(basePackage.amount);
+        const basePrice = parseGoldPriceValue(basePackage.price);
+        if (!baseAmount || !basePrice) {
+            return null;
+        }
+
+        const totalPrice = (customAmount / baseAmount) * basePrice;
+
+        return {
+            amount: customAmount,
+            price: formatGoldPriceValue(totalPrice),
+            basePackage
+        };
+    }
+
+    function showGoldOrderMessage(text = '', type = 'info') {
+        const message = document.getElementById('gold-order-message');
+        if (!message) return;
+
+        if (!text) {
+            message.textContent = '';
+            message.className = 'message';
+            message.style.display = 'none';
+            return;
+        }
+
+        message.textContent = text;
+        message.className = `message ${type}`;
+        message.style.display = 'block';
+    }
+
+    function setGoldOrderSubmitEnabled(enabled) {
+        const submitButton = document.getElementById('gold-order-submit');
+        if (!submitButton) return;
+
+        submitButton.disabled = !enabled;
+        submitButton.setAttribute('aria-disabled', enabled ? 'false' : 'true');
+        submitButton.style.pointerEvents = enabled ? 'auto' : 'none';
+        submitButton.style.opacity = enabled ? '1' : '0.6';
+    }
+
+    function updateGoldOrderPaymentMethodOptions(selectedId = '') {
+        const select = document.getElementById('gold-order-payment-method');
+        const info = document.getElementById('gold-order-payment-method-info');
+        if (!select) return;
+
+        if (!Array.isArray(paymentMethods) || paymentMethods.length === 0) {
+            select.innerHTML = '<option value="">Sin métodos de pago disponibles</option>';
+            select.disabled = true;
+            if (info) info.textContent = 'No hay métodos de pago configurados en el panel de admin.';
+            return;
+        }
+
+        select.disabled = false;
+        select.innerHTML = `
+            <option value="">Selecciona un método de pago</option>
+            ${paymentMethods.map((method) => `
+                <option value="${method.id}" ${String(method.id) === String(selectedId) ? 'selected' : ''}>
+                    ${method.name}
+                </option>
+            `).join('')}
+        `;
+
+        updateGoldOrderPaymentMethodInfo();
+    }
+
+    function updateGoldOrderPaymentMethodInfo() {
+        const select = document.getElementById('gold-order-payment-method');
+        const info = document.getElementById('gold-order-payment-method-info');
+        const preview = document.getElementById('gold-order-payment-method-preview');
+        if (!select || !info) return;
+
+        const method = paymentMethods.find((entry) => String(entry.id) === String(select.value || ''));
+        if (!method) {
+            info.textContent = 'Selecciona el método que prefieres para pagar tu pedido.';
+            if (preview) {
+                preview.style.display = 'none';
+                preview.innerHTML = '';
+            }
+            return;
+        }
+
+        info.textContent = `${getPaymentMethodInfoLabel(method.infoType)}: ${method.infoValue}`;
+        if (preview) {
+            preview.style.display = 'block';
+            preview.innerHTML = `
+                <div style="display:flex; gap:12px; align-items:center; background:rgba(200,170,109,.08); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:12px;">
+                    <img src="${method.image || DEFAULT_LOGO_URL}" alt="${method.name}" style="width:48px;height:48px;object-fit:contain;background:rgba(5,5,5,.85);padding:6px;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='${DEFAULT_LOGO_URL}'">
+                    <div>
+                        <div style="color:var(--wow-gold); font-weight:700;">${method.name}</div>
+                        <div style="color:var(--text-gray); font-size:.95rem;">${getPaymentMethodInfoLabel(method.infoType)}: ${method.infoValue}</div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    function buildGoldOrderPayload() {
+        const amountSelect = document.getElementById('gold-order-amount');
+        const factionSelect = document.getElementById('gold-order-faction');
+        const characterInput = document.getElementById('gold-order-character');
+        const tradeSelect = document.getElementById('gold-order-trade');
+        const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const contactInput = document.getElementById('gold-order-contact');
+
+        const selectedGame = goldOrderState.game;
+        const selectedServer = goldOrderState.server;
+        const selectedAmount = amountSelect?.value || '';
+        const selectedFaction = factionSelect?.value || '';
+        const characterName = characterInput?.value.trim() || '';
+        const tradeType = tradeSelect?.value || '';
+        const paymentMethodId = paymentMethodSelect?.value || '';
+        const customerContact = contactInput?.value.trim() || '';
+        const selectedPaymentMethod = paymentMethods.find((method) => String(method.id) === String(paymentMethodId));
+
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod || !customerContact) {
+            return {
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade, método de pago y tu correo o Discord.'
+            };
+        }
+
+        if (!goldOrderProofData || !goldOrderProofName) {
+            return {
+                error: 'Debes subir el capture de la transacción para crear el ticket.'
+            };
+        }
+
+        const packages = getGoldOrderPackagesForSelection();
+        let amountLabel = '';
+        let totalPrice = '';
+
+        if (selectedAmount === 'custom') {
+            const customQuote = getGoldOrderCustomQuote(packages);
+            if (!customQuote) {
+                return {
+                    error: 'La cantidad específica debe ser mínima 1000 para poder crear el ticket.'
+                };
+            }
+
+            amountLabel = formatGoldAmountLabel(customQuote.amount);
+            totalPrice = customQuote.price;
+        } else {
+            const selectedPackage = gold.find(entry => String(entry.id) === String(selectedAmount));
+            if (!selectedPackage) {
+                return {
+                    error: 'Selecciona un paquete válido de oro.'
+                };
+            }
+
+            amountLabel = formatGoldAmountLabel(selectedPackage.amount);
+            totalPrice = formatGoldPriceValue(selectedPackage.price);
+        }
+
+        return {
+            payload: {
+                game: selectedGame,
+                server: selectedServer,
+                amount: amountLabel,
+                price: totalPrice,
+                faction: selectedFaction,
+                character: characterName,
+                trade: tradeType,
+                customer_contact: customerContact,
+                payment_method_name: selectedPaymentMethod.name,
+                payment_method_label: getPaymentMethodInfoLabel(selectedPaymentMethod.infoType),
+                payment_method_value: selectedPaymentMethod.infoValue,
+                transaction_proof_name: goldOrderProofName,
+                transaction_proof_data_url: goldOrderProofData,
+                custom_amount: selectedAmount === 'custom',
+                source: 'web_gold_order',
+                created_at: new Date().toISOString()
+            }
+        };
+    }
+
+    async function submitGoldOrderTicket() {
+        const { payload, error } = buildGoldOrderPayload();
+        if (error) {
+            showGoldOrderMessage(error, 'error');
+            return;
+        }
+
+        showGoldOrderMessage('Creando ticket...', 'info');
+
+        try {
+            const { data, error: invokeError } = await supabaseClient.functions.invoke('create-gold-ticket', {
+                body: payload
+            });
+
+            if (invokeError) {
+                const backendMessage = (data && (data.details || data.error))
+                    || invokeError?.context?.details
+                    || invokeError?.context?.error
+                    || invokeError?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-gold-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
+            }
+
+            const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}`, 'success');
+        } catch (submitError) {
+            console.error(submitError);
+            const errorDetail = submitError instanceof Error
+                ? submitError.message
+                : String(submitError || 'Error desconocido');
+            showGoldOrderMessage(`No se pudo crear el ticket automático. ${errorDetail}`, 'error');
+        }
+    }
+
+    function openDiscordFallback(url = '') {
+        window.open(url || settings.discord || DISCORD_LINK, '_blank', 'noopener,noreferrer');
+    }
+
+    async function submitAccountTicket(accountId) {
+        const account = accounts.find(entry => String(entry.id) === String(accountId));
+        if (!account) {
+            showMessage('No se encontró la cuenta seleccionada.', 'error', { force: true });
+            return;
+        }
+
+        showMessage('Enviando consulta de cuenta a Discord...', 'info', { force: true });
+
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('create-account-ticket', {
+                body: {
+                    category: account.category || 'Sin categoría',
+                    server: account.server || 'No especificado',
+                    name: account.name || 'Cuenta premium',
+                    price: String(account.price || '0'),
+                    description: account.description || '',
+                    image: account.image || '',
+                    source: 'web_account_order',
+                    created_at: new Date().toISOString()
+                }
+            });
+
+            if (error) {
+                const backendMessage = (data && (data.details || data.error))
+                    || error?.context?.details
+                    || error?.context?.error
+                    || error?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-account-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
+            }
+
+            showMessage('✅ Ticket de cuenta enviado correctamente.', 'success', { force: true });
+        } catch (submitError) {
+            console.error(submitError);
+            const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
+            showMessage(`No se pudo crear el ticket automático de la cuenta. ${errorDetail}`, 'error', { force: true });
+            openDiscordFallback();
+        }
+    }
+
+    async function submitServiceTicket(serviceId) {
+        const service = services.find(entry => String(entry.id) === String(serviceId));
+        if (!service) {
+            showMessage('No se encontró el servicio seleccionado.', 'error', { force: true });
+            return;
+        }
+
+        showMessage('Enviando consulta de servicio a Discord...', 'info', { force: true });
+
+        try {
+            const { data, error } = await supabaseClient.functions.invoke('create-service-ticket', {
+                body: {
+                    category: service.category || 'servicios',
+                    game: service.game || 'WoW',
+                    name: service.name || 'Servicio premium',
+                    price: String(service.price || '0'),
+                    description: service.description || '',
+                    image: service.image || '',
+                    source: 'web_service_order',
+                    created_at: new Date().toISOString()
+                }
+            });
+
+            if (error) {
+                const backendMessage = (data && (data.details || data.error))
+                    || error?.context?.details
+                    || error?.context?.error
+                    || error?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-service-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
+            }
+
+            showMessage('✅ Ticket de servicio enviado correctamente.', 'success', { force: true });
+        } catch (submitError) {
+            console.error(submitError);
+            const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
+            showMessage(`No se pudo crear el ticket automático del servicio. ${errorDetail}`, 'error', { force: true });
+            openDiscordFallback();
+        }
+    }
+
+    function googleTranslateElementInit() {
+        if (!window.google?.translate?.TranslateElement) return;
+        new window.google.translate.TranslateElement({
+            pageLanguage: 'es',
+            includedLanguages: 'es,en',
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    function setGoogleTranslateLanguage(lang = 'es') {
+        const combo = document.querySelector('.goog-te-combo');
+        if (!combo) {
+            return false;
+        }
+
+        if (combo.value !== lang) {
+            combo.value = lang;
+            combo.dispatchEvent(new Event('change'));
+        }
+
+        return true;
+    }
+
+    function syncGoogleTranslate(lang = 'es', attempts = 0) {
+        if (setGoogleTranslateLanguage(lang)) {
+            return;
+        }
+
+        if (attempts >= 10) {
+            return;
+        }
+
+        setTimeout(() => syncGoogleTranslate(lang, attempts + 1), 400);
+    }
+
+    function applyEntryLanguage(lang = 'es') {
+        currentLanguage = lang === 'en' ? 'en' : 'es';
+        const copy = ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es;
+        document.documentElement.lang = currentLanguage;
+        const mappings = [
+            ['hero-title', copy.heroTitle],
+            ['hero-subtitle', copy.heroSubtitle],
+            ['quick-action-accounts-label', copy.quickAccounts],
+            ['quick-action-gold-label', copy.quickGold],
+            ['quick-action-sell-label', copy.quickSell],
+            ['quick-action-services-label', copy.quickServices],
+            ['nav-accounts-label', copy.navAccounts],
+            ['nav-gold-label', copy.navGold],
+            ['nav-sell-label', copy.navSell],
+            ['nav-services-label', copy.navServices],
+            ['nav-references-label', copy.navReferences],
+            ['nav-contact-label', copy.navContact],
+            ['nav-access-label', copy.navAccess],
+            ['logo-subtitle', copy.logoSubtitle],
+            ['products-section-title', copy.productsSectionTitle],
+            ['filter-accounts-label', copy.filterAccounts],
+            ['gold-section-title', copy.goldSectionTitle],
+            ['gold-panel-description', copy.goldPanelDescription],
+            ['gold-order-open-label', copy.goldOpen]
+        ];
+
+        mappings.forEach(([id, value]) => {
+            const element = document.getElementById(id);
+            if (element) element.textContent = value;
+        });
+
+        const goldPanelTitle = document.getElementById('gold-panel-title');
+        if (goldPanelTitle) {
+            goldPanelTitle.innerHTML = `<i class="fas fa-coins"></i> ${copy.goldPanelTitle}`;
+        }
+
+        const langEsBtn = document.getElementById('lang-es-btn');
+        const langEnBtn = document.getElementById('lang-en-btn');
+        if (langEsBtn) langEsBtn.classList.toggle('active', currentLanguage === 'es');
+        if (langEnBtn) langEnBtn.classList.toggle('active', currentLanguage === 'en');
+
+        renderAccounts(currentFilter);
+        renderServices();
+    }
+
+    function enterStore(lang = 'es') {
+        applyEntryLanguage(lang);
+        syncGoogleTranslate(lang);
+    }
+
     function updateGoldOrderAmountOptions() {
         const detailContainer = document.getElementById('gold-order-step-details');
         const amountSelect = document.getElementById('gold-order-amount');
@@ -5138,11 +6401,12 @@
             if (detailContainer) {
                 detailContainer.style.display = 'none';
             }
+            toggleGoldOrderCustomAmount([]);
             updateGoldOrderSummary();
             return;
         }
 
-        const packages = gold.filter(item => item.game === selectedGame && item.server === selectedServer);
+        const packages = getGoldOrderPackagesForSelection();
         if (packages.length === 0) {
             amountSelect.innerHTML = '<option value="">Sin paquetes disponibles</option>';
             amountSelect.value = '';
@@ -5150,6 +6414,7 @@
             if (detailContainer) {
                 detailContainer.style.display = 'none';
             }
+            toggleGoldOrderCustomAmount([]);
             updateGoldOrderSummary();
             return;
         }
@@ -5163,46 +6428,57 @@
             <option value="">Selecciona una cantidad</option>
             ${packages.map(item => `
                 <option value="${item.id}" ${String(item.id) === current ? 'selected' : ''}>
-                    ${item.amount} • ${item.price}
+                    ${formatGoldAmountLabel(item.amount)} • ${formatGoldPriceValue(item.price)}
                 </option>
             `).join('')}
+            <option value="custom" ${current === 'custom' ? 'selected' : ''}>Cantidad específica</option>
         `;
 
-        if (current && packages.some(item => String(item.id) === current)) {
+        if (current === 'custom') {
+            amountSelect.value = 'custom';
+        } else if (current && packages.some(item => String(item.id) === current)) {
             amountSelect.value = current;
         }
 
+        toggleGoldOrderCustomAmount(packages);
         updateGoldOrderSummary();
     }
 
     function updateGoldOrderSummary() {
         const amountSelect = document.getElementById('gold-order-amount');
         const priceEl = document.getElementById('gold-order-price');
-        const cta = document.getElementById('gold-order-cta');
 
         if (!amountSelect || !priceEl) return;
+
+        showGoldOrderMessage('');
+        const packages = getGoldOrderPackagesForSelection();
+        toggleGoldOrderCustomAmount(packages);
+
+        if (amountSelect.value === 'custom') {
+            const customQuote = getGoldOrderCustomQuote(packages);
+
+            if (!customQuote) {
+                priceEl.textContent = 'Mínimo 1,000g';
+                setGoldOrderSubmitEnabled(false);
+                return;
+            }
+
+            priceEl.textContent = customQuote.price;
+            setGoldOrderSubmitEnabled(true);
+            return;
+        }
 
         const selectedId = String(amountSelect.value || '');
         const item = gold.find(entry => String(entry.id) === selectedId);
 
         if (!item) {
             priceEl.textContent = '-';
-            if (cta) {
-                cta.setAttribute('aria-disabled', 'true');
-                cta.style.pointerEvents = 'none';
-                cta.style.opacity = '0.6';
-                cta.href = settings?.discord || DISCORD_LINK;
-            }
+            setGoldOrderSubmitEnabled(false);
             return;
         }
 
-        priceEl.textContent = item.price;
-        if (cta) {
-            cta.setAttribute('aria-disabled', 'false');
-            cta.style.pointerEvents = 'auto';
-            cta.style.opacity = '1';
-            cta.href = settings?.discord || DISCORD_LINK;
-        }
+        priceEl.textContent = formatGoldPriceValue(item.price);
+        setGoldOrderSubmitEnabled(true);
     }
 
     function updateGoldOrderForm() {
@@ -5211,6 +6487,7 @@
             renderGoldOrderGameList();
             renderGoldOrderServerList();
             updateGoldOrderAmountOptions();
+            updateGoldOrderPaymentMethodOptions(document.getElementById('gold-order-payment-method')?.value || '');
             updateGoldOrderSummary();
         }
     }
@@ -5223,6 +6500,13 @@
 
         const serverSelect = document.getElementById('gold-order-server-select');
         const amountSelect = document.getElementById('gold-order-amount');
+        const customAmountInput = document.getElementById('gold-order-custom-amount');
+        const factionSelect = document.getElementById('gold-order-faction');
+        const characterInput = document.getElementById('gold-order-character');
+        const tradeSelect = document.getElementById('gold-order-trade');
+        const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const contactInput = document.getElementById('gold-order-contact');
+        const proofFileInput = document.getElementById('gold-order-proof-file');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -5232,6 +6516,22 @@
             amountSelect.value = '';
             amountSelect.disabled = true;
         }
+        if (customAmountInput) {
+            customAmountInput.value = '';
+        }
+        if (factionSelect) factionSelect.value = '';
+        if (characterInput) characterInput.value = '';
+        if (tradeSelect) tradeSelect.value = '';
+        if (paymentMethodSelect) paymentMethodSelect.value = '';
+        if (contactInput) contactInput.value = '';
+        if (proofFileInput) proofFileInput.value = '';
+        goldOrderProofData = '';
+        goldOrderProofName = '';
+        updateGoldOrderProofPreview('');
+        updateGoldOrderPaymentMethodOptions();
+        toggleGoldOrderCustomAmount([]);
+        showGoldOrderMessage('');
+        setGoldOrderSubmitEnabled(false);
         document.getElementById('gold-order-modal-title').textContent = 'Selecciona un juego';
         showGoldOrderStep('game');
         renderGoldOrderGameList();
@@ -5254,6 +6554,11 @@
 
         if (!gameSelect || !serverSelect) return;
 
+        const amountInput = document.getElementById('admin-gold-price-amount');
+        if (amountInput && !amountInput.value.trim()) {
+            amountInput.value = '100';
+        }
+
         const games = getAdminGoldGames();
         if (games.length === 0) {
             gameSelect.innerHTML = '<option value="">Sin juegos disponibles</option>';
@@ -5266,13 +6571,7 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const serversFromAdmin = gameServers
-                .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const serversFromGold = gold
-                .filter(item => item.game === selectedGame)
-                .map(item => item.server);
-            const servers = Array.from(new Set([...serversFromAdmin, ...serversFromGold])).sort();
+            const servers = getServersForGame(selectedGame);
 
             if (servers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
@@ -5298,6 +6597,11 @@
 
         if (!gameSelect || !serverSelect || !packageSelect) return;
 
+        const amountInput = document.getElementById('admin-gold-price-amount');
+        if (amountInput && !amountInput.value.trim()) {
+            amountInput.value = '100';
+        }
+
         const games = getAdminGoldGames();
         if (games.length === 0) {
             gameSelect.innerHTML = '<option value="">Sin juegos disponibles</option>';
@@ -5312,10 +6616,7 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const servers = gameServers
-                .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const uniqueServers = Array.from(new Set(servers)).sort();
+            const uniqueServers = getServersForGame(selectedGame);
             if (uniqueServers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores</option>';
                 serverSelect.disabled = true;
@@ -5567,6 +6868,42 @@
             });
         }
 
+        const goldOrderCustomAmountInput = document.getElementById('gold-order-custom-amount');
+        if (goldOrderCustomAmountInput) {
+            goldOrderCustomAmountInput.addEventListener('input', function() {
+                updateGoldOrderSummary();
+            });
+        }
+
+        const goldOrderPaymentMethodSelect = document.getElementById('gold-order-payment-method');
+        if (goldOrderPaymentMethodSelect) {
+            goldOrderPaymentMethodSelect.addEventListener('change', function() {
+                updateGoldOrderPaymentMethodInfo();
+            });
+        }
+
+        const goldOrderProofFileInput = document.getElementById('gold-order-proof-file');
+        if (goldOrderProofFileInput) {
+            goldOrderProofFileInput.addEventListener('change', handleGoldOrderProofFileChange);
+        }
+
+        const paymentMethodImageInput = document.getElementById('payment-method-image');
+        if (paymentMethodImageInput) {
+            paymentMethodImageInput.addEventListener('input', function() {
+                if ((this.value || '').trim()) {
+                    paymentMethodImageData = '';
+                    const paymentMethodImageFileInput = document.getElementById('payment-method-image-file');
+                    if (paymentMethodImageFileInput) paymentMethodImageFileInput.value = '';
+                }
+                updatePaymentMethodImagePreview(this.value || '');
+            });
+        }
+
+        const paymentMethodImageFileInput = document.getElementById('payment-method-image-file');
+        if (paymentMethodImageFileInput) {
+            paymentMethodImageFileInput.addEventListener('change', handlePaymentMethodImageFileChange);
+        }
+
         const goldOrderBackBtn = document.getElementById('gold-order-back-btn');
         if (goldOrderBackBtn) {
             goldOrderBackBtn.addEventListener('click', function() {
@@ -5585,12 +6922,21 @@
             });
         }
 
-        const goldOrderOpenBtn = document.getElementById('gold-order-open');
-        if (goldOrderOpenBtn) {
-            goldOrderOpenBtn.addEventListener('click', function() {
-                openGoldOrderModal();
-            });
-        }
+        document.addEventListener('click', function(event) {
+            const accountButton = event.target.closest('.account-ticket-btn');
+            if (accountButton) {
+                event.preventDefault();
+                submitAccountTicket(accountButton.dataset.accountId);
+                return;
+            }
+
+            const serviceButton = event.target.closest('.service-ticket-btn');
+            if (serviceButton) {
+                event.preventDefault();
+                submitServiceTicket(serviceButton.dataset.serviceId);
+            }
+        });
+
     }
 
     // ============================================
@@ -5773,10 +7119,10 @@
             container.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 80px 40px; color: var(--text-gray); background: var(--panel); border-radius: 15px; border: 2px solid var(--wow-gold-dark);">
                     <i class="fas fa-user-slash" style="font-size: 5rem; margin-bottom: 25px; color: var(--wow-gold); opacity: 0.5;"></i>
-                    <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">No hay cuentas disponibles en esta categoría</h3>
-                    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">Pronto agregaremos más cuentas premium. Mientras tanto, puedes revisar otras categorías o contactarnos para solicitudes especiales.</p>
+                    <h3 style="color: var(--wow-gold); margin-bottom: 15px; font-size: 1.8rem;">${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noAccountsTitle}</h3>
+                    <p style="font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.7;">${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noAccountsText}</p>
                     <button class="btn-primary" onclick="filterProducts('all')" style="margin-top: 30px;">
-                        <i class="fas fa-layer-group"></i> VER TODAS LAS CUENTAS
+                        <i class="fas fa-layer-group"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).viewAllAccounts}
                     </button>
                 </div>
             `;
@@ -5784,10 +7130,8 @@
         }
 
         container.innerHTML = filteredAccounts.map(account => `
-            <div class="product-card">
-                <div class="product-image-container" data-category="${account.category}">
-                    <!-- La imagen se carga dinámicamente con el sistema de caché -->
-                </div>
+            <div class="product-card" style="padding: 0; overflow: hidden;">
+                <div style="width:100%;height:420px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(5,5,5,.92), rgba(12,28,44,.96));padding:16px;"><img src="${account.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${account.name}" style="width:100%;height:100%;object-fit:contain;object-position:center;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"></div>
                 <div class="product-content">
                     <div class="product-category">
                         <i class="fas fa-gamepad"></i> ${account.category} ${account.server ? '• ' + account.server : ''}
@@ -5803,21 +7147,14 @@
 
                     <div class="product-details">
                         <div class="product-price">${account.price}</div>
-                        <a href="${DISCORD_LINK}" target="_blank" class="btn-buy" data-tooltip="Comprar en Discord">
-                            <i class="fas fa-shopping-cart"></i> COMPRAR
-                        </a>
+                        <button type="button" class="btn-buy account-ticket-btn" data-account-id="${account.id}" data-tooltip="Comprar en Discord">
+                            <i class="fas fa-shopping-cart"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).accountTicket}
+                        </button>
                     </div>
                 </div>
             </div>
         `).join('');
 
-        // Cargar imágenes con el sistema mejorado
-        filteredAccounts.forEach((account, index) => {
-            const container = document.querySelectorAll('.product-image-container')[index];
-            if (container) {
-                loadImageWithCache(account.image, account.name, container);
-            }
-        });
     }
 
     function renderGold() {
@@ -5834,7 +7171,7 @@
         if (!Array.isArray(services) || services.length === 0) {
             grid.innerHTML = `
                 <div style="grid-column: 1/-1; text-align:center; padding:50px; background: var(--panel); border-radius: 12px; border:2px dashed var(--wow-gold-dark); color: var(--text-gray);">
-                    No hay servicios publicados por ahora.
+                    ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).noServices}
                 </div>
             `;
             return;
@@ -5842,12 +7179,17 @@
 
         grid.innerHTML = services.map(service => `
             <div class="product-card" style="padding: 0; overflow: hidden;">
-                <img src="${service.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${service.name}" style="width:100%;height:280px;object-fit:cover;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'">
+                <div style="width:100%;height:420px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(5,5,5,.92), rgba(12,28,44,.96));padding:16px;"><img src="${service.image || 'https://i.imgur.com/ynvAS9B.png'}" alt="${service.name}" style="width:100%;height:100%;object-fit:contain;object-position:center;" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"></div>
                 <div style="padding: 20px;">
                     <h3 style="color: var(--wow-gold); margin-bottom:8px;">${service.name}</h3>
                     <div style="color: var(--text-gray); font-size: .95rem; margin-bottom:8px;">${service.game || 'WoW'} • ${(service.category || 'servicios').toUpperCase()}</div>
                     <p style="color: var(--text-gray); min-height: 48px;">${service.description || ''}</p>
-                    <div style="color: var(--text); font-weight: 800; font-size: 1.2rem; margin-top:10px;">$${service.price}</div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:14px;">
+                        <div style="color: var(--text); font-weight: 800; font-size: 1.2rem;">$${service.price}</div>
+                        <button type="button" class="btn-buy service-ticket-btn" style="padding: 12px 22px; font-size: 1rem;" data-service-id="${service.id}">
+                            <i class="fas fa-ticket-alt"></i> ${(ENTRY_GATE_TRANSLATIONS[currentLanguage] || ENTRY_GATE_TRANSLATIONS.es).serviceTicket}
+                        </button>
+                    </div>
                 </div>
             </div>
         `).join('');
@@ -5989,6 +7331,7 @@
             document.getElementById('references').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 500);
     }
+
 
     // ============================================
     // FUNCIONES DE ADMINISTRACIÓN
@@ -6317,7 +7660,7 @@
                     </div>
                     <div style="text-align: center;">
                         <div style="font-size: 2.2rem; font-weight: 900; color: var(--wow-gold);">${categoriesWithPackages}</div>
-                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con Stock</div>
+                        <div style="color: var(--text-gray); font-size: 0.9rem;">Con paquetes</div>
                     </div>
                 </div>
             </div>
@@ -6330,9 +7673,14 @@
 
             <div style="max-height: 600px; overflow-y: auto; padding-right: 10px;">
                 ${goldCategories.map(category => {
-                    const packageCount = gold.filter(item =>
-                        item.game === category.game && item.server === category.server
-                    ).length;
+                    const normalizeValue = (value) => String(value || '').trim().toLowerCase();
+                    const categoryGame = normalizeValue(category.game || category.name);
+                    const categoryServer = normalizeValue(category.server);
+                    const packageCount = gold.filter(item => {
+                        const sameGame = normalizeValue(item.game) === categoryGame;
+                        const sameServer = !categoryServer || normalizeValue(item.server) === categoryServer;
+                        return sameGame && sameServer;
+                    }).length;
 
                     return `
                     <div style="background: var(--panel); padding: 25px; border-radius: 10px; margin-bottom: 20px; border-left: 5px solid var(--wow-gold); position: relative;">
@@ -6340,7 +7688,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
                                     <div style="width: 80px; height: 80px; background: rgba(200, 170, 109, 0.1); border-radius: 50%; border: 2px solid var(--wow-gold); display: flex; align-items: center; justify-content: center;">
-                                        <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
+                                        <img src="${getPublicCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
                                         <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name || category.game || "Juego sin nombre"}</h4>
@@ -6482,7 +7830,7 @@
         `;
     }
 
-    function addGameServer() {
+    async function addGameServer() {
         const gameSelect = document.getElementById('server-game');
         const nameInput = document.getElementById('server-name');
         const message = document.getElementById('server-message');
@@ -6514,33 +7862,99 @@
             return;
         }
 
-        gameServers.push({
+        const newServer = {
             id: Date.now(),
             game,
             name
-        });
-        persistToDatabase('epicgoldshop_game_servers', gameServers);
+        };
+        gameServers.push(newServer);
+
+        const saved = await persistToDatabase('epicgoldshop_game_servers', gameServers);
+        if (!saved) {
+            gameServers = gameServers.filter(server => server !== newServer);
+            return;
+        }
+
         nameInput.value = '';
         if (message) message.style.display = 'none';
 
-        updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
+        refreshGoldViews();
         switchAdminTab('servers');
         showMessage('✅ Servidor agregado correctamente', 'success');
     }
 
-    function deleteGameServer(id) {
+    async function deleteGameServer(id) {
         const serverIndex = gameServers.findIndex(server => String(server.id) === String(id));
         if (serverIndex === -1) return;
 
         if (!confirm('¿Eliminar este servidor?')) return;
 
-        gameServers.splice(serverIndex, 1);
-        persistToDatabase('epicgoldshop_game_servers', gameServers);
-        updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
+        const [removedServer] = gameServers.splice(serverIndex, 1);
+        const saved = await persistToDatabase('epicgoldshop_game_servers', gameServers);
+        if (!saved) {
+            gameServers.splice(serverIndex, 0, removedServer);
+            return;
+        }
+
+        refreshGoldViews();
         switchAdminTab('servers');
         showMessage('✅ Servidor eliminado', 'success');
+    }
+
+    function resetAdminServiceForm() {
+        editingServiceId = null;
+        const categoryInput = document.getElementById('admin-service-category');
+        const gameInput = document.getElementById('admin-service-game');
+        const nameInput = document.getElementById('admin-service-name');
+        const priceInput = document.getElementById('admin-service-price');
+        const imageInput = document.getElementById('admin-service-image');
+        const imageFileInput = document.getElementById('admin-service-image-file');
+        const descriptionInput = document.getElementById('admin-service-description');
+        const title = document.getElementById('admin-service-form-title');
+        const saveBtn = document.getElementById('admin-service-save-btn');
+        const cancelBtn = document.getElementById('admin-service-cancel-btn');
+
+        if (categoryInput) categoryInput.value = 'boosteo';
+        if (gameInput) gameInput.value = '';
+        if (nameInput) nameInput.value = '';
+        if (priceInput) priceInput.value = '';
+        if (imageInput) imageInput.value = '';
+        if (imageFileInput) imageFileInput.value = '';
+        if (descriptionInput) descriptionInput.value = '';
+        if (title) title.innerHTML = '<i class="fas fa-plus"></i> Agregar servicio';
+        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar servicio';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    function editAdminService(id) {
+        const service = services.find(item => String(item.id) === String(id));
+        if (!service) return showMessage('No se encontró el servicio a editar', 'error');
+
+        editingServiceId = String(id);
+        const categoryInput = document.getElementById('admin-service-category');
+        const gameInput = document.getElementById('admin-service-game');
+        const nameInput = document.getElementById('admin-service-name');
+        const priceInput = document.getElementById('admin-service-price');
+        const imageInput = document.getElementById('admin-service-image');
+        const imageFileInput = document.getElementById('admin-service-image-file');
+        const descriptionInput = document.getElementById('admin-service-description');
+        const title = document.getElementById('admin-service-form-title');
+        const saveBtn = document.getElementById('admin-service-save-btn');
+        const cancelBtn = document.getElementById('admin-service-cancel-btn');
+
+        if (categoryInput) categoryInput.value = service.category || 'boosteo';
+        if (gameInput) gameInput.value = service.game || '';
+        if (nameInput) nameInput.value = service.name || '';
+        if (priceInput) priceInput.value = String(service.price || '');
+        if (imageInput) imageInput.value = service.image?.startsWith('data:image/') ? '' : (service.image || '');
+        if (imageFileInput) imageFileInput.value = '';
+        if (descriptionInput) descriptionInput.value = service.description || '';
+        if (title) title.innerHTML = '<i class="fas fa-edit"></i> Editar servicio';
+        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> Actualizar servicio';
+        if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+
+        const formCard = document.getElementById('admin-service-form-card');
+        if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function renderAdminServices() {
@@ -6550,31 +7964,31 @@
                 <div class="stats-badge"><i class="fas fa-list"></i> ${services.length} servicios</div>
             </div>
 
-            <div style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
-                <h4 style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;"><i class="fas fa-plus"></i> Agregar servicio</h4>
+            <div id="admin-service-form-card" style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
+                <h4 id="admin-service-form-title" style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;"><i class="fas fa-plus"></i> ${editingServiceId ? 'Editar servicio' : 'Agregar servicio'}</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label class="form-label">Categoría</label>
                         <select id="admin-service-category">
-                            <option value="boosteo">Boosteo</option>
-                            <option value="profesiones">Profesiones</option>
+                            <option value="boosteo" ${editingServiceId && services.find(s => String(s.id) === String(editingServiceId))?.category === 'boosteo' ? 'selected' : ''}>Boosteo</option>
+                            <option value="profesiones" ${editingServiceId && services.find(s => String(s.id) === String(editingServiceId))?.category === 'profesiones' ? 'selected' : ''}>Profesiones</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Juego</label>
-                        <input type="text" id="admin-service-game" placeholder="Ej: WoW Privado" maxlength="60">
+                        <input type="text" id="admin-service-game" placeholder="Ej: WoW Privado" maxlength="60" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.game || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Nombre</label>
-                        <input type="text" id="admin-service-name" placeholder="Ej: Boosteo cualquier clase" maxlength="100">
+                        <input type="text" id="admin-service-name" placeholder="Ej: Boosteo cualquier clase" maxlength="100" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.name || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Precio (USD)</label>
-                        <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20">
+                        <input type="text" id="admin-service-price" placeholder="Ej: 280" maxlength="20" value="${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.price || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Imagen (URL)</label>
-                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500">
+                        <input type="text" id="admin-service-image" placeholder="https://...jpg" maxlength="500" value="${editingServiceId ? ((services.find(s => String(s.id) === String(editingServiceId))?.image || '').startsWith('data:image/') ? '' : (services.find(s => String(s.id) === String(editingServiceId))?.image || '')) : ''}">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Imagen (archivo)</label>
@@ -6583,20 +7997,26 @@
                 </div>
                 <div class="form-group">
                     <label class="form-label">Descripción</label>
-                    <textarea id="admin-service-description" placeholder="Descripción del servicio" maxlength="300"></textarea>
+                    <textarea id="admin-service-description" placeholder="Descripción del servicio" maxlength="300">${editingServiceId ? (services.find(s => String(s.id) === String(editingServiceId))?.description || '') : ''}</textarea>
                 </div>
-                <button class="btn-primary" onclick="addAdminService()"><i class="fas fa-save"></i> Guardar servicio</button>
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button id="admin-service-save-btn" class="btn-primary" onclick="saveAdminService()"><i class="fas fa-save"></i> ${editingServiceId ? 'Actualizar servicio' : 'Guardar servicio'}</button>
+                    <button id="admin-service-cancel-btn" class="btn-danger" onclick="resetAdminServiceForm()" style="display:${editingServiceId ? 'inline-flex' : 'none'};"><i class="fas fa-times"></i> Cancelar edición</button>
+                </div>
             </div>
 
             <div style="max-height: 520px; overflow-y: auto; padding-right: 10px;">
                 ${services.map(service => `
                     <div style="background: var(--panel); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--wow-gold); display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
                         <div>
-                            <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;"><img src="${service.image || "https://i.imgur.com/ynvAS9B.png"}" alt="${service.name}" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"><div style="color: var(--wow-gold); font-weight:700;">${service.name} • $${service.price}</div></div>
+                            <div style="display:flex; gap:12px; align-items:center; margin-bottom:8px;"><img src="${service.image || "https://i.imgur.com/ynvAS9B.png"}" alt="${service.name}" style="width:54px;height:54px;object-fit:contain;background:rgba(5,5,5,.85);padding:4px;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='https://i.imgur.com/ynvAS9B.png'"><div style="color: var(--wow-gold); font-weight:700;">${service.name} • $${service.price}</div></div>
                             <div style="color: var(--text); margin-bottom:6px;">${service.game || 'Sin juego'} · ${(service.category || '').toUpperCase()}</div>
                             <div style="color: var(--text-gray);">${service.description || 'Sin descripción'}</div>
                         </div>
-                        <button class="btn-danger" onclick="deleteAdminService('${service.id}')"><i class="fas fa-trash"></i></button>
+                        <div style="display:flex; gap:10px; flex-shrink:0;">
+                            <button class="btn-primary" onclick="editAdminService('${service.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn-danger" onclick="deleteAdminService('${service.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
                     </div>
                 `).join('')}
                 ${services.length === 0 ? `<div style="text-align:center;color:var(--text-gray);padding:30px;">No hay servicios cargados.</div>` : ''}
@@ -6604,7 +8024,7 @@
         `;
     }
 
-    async function addAdminService() {
+    async function saveAdminService() {
         const category = document.getElementById('admin-service-category')?.value || 'boosteo';
         const game = document.getElementById('admin-service-game')?.value.trim() || 'WoW';
         const name = document.getElementById('admin-service-name')?.value.trim();
@@ -6616,7 +8036,8 @@
         if (!name) return showMessage('El nombre del servicio es obligatorio', 'error');
         if (!price || !price.match(/^\$?\d+(\.\d{1,2})?$/)) return showMessage('Precio inválido. Usa 99 o 99.99', 'error');
 
-        let image = imageUrl || null;
+        const existingService = services.find(service => String(service.id) === String(editingServiceId));
+        let image = imageUrl || existingService?.image || null;
         if (imageFile) {
             try {
                 image = await readFileAsDataUrl(imageFile);
@@ -6626,17 +8047,29 @@
             }
         }
 
-        const serviceId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-        services.push({ id: serviceId, category, game, name, description, image, price: price.replace('$','') });
+        const serviceId = existingService?.id || ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+        const normalizedService = normalizeServiceCatalog([{ id: serviceId, category, game, name, description, image, price: price.replace('$','') }])[0];
+
+        if (existingService) {
+            const index = services.findIndex(service => String(service.id) === String(editingServiceId));
+            if (index !== -1) services[index] = normalizedService;
+        } else {
+            services.push(normalizedService);
+        }
+
         persistToDatabase('epicgoldshop_services', services);
+        resetAdminServiceForm();
         switchAdminTab('services');
         renderServices();
-        showMessage('✅ Servicio agregado con éxito', 'success');
+        showMessage(existingService ? '✅ Servicio actualizado con éxito' : '✅ Servicio agregado con éxito', 'success');
     }
 
     function deleteAdminService(id) {
         if (!confirm('¿Eliminar este servicio?')) return;
         services = services.filter(service => String(service.id) !== String(id));
+        if (String(editingServiceId) === String(id)) {
+            editingServiceId = null;
+        }
         persistToDatabase('epicgoldshop_services', services);
         switchAdminTab('services');
         renderServices();
@@ -6748,6 +8181,74 @@
                 <button class="btn-primary" onclick="saveSettings()" style="margin-top: 20px; padding: 18px 35px;">
                     <i class="fas fa-save"></i> GUARDAR CONFIGURACIÓN
                 </button>
+            </div>
+
+            <div style="margin-bottom: 40px;">
+                <h3 style="color: var(--wow-gold); margin-bottom: 25px; font-size: 1.5rem;">
+                    <i class="fas fa-money-check-alt"></i> Métodos de Pago
+                </h3>
+
+                <div style="background: var(--panel-light); padding: 25px; border-radius: 10px; border: 2px solid var(--wow-gold-dark); margin-bottom: 25px;">
+                    <h4 id="payment-method-form-title" style="color: var(--wow-gold); margin-bottom: 20px; font-size: 1.2rem;">
+                        <i class="fas fa-plus"></i> Agregar método de pago
+                    </h4>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" id="payment-method-name" placeholder="Ej: Binance, PayPal, Zinli" maxlength="80">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Imagen (URL)</label>
+                            <input type="text" id="payment-method-image" placeholder="https://...png" maxlength="500">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Imagen (archivo)</label>
+                            <input type="file" id="payment-method-image-file" accept="image/*">
+                            <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                                Puedes subir una imagen o dejar una URL. Si subes archivo, se guarda esa imagen.
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tipo de información</label>
+                            <select id="payment-method-info-type">
+                                <option value="payment_id">ID de pago</option>
+                                <option value="email">Correo</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Información</label>
+                            <input type="text" id="payment-method-info-value" placeholder="Ej: correo@dominio.com o ID del pago" maxlength="150">
+                        </div>
+                    </div>
+                    <div id="payment-method-image-preview" style="display:none; margin: 0 0 18px 0;"></div>
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <button class="btn-primary" id="payment-method-save-btn" onclick="savePaymentMethod()">
+                            <i class="fas fa-save"></i> GUARDAR MÉTODO
+                        </button>
+                        <button class="btn-danger" id="payment-method-cancel-btn" onclick="resetPaymentMethodForm()" style="display:none;">
+                            <i class="fas fa-times"></i> CANCELAR
+                        </button>
+                    </div>
+                </div>
+
+                <div style="max-height: 420px; overflow-y: auto; padding-right: 10px;">
+                    ${paymentMethods.map(method => `
+                        <div style="background: var(--panel); padding: 20px; border-radius: 10px; margin-bottom: 15px; border-left: 4px solid var(--wow-gold); display:flex; justify-content:space-between; gap:16px; align-items:flex-start;">
+                            <div style="display:flex; gap:14px; align-items:flex-start;">
+                                <img src="${method.image || DEFAULT_LOGO_URL}" alt="${method.name}" style="width:54px;height:54px;object-fit:contain;background:rgba(5,5,5,.85);padding:6px;border-radius:8px;border:1px solid var(--wow-gold-dark);" onerror="this.onerror=null;this.src='${DEFAULT_LOGO_URL}'">
+                                <div>
+                                    <div style="color: var(--wow-gold); font-weight:700; margin-bottom:6px;">${method.name}</div>
+                                    <div style="color: var(--text); margin-bottom:4px;">${getPaymentMethodInfoLabel(method.infoType)}: ${method.infoValue}</div>
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:10px; flex-shrink:0;">
+                                <button class="btn-primary" onclick="editPaymentMethod('${method.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-danger" onclick="deletePaymentMethod('${method.id}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${paymentMethods.length === 0 ? `<div style="text-align:center;color:var(--text-gray);padding:30px;">No hay métodos de pago cargados.</div>` : ''}
+                </div>
             </div>
         `;
     }
@@ -6891,7 +8392,7 @@
             settings.discord = discord;
         }
 
-        settings.whatsapp = whatsapp || 'https://wa.me/1234567890';
+        settings.whatsapp = whatsapp || '';
         settings.tiktok = tiktok || TIKTOK_LINK;
         settings.email = email || 'soporte@epicgoldshop.com';
         settings.site = site || SITE_URL;
@@ -6910,6 +8411,92 @@
             saveBtn.innerHTML = originalText;
             saveBtn.style.background = 'linear-gradient(135deg, var(--wow-gold-dark), var(--wow-gold))';
         }, 2000);
+    }
+
+    function resetPaymentMethodForm() {
+        editingPaymentMethodId = null;
+        const nameInput = document.getElementById('payment-method-name');
+        const imageInput = document.getElementById('payment-method-image');
+        const imageFileInput = document.getElementById('payment-method-image-file');
+        const infoTypeSelect = document.getElementById('payment-method-info-type');
+        const infoValueInput = document.getElementById('payment-method-info-value');
+        const title = document.getElementById('payment-method-form-title');
+        const saveBtn = document.getElementById('payment-method-save-btn');
+        const cancelBtn = document.getElementById('payment-method-cancel-btn');
+
+        paymentMethodImageData = '';
+        if (nameInput) nameInput.value = '';
+        if (imageInput) imageInput.value = '';
+        if (imageFileInput) imageFileInput.value = '';
+        if (infoTypeSelect) infoTypeSelect.value = 'payment_id';
+        if (infoValueInput) infoValueInput.value = '';
+        updatePaymentMethodImagePreview('');
+        if (title) title.innerHTML = '<i class="fas fa-plus"></i> Agregar método de pago';
+        if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> GUARDAR MÉTODO';
+        if (cancelBtn) cancelBtn.style.display = 'none';
+    }
+
+    function editPaymentMethod(id) {
+        const method = paymentMethods.find((entry) => String(entry.id) === String(id));
+        if (!method) return showMessage('No se encontró el método de pago', 'error');
+
+        editingPaymentMethodId = String(id);
+        paymentMethodImageData = '';
+        document.getElementById('payment-method-name').value = method.name || '';
+        document.getElementById('payment-method-image').value = method.image || '';
+        const imageFileInput = document.getElementById('payment-method-image-file');
+        if (imageFileInput) imageFileInput.value = '';
+        document.getElementById('payment-method-info-type').value = method.infoType || 'payment_id';
+        document.getElementById('payment-method-info-value').value = method.infoValue || '';
+        updatePaymentMethodImagePreview(method.image || '');
+        document.getElementById('payment-method-form-title').innerHTML = '<i class="fas fa-edit"></i> Editar método de pago';
+        document.getElementById('payment-method-save-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR MÉTODO';
+        document.getElementById('payment-method-cancel-btn').style.display = 'inline-flex';
+    }
+
+    function savePaymentMethod() {
+        const name = document.getElementById('payment-method-name')?.value.trim();
+        const image = paymentMethodImageData || document.getElementById('payment-method-image')?.value.trim() || '';
+        const infoType = document.getElementById('payment-method-info-type')?.value || 'payment_id';
+        const infoValue = document.getElementById('payment-method-info-value')?.value.trim();
+
+        if (!name) return showMessage('El nombre del método de pago es obligatorio', 'error');
+        if (!infoValue) return showMessage(`La información de ${getPaymentMethodInfoLabel(infoType).toLowerCase()} es obligatoria`, 'error');
+
+        const existingMethod = paymentMethods.find((entry) => String(entry.id) === String(editingPaymentMethodId));
+        const nextMethod = {
+            id: existingMethod?.id || ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
+            name,
+            image,
+            infoType,
+            infoValue
+        };
+
+        if (existingMethod) {
+            const index = paymentMethods.findIndex((entry) => String(entry.id) === String(editingPaymentMethodId));
+            if (index !== -1) paymentMethods[index] = nextMethod;
+        } else {
+            paymentMethods.push(nextMethod);
+        }
+
+        paymentMethods = normalizePaymentMethods(paymentMethods);
+        persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        resetPaymentMethodForm();
+        switchAdminTab('settings');
+        updateGoldOrderPaymentMethodOptions();
+        showMessage(existingMethod ? '✅ Método de pago actualizado' : '✅ Método de pago agregado', 'success');
+    }
+
+    function deletePaymentMethod(id) {
+        if (!confirm('¿Eliminar este método de pago?')) return;
+        paymentMethods = paymentMethods.filter((entry) => String(entry.id) !== String(id));
+        if (String(editingPaymentMethodId) === String(id)) {
+            resetPaymentMethodForm();
+        }
+        persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        switchAdminTab('settings');
+        updateGoldOrderPaymentMethodOptions();
+        showMessage('✅ Método de pago eliminado', 'success');
     }
 
     // ============================================
@@ -6953,6 +8540,19 @@
         return normalized;
     }
 
+    function getPublicCategoryImage(category) {
+        const raw = String(category?.image || '').trim().toLowerCase();
+        if (!raw) {
+            return getGameImage(category?.game || '');
+        }
+
+        if (raw.includes('imgur.com/')) {
+            return getGameImage(category?.game || '');
+        }
+
+        return resolveCategoryImage(category);
+    }
+
     function syncGameImagesFromCategories() {
         if (!Array.isArray(goldCategories)) return;
         goldCategories.forEach(category => {
@@ -6963,19 +8563,15 @@
 
     function sanitizeGoldCategoryImages() {
         if (!Array.isArray(goldCategories)) return;
-        let changed = false;
 
         goldCategories = goldCategories.map(category => {
             const nextImage = resolveCategoryImage(category);
             if (category.image !== nextImage) {
-                changed = true;
                 return { ...category, image: nextImage };
             }
             return category;
         });
 
-        if (changed) {        persistToDatabase('epicgoldshop_gold_categories', goldCategories);
-        }
         syncGameImagesFromCategories();
     }
 
@@ -7116,11 +8712,6 @@
             showMessage('✅ Agregado con éxito', 'success');
         }
 
-        if (!categories.includes(game)) {
-            categories.push(game);
-            categories.sort();
-        persistToDatabase('epicgoldshop_categories', categories);
-        }
         persistToDatabase('epicgoldshop_gold_categories', goldCategories);
         syncGameImagesFromCategories();
         closeModal();
@@ -7417,7 +9008,7 @@
         document.getElementById('gold-server-select').value = '';
         document.getElementById('gold-server-custom').value = '';
         document.getElementById('gold-server-custom').style.display = 'none';
-        document.getElementById('gold-amount').value = '';
+        document.getElementById('gold-amount').value = '100';
         document.getElementById('gold-price').value = '';
 
         // Actualizar select de categorías
@@ -7594,8 +9185,7 @@
 
     function showMessage(text, type, options = {}) {
         const adminVisible = document.getElementById('admin-section').style.display === 'flex';
-        const isWelcomeMessage = text.includes('¡Bienvenido a EPIC GOLD SHOP!');
-        const shouldShowOutsideAdmin = options.force === true || isWelcomeMessage;
+        const shouldShowOutsideAdmin = options.force === true;
 
         if (!adminVisible && !shouldShowOutsideAdmin) {
             return;
@@ -7671,10 +9261,18 @@
         history.scrollRestoration = 'manual';
     }
 
+    window.openGoldOrderModal = openGoldOrderModal;
+    window.submitGoldOrderTicket = submitGoldOrderTicket;
+    window.submitAccountTicket = submitAccountTicket;
+    window.submitServiceTicket = submitServiceTicket;
+    window.enterStore = enterStore;
+    window.googleTranslateElementInit = googleTranslateElementInit;
+
     document.addEventListener('DOMContentLoaded', function() {
         window.scrollTo(0, 0);
         init();
     });
 </script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>

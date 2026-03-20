@@ -25,9 +25,7 @@
       "game": "World of Warcraft",
       "server": "Whitemane",
       "amount": 10000,
-      "price": 35.5,
-      "delivery": "5-15 minutos",
-      "stock": "10"
+      "price": 35.5
     }
   ],
   "accounts": [
@@ -59,7 +57,8 @@
       "game": "WoW Privado",
       "name": "Boosteo cualquier clase",
       "description": "Subida de personaje",
-      "price": 140
+      "price": 140,
+      "image": "https://.../boosting-epic.jpg"
     }
   ]
 }
