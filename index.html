@@ -4231,7 +4231,10 @@
     // Imágenes para juegos (portadas reales por juego)
     const GAME_IMAGES = {
         'Turtle WoW': IMGUR_IMAGE_URLS.turtleWow2,
+        'WoW Turtle': generateGameCoverDataUrl('WoW Turtle'),
         'World of Warcraft': IMGUR_IMAGE_URLS.wowClassic,
+        'WoW Oficial': generateGameCoverDataUrl('WoW Oficial'),
+        'WoW Privado': generateGameCoverDataUrl('WoW Privado'),
         'Albion Online': IMGUR_IMAGE_URLS.albionOnline,
         'Runescape': IMGUR_IMAGE_URLS.goldCoins,
         'default': generateGameCoverDataUrl('Epic Gold Shop')
@@ -4602,27 +4605,43 @@
         return infoType === 'email' ? 'Correo' : 'ID de pago';
     }
 
-    let localCatalogCache = null;
+    const GOLD_CATALOG_CACHE_KEY = 'epicgoldshop_gold_catalog_cache_v2';
 
-    async function loadLocalCatalogFallback() {
-        if (localCatalogCache) {
-            return localCatalogCache;
-        }
-
+    function readGoldCatalogCache() {
         try {
-            const response = await fetch('./data/catalog.json', { cache: 'no-store' });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-
-            localCatalogCache = await response.json();
-            connectionLog('Catálogo local cargado como respaldo.', 'warning');
-            return localCatalogCache;
+            const raw = window.localStorage.getItem(GOLD_CATALOG_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
         } catch (error) {
-            connectionLog(`No se pudo cargar el catálogo local de respaldo: ${error?.message || error}`, 'warning');
-            localCatalogCache = {};
-            return localCatalogCache;
+            console.warn('No se pudo leer caché local de oro:', error);
+            return null;
         }
+    }
+
+    function writeGoldCatalogCache(payload = {}) {
+        try {
+            window.localStorage.setItem(GOLD_CATALOG_CACHE_KEY, JSON.stringify({
+                updatedAt: new Date().toISOString(),
+                gold_categories: Array.isArray(payload.gold_categories) ? payload.gold_categories : [],
+                game_servers: Array.isArray(payload.game_servers) ? payload.game_servers : [],
+                gold: Array.isArray(payload.gold) ? payload.gold : []
+            }));
+        } catch (error) {
+            console.warn('No se pudo guardar caché local de oro:', error);
+        }
+    }
+
+    function hydrateGoldCatalogFromCache() {
+        const cachedCatalog = readGoldCatalogCache();
+        if (!cachedCatalog) return false;
+
+        goldCategories = normalizeGoldCategories(cachedCatalog.gold_categories);
+        gameServers = normalizeGameServers(cachedCatalog.game_servers);
+        gold = normalizeGoldCatalog(cachedCatalog.gold);
+        sanitizeGoldCategoryImages();
+        connectionLog('Catálogo de oro precargado desde caché local.', 'warning');
+        return goldCategories.length > 0 || gameServers.length > 0 || gold.length > 0;
     }
 
     function normalizeGoldCategories(rows = []) {
@@ -5281,14 +5300,7 @@
     // ============================================
 
     async function init() {
-        try {
-            supabaseReady = await checkSupabaseConnection('inicio');
-            await loadData();
-        } catch (error) {
-            console.error('Error inicializando datos de Supabase:', error);
-            connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
-        }
-
+        hydrateGoldCatalogFromCache();
         initCustomerAuth();
 
         // Renderizar contenido inicial
@@ -5325,6 +5337,21 @@
 
         // Inicializar dropdown de categorías
         renderCategoryDropdown();
+
+        try {
+            await loadData();
+            renderAccounts();
+            renderGold();
+            renderReferences();
+            renderServices();
+            updateGoldOrderForm();
+            updateCategorySelects();
+            renderCategoryDropdown();
+            updateAverageRating();
+        } catch (error) {
+            console.error('Error inicializando datos de Supabase:', error);
+            connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
+        }
 
         // Configurar click fuera del dropdown para cerrar
         document.addEventListener('click', function(event) {
@@ -5417,7 +5444,8 @@
     }
 
     async function loadData() {
-        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes, paymentMethodsRes, localCatalog] = await Promise.all([
+        const cachedCatalog = readGoldCatalogCache();
+        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes, paymentMethodsRes] = await Promise.all([
             supabaseClient.from('settings').select('*').limit(1).maybeSingle(),
             supabaseClient.from('gold_categories').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('game_servers').select('*').order('created_at', { ascending: true }),
@@ -5426,8 +5454,7 @@
             supabaseClient.from('account_categories').select('*').order('name', { ascending: true }),
             loadReferenceRows(),
             supabaseClient.from('services').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('payment_methods').select('*').order('created_at', { ascending: true }),
-            loadLocalCatalogFallback()
+            supabaseClient.from('payment_methods').select('*').order('created_at', { ascending: true })
         ]);
 
         if (settingsRes.error) {
@@ -5446,27 +5473,37 @@
         if (categoriesRes.error) {
             connectionLog(`Error gold_categories: ${categoriesRes.error.message}`, 'error');
         }
-        goldCategories = pickGoldDataset(categoriesRes.data, localCatalog?.gold_categories, normalizeGoldCategories);
-        if (!Array.isArray(categoriesRes.data) || categoriesRes.data.length === 0) {
-            connectionLog('Usando gold_categories del catálogo local como respaldo.', 'warning');
+        goldCategories = pickGoldDataset(categoriesRes.data, cachedCatalog?.gold_categories, normalizeGoldCategories);
+        if ((!Array.isArray(categoriesRes.data) || categoriesRes.data.length === 0) && Array.isArray(cachedCatalog?.gold_categories) && cachedCatalog.gold_categories.length > 0) {
+            connectionLog('Usando gold_categories de la última caché válida.', 'warning');
         }
         sanitizeGoldCategoryImages();
 
         if (serversRes.error) {
             connectionLog(`Error game_servers: ${serversRes.error.message}`, 'error');
         }
-        gameServers = pickGoldDataset(serversRes.data, localCatalog?.game_servers, normalizeGameServers);
-        if (!Array.isArray(serversRes.data) || serversRes.data.length === 0) {
-            connectionLog('Usando game_servers del catálogo local como respaldo.', 'warning');
+        gameServers = pickGoldDataset(serversRes.data, cachedCatalog?.game_servers, normalizeGameServers);
+        if ((!Array.isArray(serversRes.data) || serversRes.data.length === 0) && Array.isArray(cachedCatalog?.game_servers) && cachedCatalog.game_servers.length > 0) {
+            connectionLog('Usando game_servers de la última caché válida.', 'warning');
         }
 
         if (goldRes.error) {
             connectionLog(`Error gold: ${goldRes.error.message}`, 'error');
         }
-        gold = pickGoldDataset(goldRes.data, localCatalog?.gold, normalizeGoldCatalog);
-        if (!Array.isArray(goldRes.data) || goldRes.data.length === 0) {
-            connectionLog('Usando gold del catálogo local como respaldo.', 'warning');
+        gold = pickGoldDataset(goldRes.data, cachedCatalog?.gold, normalizeGoldCatalog);
+        if ((!Array.isArray(goldRes.data) || goldRes.data.length === 0) && Array.isArray(cachedCatalog?.gold) && cachedCatalog.gold.length > 0) {
+            connectionLog('Usando gold de la última caché válida.', 'warning');
         }
+
+        if (Array.isArray(categoriesRes.data) && categoriesRes.data.length > 0 && Array.isArray(serversRes.data) && serversRes.data.length > 0 && Array.isArray(goldRes.data) && goldRes.data.length > 0) {
+            writeGoldCatalogCache({
+                gold_categories: categoriesRes.data,
+                game_servers: serversRes.data,
+                gold: goldRes.data
+            });
+        }
+
+        supabaseReady = !settingsRes.error && !categoriesRes.error && !serversRes.error && !goldRes.error;
 
         if (accountsRes.error) {
             connectionLog(`Error accounts: ${accountsRes.error.message}`, 'error');
@@ -5977,7 +6014,7 @@
 
         list.innerHTML = games.map(game => {
             const category = goldCategories.find(item => item.game === game) || {};
-            const image = resolveCategoryImage(category) || getGameImage(game);
+            const image = getPublicCategoryImage(category) || getGameImage(game);
             const description = category.description || `Compra oro para ${game} con entrega rápida y segura.`;
             const serversCount = getGoldOrderServers(game).length;
 
@@ -8014,7 +8051,7 @@
                             <div style="flex: 1; min-width: 0;">
                                 <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 15px;">
                                     <div style="width: 80px; height: 80px; background: rgba(200, 170, 109, 0.1); border-radius: 50%; border: 2px solid var(--wow-gold); display: flex; align-items: center; justify-content: center;">
-                                        <img src="${resolveCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
+                                        <img src="${getPublicCategoryImage(category)}" alt="${category.game}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.onerror=null;this.src='${getGameImage(category.game)}';">
                                     </div>
                                     <div style="flex: 1;">
                                         <h4 style="color: var(--text); margin-bottom: 8px; font-size: 1.3rem; word-break: break-word;">${category.name || category.game || "Juego sin nombre"}</h4>
@@ -8840,6 +8877,19 @@
         return normalized;
     }
 
+    function getPublicCategoryImage(category) {
+        const raw = String(category?.image || '').trim().toLowerCase();
+        if (!raw) {
+            return getGameImage(category?.game || '');
+        }
+
+        if (raw.includes('imgur.com/')) {
+            return getGameImage(category?.game || '');
+        }
+
+        return resolveCategoryImage(category);
+    }
+
     function syncGameImagesFromCategories() {
         if (!Array.isArray(goldCategories)) return;
         goldCategories.forEach(category => {
@@ -8850,19 +8900,15 @@
 
     function sanitizeGoldCategoryImages() {
         if (!Array.isArray(goldCategories)) return;
-        let changed = false;
 
         goldCategories = goldCategories.map(category => {
             const nextImage = resolveCategoryImage(category);
             if (category.image !== nextImage) {
-                changed = true;
                 return { ...category, image: nextImage };
             }
             return category;
         });
 
-        if (changed) {        persistToDatabase('epicgoldshop_gold_categories', goldCategories);
-        }
         syncGameImagesFromCategories();
     }
 
