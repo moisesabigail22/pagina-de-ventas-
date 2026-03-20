@@ -1040,18 +1040,33 @@
         }
 
         .gold-order-summary-item {
-            min-width: 160px;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .gold-order-summary-label {
             color: var(--text-gray);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
         }
 
         .gold-order-summary-value {
-            color: var(--wow-gold);
-            font-size: 1.4rem;
-            font-weight: 800;
+            color: var(--wow-gold-light);
+            font-size: 2.3rem;
+            font-weight: 900;
+            line-height: 1;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border: 2px solid rgba(200, 170, 109, 0.35);
+            background: linear-gradient(135deg, rgba(200, 170, 109, 0.16), rgba(12, 28, 44, 0.9));
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), inset 0 0 18px rgba(200, 170, 109, 0.08);
+            text-shadow: 0 0 18px rgba(247, 231, 160, 0.3);
+            min-height: 72px;
+            display: flex;
+            align-items: center;
         }
 
         .gold-order-cta {
@@ -4314,6 +4329,12 @@
         return `$${Number(value || 0).toFixed(2)}`;
     }
 
+    function formatGoldAmountLabel(value) {
+        const amount = parseGoldOrderAmount(value);
+        if (!amount) return String(value || '0');
+        return `${amount.toLocaleString('en-US')}g`;
+    }
+
     function normalizeGoldCatalog(rows = []) {
         const normalizedRows = Array.isArray(rows)
             ? rows.map((row, index) => {
@@ -5828,14 +5849,14 @@
         if (!isCustomSelected) {
             customInput.value = '';
             if (customHelp) {
-                customHelp.textContent = 'Ingresa una cantidad mínima de 1000. El total se calcula con la tarifa actual del servidor.';
+                customHelp.textContent = 'Ingresa una cantidad mínima de 1,000g. El total se calcula con la tarifa actual del servidor.';
             }
             return;
         }
 
         const basePackage = packages[0];
         if (customHelp && basePackage) {
-            customHelp.textContent = `Cantidad mínima: 1000. Tarifa actual: ${basePackage.price} por ${basePackage.amount}.`;
+            customHelp.textContent = `Cantidad mínima: 1,000g. Tarifa actual: ${formatGoldPriceValue(basePackage.price)} por ${formatGoldAmountLabel(basePackage.amount)}.`;
         }
     }
 
@@ -5983,7 +6004,7 @@
                 };
             }
 
-            amountLabel = `${customQuote.amount}`;
+            amountLabel = formatGoldAmountLabel(customQuote.amount);
             totalPrice = customQuote.price;
         } else {
             const selectedPackage = gold.find(entry => String(entry.id) === String(selectedAmount));
@@ -5993,8 +6014,8 @@
                 };
             }
 
-            amountLabel = String(selectedPackage.amount);
-            totalPrice = String(selectedPackage.price);
+            amountLabel = formatGoldAmountLabel(selectedPackage.amount);
+            totalPrice = formatGoldPriceValue(selectedPackage.price);
         }
 
         return {
@@ -6023,7 +6044,8 @@
             return;
         }
 
-        showGoldOrderMessage('Creando ticket...', 'info');
+        openDiscordFallback();
+        showGoldOrderMessage('Abriendo Discord y creando ticket...', 'info');
 
         try {
             const { data, error: invokeError } = await supabaseClient.functions.invoke('create-gold-ticket', {
@@ -6277,7 +6299,7 @@
             <option value="">Selecciona una cantidad</option>
             ${packages.map(item => `
                 <option value="${item.id}" ${String(item.id) === current ? 'selected' : ''}>
-                    ${item.amount} • ${item.price}
+                    ${formatGoldAmountLabel(item.amount)} • ${formatGoldPriceValue(item.price)}
                 </option>
             `).join('')}
             <option value="custom" ${current === 'custom' ? 'selected' : ''}>Cantidad específica</option>
@@ -6307,7 +6329,7 @@
             const customQuote = getGoldOrderCustomQuote(packages);
 
             if (!customQuote) {
-                priceEl.textContent = 'Mínimo 1000';
+                priceEl.textContent = 'Mínimo 1,000g';
                 setGoldOrderSubmitEnabled(false);
                 return;
             }
@@ -6326,7 +6348,7 @@
             return;
         }
 
-        priceEl.textContent = item.price;
+        priceEl.textContent = formatGoldPriceValue(item.price);
         setGoldOrderSubmitEnabled(true);
     }
 
