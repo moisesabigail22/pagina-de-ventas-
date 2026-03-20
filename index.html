@@ -4602,6 +4602,57 @@
         return infoType === 'email' ? 'Correo' : 'ID de pago';
     }
 
+    let localCatalogCache = null;
+
+    async function loadLocalCatalogFallback() {
+        if (localCatalogCache) {
+            return localCatalogCache;
+        }
+
+        try {
+            const response = await fetch('./data/catalog.json', { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
+            localCatalogCache = await response.json();
+            connectionLog('Catálogo local cargado como respaldo.', 'warning');
+            return localCatalogCache;
+        } catch (error) {
+            connectionLog(`No se pudo cargar el catálogo local de respaldo: ${error?.message || error}`, 'warning');
+            localCatalogCache = {};
+            return localCatalogCache;
+        }
+    }
+
+    function normalizeGoldCategories(rows = []) {
+        if (!Array.isArray(rows)) return [];
+
+        return rows
+            .map((item, index) => ({
+                ...item,
+                id: item.id || `gold-category-${index}`,
+                game: (item.game || item.name || 'Juego sin nombre').trim(),
+                name: (item.name || item.game || 'Juego sin nombre').trim(),
+                server: (item.server || '').trim(),
+                description: String(item.description || '').trim(),
+                image: String(item.image || '').trim()
+            }))
+            .filter((item) => item.game);
+    }
+
+    function pickGoldDataset(primaryRows, fallbackRows, normalizeRows) {
+        if (Array.isArray(primaryRows) && primaryRows.length > 0) {
+            return normalizeRows(primaryRows);
+        }
+
+        if (Array.isArray(fallbackRows) && fallbackRows.length > 0) {
+            return normalizeRows(fallbackRows);
+        }
+
+        return [];
+    }
+
     function normalizeReferenceRecords(rows = []) {
         if (!Array.isArray(rows)) return [];
 
@@ -5366,7 +5417,7 @@
     }
 
     async function loadData() {
-        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes, paymentMethodsRes] = await Promise.all([
+        const [settingsRes, categoriesRes, serversRes, goldRes, accountsRes, accountCategoriesRes, refsRes, servicesRes, paymentMethodsRes, localCatalog] = await Promise.all([
             supabaseClient.from('settings').select('*').limit(1).maybeSingle(),
             supabaseClient.from('gold_categories').select('*').order('created_at', { ascending: true }),
             supabaseClient.from('game_servers').select('*').order('created_at', { ascending: true }),
@@ -5375,7 +5426,8 @@
             supabaseClient.from('account_categories').select('*').order('name', { ascending: true }),
             loadReferenceRows(),
             supabaseClient.from('services').select('*').order('created_at', { ascending: true }),
-            supabaseClient.from('payment_methods').select('*').order('created_at', { ascending: true })
+            supabaseClient.from('payment_methods').select('*').order('created_at', { ascending: true }),
+            loadLocalCatalogFallback()
         ]);
 
         if (settingsRes.error) {
@@ -5393,28 +5445,27 @@
 
         if (categoriesRes.error) {
             connectionLog(`Error gold_categories: ${categoriesRes.error.message}`, 'error');
-            goldCategories = [];
-        } else {
-            goldCategories = Array.isArray(categoriesRes.data) ? categoriesRes.data.map(item => ({
-                ...item,
-                game: (item.game || item.name || 'Juego sin nombre').trim(),
-                name: (item.name || item.game || 'Juego sin nombre').trim()
-            })) : [];
+        }
+        goldCategories = pickGoldDataset(categoriesRes.data, localCatalog?.gold_categories, normalizeGoldCategories);
+        if (!Array.isArray(categoriesRes.data) || categoriesRes.data.length === 0) {
+            connectionLog('Usando gold_categories del catálogo local como respaldo.', 'warning');
         }
         sanitizeGoldCategoryImages();
 
         if (serversRes.error) {
             connectionLog(`Error game_servers: ${serversRes.error.message}`, 'error');
-            gameServers = [];
-        } else {
-            gameServers = Array.isArray(serversRes.data) ? normalizeGameServers(serversRes.data) : [];
+        }
+        gameServers = pickGoldDataset(serversRes.data, localCatalog?.game_servers, normalizeGameServers);
+        if (!Array.isArray(serversRes.data) || serversRes.data.length === 0) {
+            connectionLog('Usando game_servers del catálogo local como respaldo.', 'warning');
         }
 
         if (goldRes.error) {
             connectionLog(`Error gold: ${goldRes.error.message}`, 'error');
-            gold = [];
-        } else {
-            gold = normalizeGoldCatalog(goldRes.data);
+        }
+        gold = pickGoldDataset(goldRes.data, localCatalog?.gold, normalizeGoldCatalog);
+        if (!Array.isArray(goldRes.data) || goldRes.data.length === 0) {
+            connectionLog('Usando gold del catálogo local como respaldo.', 'warning');
         }
 
         if (accountsRes.error) {
