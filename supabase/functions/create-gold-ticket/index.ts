@@ -107,6 +107,7 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>, proofFileName =
   const embed: Record<string, unknown> = {
     title: 'Nuevo ticket de compra de oro',
     color: 0xc8aa6d,
+    description: `Contacto del comprador: ${payload.customer_contact}`,
     fields: [
       { name: 'Juego', value: payload.game, inline: true },
       { name: 'Servidor', value: payload.server, inline: true },
@@ -299,7 +300,15 @@ async function postChannelMessageWithAttachment(
   attachment: DiscordAttachmentInput
 ) {
   const formData = new FormData();
-  formData.append('payload_json', JSON.stringify(body));
+  formData.append('payload_json', JSON.stringify({
+    ...body,
+    attachments: [
+      {
+        id: 0,
+        filename: attachment.fileName
+      }
+    ]
+  }));
   formData.append('files[0]', new Blob([attachment.bytes], { type: attachment.mimeType }), attachment.fileName);
 
   const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
@@ -369,11 +378,17 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const embed = buildDiscordEmbed(payload, proofAttachment.fileName);
   const adminRoleMentions = adminRoleIds.map((adminRoleId) => `<@&${adminRoleId}>`).join(' ');
   const adminUserMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
-  const openingMessage = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
+  const openingHeader = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
+  const openingSummary = [
+    openingHeader,
+    `Contacto: ${payload.customer_contact}`,
+    `Comprobante: ${proofAttachment.fileName}`,
+    `Pago: ${payload.payment_method_name} (${payload.payment_method_label}: ${payload.payment_method_value})`
+  ].filter(Boolean).join('\n');
 
   try {
     await postChannelMessageWithAttachment(botToken, channel.id, {
-      content: openingMessage,
+      content: openingSummary,
       embeds: [embed]
     }, proofAttachment);
   } catch (error) {
