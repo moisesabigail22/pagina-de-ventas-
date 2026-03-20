@@ -102,24 +102,3 @@ create table if not exists public.payment_methods (
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.profiles (
-  id uuid primary key references auth.users(id) on delete cascade,
-  email text,
-  display_name text,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.orders (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  order_type text not null,
-  title text not null,
-  summary text,
-  status text not null default 'ticket_creado',
-  discord_url text,
-  discord_channel_id text,
-  order_payload jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
