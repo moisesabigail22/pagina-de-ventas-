@@ -105,6 +105,11 @@ create table if not exists public.payment_methods (
   updated_at timestamptz not null default now()
 );
 
+alter table if exists public.payment_methods
+  add column if not exists image text,
+  add column if not exists info_type text default 'payment_id',
+  add column if not exists info_value text;
+
 
 -- Compatibilidad: migra datos de la tabla antigua "references" si existe.
 do $$

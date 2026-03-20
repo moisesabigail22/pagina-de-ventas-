@@ -106,6 +106,11 @@ create table if not exists public.payment_methods (
   updated_at timestamptz not null default now()
 );
 
+alter table if exists public.payment_methods
+  add column if not exists image text,
+  add column if not exists info_type text default 'payment_id',
+  add column if not exists info_value text;
+
 
 create temporary table if not exists tmp_backup_payload(payload jsonb) on commit drop;
 truncate tmp_backup_payload;

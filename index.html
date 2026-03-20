@@ -3836,6 +3836,23 @@
                     <div id="gold-order-payment-method-preview" style="display:none; margin-top:12px;"></div>
                 </div>
 
+                <div class="form-group">
+                    <label class="form-label">Correo o Discord</label>
+                    <input type="text" id="gold-order-contact" placeholder="Ej: correo@dominio.com o @usuarioDiscord" maxlength="120">
+                    <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Déjanos tu correo o tu Discord para contactarte sobre el pedido.
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Capture de la transacción</label>
+                    <input type="file" id="gold-order-proof-file" accept="image/*">
+                    <small id="gold-order-proof-info" style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Sube el comprobante de pago para adjuntarlo al ticket.
+                    </small>
+                    <div id="gold-order-proof-preview" style="display:none; margin-top:12px;"></div>
+                </div>
+
             </div>
 
             <div class="gold-order-summary">
@@ -3869,6 +3886,9 @@
     let editingServiceId = null;
     let editingPaymentMethodId = null;
     let currentImageData = null;
+    let paymentMethodImageData = '';
+    let goldOrderProofData = '';
+    let goldOrderProofName = '';
     let currentFilter = 'all';
     let isDropdownOpen = false;
     let currentOptimization = 'auto';
@@ -5758,6 +5778,72 @@
         });
     }
 
+    function updatePaymentMethodImagePreview(src = '') {
+        const preview = document.getElementById('payment-method-image-preview');
+        if (!preview) return;
+
+        const normalizedSrc = String(src || '').trim();
+        if (!normalizedSrc) {
+            preview.style.display = 'none';
+            preview.innerHTML = '';
+            return;
+        }
+
+        preview.style.display = 'block';
+        preview.innerHTML = `
+            <div style="display:flex; align-items:center; gap:12px; background:rgba(5,5,5,.72); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:12px;">
+                <img src="${normalizedSrc}" alt="Preview método de pago" style="width:64px; height:64px; object-fit:contain; background:rgba(0,0,0,.45); border-radius:8px; padding:6px;" onerror="this.onerror=null;this.src='${DEFAULT_LOGO_URL}'">
+                <div style="color:var(--text-gray); font-size:.95rem;">Vista previa de la imagen del método de pago.</div>
+            </div>
+        `;
+    }
+
+    async function handlePaymentMethodImageFileChange(event) {
+        const file = event?.target?.files?.[0];
+        if (!file) {
+            paymentMethodImageData = '';
+            updatePaymentMethodImagePreview(document.getElementById('payment-method-image')?.value || '');
+            return;
+        }
+
+        paymentMethodImageData = await readFileAsDataUrl(file);
+        updatePaymentMethodImagePreview(paymentMethodImageData);
+    }
+
+    function updateGoldOrderProofPreview(fileName = '') {
+        const preview = document.getElementById('gold-order-proof-preview');
+        if (!preview) return;
+
+        if (!fileName) {
+            preview.style.display = 'none';
+            preview.innerHTML = '';
+            return;
+        }
+
+        preview.style.display = 'block';
+        preview.innerHTML = `
+            <div style="background:rgba(5,5,5,.72); border:1px solid var(--wow-gold-dark); border-radius:10px; padding:12px; color:var(--text);">
+                <i class="fas fa-image" style="color:var(--wow-gold); margin-right:8px;"></i>
+                Capture seleccionado: <strong>${fileName}</strong>
+            </div>
+        `;
+    }
+
+    async function handleGoldOrderProofFileChange(event) {
+        const file = event?.target?.files?.[0];
+        goldOrderProofData = '';
+        goldOrderProofName = '';
+
+        if (!file) {
+            updateGoldOrderProofPreview('');
+            return;
+        }
+
+        goldOrderProofData = await readFileAsDataUrl(file);
+        goldOrderProofName = file.name || 'capture-transaccion';
+        updateGoldOrderProofPreview(goldOrderProofName);
+    }
+
     function getGoldOrderGames() {
         return getGoldCategoryGames();
     }
@@ -6014,6 +6100,7 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const contactInput = document.getElementById('gold-order-contact');
 
         const selectedGame = goldOrderState.game;
         const selectedServer = goldOrderState.server;
@@ -6022,11 +6109,18 @@
         const characterName = characterInput?.value.trim() || '';
         const tradeType = tradeSelect?.value || '';
         const paymentMethodId = paymentMethodSelect?.value || '';
+        const customerContact = contactInput?.value.trim() || '';
         const selectedPaymentMethod = paymentMethods.find((method) => String(method.id) === String(paymentMethodId));
 
-        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod) {
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod || !customerContact) {
             return {
-                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade y método de pago.'
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade, método de pago y tu correo o Discord.'
+            };
+        }
+
+        if (!goldOrderProofData || !goldOrderProofName) {
+            return {
+                error: 'Debes subir el capture de la transacción para crear el ticket.'
             };
         }
 
@@ -6065,9 +6159,12 @@
                 faction: selectedFaction,
                 character: characterName,
                 trade: tradeType,
+                customer_contact: customerContact,
                 payment_method_name: selectedPaymentMethod.name,
                 payment_method_label: getPaymentMethodInfoLabel(selectedPaymentMethod.infoType),
                 payment_method_value: selectedPaymentMethod.infoValue,
+                transaction_proof_name: goldOrderProofName,
+                transaction_proof_data_url: goldOrderProofData,
                 custom_amount: selectedAmount === 'custom',
                 source: 'web_gold_order',
                 created_at: new Date().toISOString()
@@ -6408,6 +6505,8 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const contactInput = document.getElementById('gold-order-contact');
+        const proofFileInput = document.getElementById('gold-order-proof-file');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -6424,6 +6523,11 @@
         if (characterInput) characterInput.value = '';
         if (tradeSelect) tradeSelect.value = '';
         if (paymentMethodSelect) paymentMethodSelect.value = '';
+        if (contactInput) contactInput.value = '';
+        if (proofFileInput) proofFileInput.value = '';
+        goldOrderProofData = '';
+        goldOrderProofName = '';
+        updateGoldOrderProofPreview('');
         updateGoldOrderPaymentMethodOptions();
         toggleGoldOrderCustomAmount([]);
         showGoldOrderMessage('');
@@ -6776,6 +6880,28 @@
             goldOrderPaymentMethodSelect.addEventListener('change', function() {
                 updateGoldOrderPaymentMethodInfo();
             });
+        }
+
+        const goldOrderProofFileInput = document.getElementById('gold-order-proof-file');
+        if (goldOrderProofFileInput) {
+            goldOrderProofFileInput.addEventListener('change', handleGoldOrderProofFileChange);
+        }
+
+        const paymentMethodImageInput = document.getElementById('payment-method-image');
+        if (paymentMethodImageInput) {
+            paymentMethodImageInput.addEventListener('input', function() {
+                if ((this.value || '').trim()) {
+                    paymentMethodImageData = '';
+                    const paymentMethodImageFileInput = document.getElementById('payment-method-image-file');
+                    if (paymentMethodImageFileInput) paymentMethodImageFileInput.value = '';
+                }
+                updatePaymentMethodImagePreview(this.value || '');
+            });
+        }
+
+        const paymentMethodImageFileInput = document.getElementById('payment-method-image-file');
+        if (paymentMethodImageFileInput) {
+            paymentMethodImageFileInput.addEventListener('change', handlePaymentMethodImageFileChange);
         }
 
         const goldOrderBackBtn = document.getElementById('gold-order-back-btn');
@@ -8076,6 +8202,13 @@
                             <input type="text" id="payment-method-image" placeholder="https://...png" maxlength="500">
                         </div>
                         <div class="form-group">
+                            <label class="form-label">Imagen (archivo)</label>
+                            <input type="file" id="payment-method-image-file" accept="image/*">
+                            <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                                Puedes subir una imagen o dejar una URL. Si subes archivo, se guarda esa imagen.
+                            </small>
+                        </div>
+                        <div class="form-group">
                             <label class="form-label">Tipo de información</label>
                             <select id="payment-method-info-type">
                                 <option value="payment_id">ID de pago</option>
@@ -8087,6 +8220,7 @@
                             <input type="text" id="payment-method-info-value" placeholder="Ej: correo@dominio.com o ID del pago" maxlength="150">
                         </div>
                     </div>
+                    <div id="payment-method-image-preview" style="display:none; margin: 0 0 18px 0;"></div>
                     <div style="display:flex; gap:12px; flex-wrap:wrap;">
                         <button class="btn-primary" id="payment-method-save-btn" onclick="savePaymentMethod()">
                             <i class="fas fa-save"></i> GUARDAR MÉTODO
@@ -8283,16 +8417,20 @@
         editingPaymentMethodId = null;
         const nameInput = document.getElementById('payment-method-name');
         const imageInput = document.getElementById('payment-method-image');
+        const imageFileInput = document.getElementById('payment-method-image-file');
         const infoTypeSelect = document.getElementById('payment-method-info-type');
         const infoValueInput = document.getElementById('payment-method-info-value');
         const title = document.getElementById('payment-method-form-title');
         const saveBtn = document.getElementById('payment-method-save-btn');
         const cancelBtn = document.getElementById('payment-method-cancel-btn');
 
+        paymentMethodImageData = '';
         if (nameInput) nameInput.value = '';
         if (imageInput) imageInput.value = '';
+        if (imageFileInput) imageFileInput.value = '';
         if (infoTypeSelect) infoTypeSelect.value = 'payment_id';
         if (infoValueInput) infoValueInput.value = '';
+        updatePaymentMethodImagePreview('');
         if (title) title.innerHTML = '<i class="fas fa-plus"></i> Agregar método de pago';
         if (saveBtn) saveBtn.innerHTML = '<i class="fas fa-save"></i> GUARDAR MÉTODO';
         if (cancelBtn) cancelBtn.style.display = 'none';
@@ -8303,10 +8441,14 @@
         if (!method) return showMessage('No se encontró el método de pago', 'error');
 
         editingPaymentMethodId = String(id);
+        paymentMethodImageData = '';
         document.getElementById('payment-method-name').value = method.name || '';
         document.getElementById('payment-method-image').value = method.image || '';
+        const imageFileInput = document.getElementById('payment-method-image-file');
+        if (imageFileInput) imageFileInput.value = '';
         document.getElementById('payment-method-info-type').value = method.infoType || 'payment_id';
         document.getElementById('payment-method-info-value').value = method.infoValue || '';
+        updatePaymentMethodImagePreview(method.image || '');
         document.getElementById('payment-method-form-title').innerHTML = '<i class="fas fa-edit"></i> Editar método de pago';
         document.getElementById('payment-method-save-btn').innerHTML = '<i class="fas fa-save"></i> ACTUALIZAR MÉTODO';
         document.getElementById('payment-method-cancel-btn').style.display = 'inline-flex';
@@ -8314,7 +8456,7 @@
 
     function savePaymentMethod() {
         const name = document.getElementById('payment-method-name')?.value.trim();
-        const image = document.getElementById('payment-method-image')?.value.trim() || '';
+        const image = paymentMethodImageData || document.getElementById('payment-method-image')?.value.trim() || '';
         const infoType = document.getElementById('payment-method-info-type')?.value || 'payment_id';
         const infoValue = document.getElementById('payment-method-info-value')?.value.trim();
 

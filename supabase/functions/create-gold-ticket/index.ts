@@ -12,9 +12,12 @@ type GoldTicketPayload = {
   faction?: string;
   character?: string;
   trade?: string;
+  customer_contact?: string;
   payment_method_name?: string;
   payment_method_label?: string;
   payment_method_value?: string;
+  transaction_proof_name?: string;
+  transaction_proof_data_url?: string;
   custom_amount?: boolean;
   source?: string;
   created_at?: string;
@@ -43,6 +46,12 @@ type DiscordPermissionOverwrite = {
 type DiscordVisibilityConfig = {
   adminRoleIds: DiscordSnowflake[];
   adminUserIds: DiscordSnowflake[];
+};
+
+type DiscordAttachmentInput = {
+  fileName: string;
+  mimeType: string;
+  bytes: Uint8Array;
 };
 
 const DISCORD_PERMISSION_VIEW_CHANNEL = 1n << 10n;
@@ -94,8 +103,8 @@ function parseDiscordSnowflakeList(value: string) {
   ));
 }
 
-function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
-  return {
+function buildDiscordEmbed(payload: Required<GoldTicketPayload>, proofFileName = '') {
+  const embed: Record<string, unknown> = {
     title: 'Nuevo ticket de compra de oro',
     color: 0xc8aa6d,
     fields: [
@@ -106,6 +115,7 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
       { name: 'Facción', value: payload.faction, inline: true },
       { name: 'Trade', value: payload.trade, inline: true },
       { name: 'Personaje', value: payload.character, inline: true },
+      { name: 'Correo o Discord', value: payload.customer_contact, inline: false },
       { name: 'Método de pago', value: payload.payment_method_name, inline: true },
       { name: payload.payment_method_label, value: payload.payment_method_value, inline: true },
       { name: 'Tipo', value: payload.custom_amount ? 'Cantidad específica' : 'Paquete estándar', inline: true },
@@ -116,6 +126,14 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
       text: 'Epic Gold Shop'
     }
   };
+
+  if (proofFileName) {
+    embed.image = {
+      url: `attachment://${proofFileName}`
+    };
+  }
+
+  return embed;
 }
 
 function formatDiscordApiError(path: string, status: number, errorText: string) {
@@ -226,6 +244,84 @@ async function postChannelMessage(token: string, channelId: string, body: Record
   });
 }
 
+function sanitizeFileName(value: string) {
+  return String(value || 'capture-transaccion.png')
+    .trim()
+    .replace(/[^a-zA-Z0-9._-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80) || 'capture-transaccion.png';
+}
+
+function parseDataUrlAttachment(fileName: string, dataUrl: string): DiscordAttachmentInput {
+  const match = String(dataUrl || '').trim().match(/^data:([^;]+);base64,(.+)$/);
+  if (!match) {
+    throw new Error('El capture de la transacción no tiene un formato Data URL válido.');
+  }
+
+  const mimeType = match[1].trim().toLowerCase();
+  const extensionMap: Record<string, string> = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg',
+    'image/webp': 'webp',
+    'image/gif': 'gif'
+  };
+  const extension = extensionMap[mimeType];
+  if (!extension) {
+    throw new Error('El capture de la transacción debe ser una imagen PNG, JPG, WEBP o GIF.');
+  }
+
+  const binary = atob(match[2]);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  const maxBytes = 7 * 1024 * 1024;
+  if (bytes.byteLength > maxBytes) {
+    throw new Error('El capture de la transacción supera el tamaño máximo permitido de 7 MB.');
+  }
+
+  const safeFileName = sanitizeFileName(fileName);
+  const finalFileName = safeFileName.includes('.') ? safeFileName : `${safeFileName}.${extension}`;
+
+  return {
+    fileName: finalFileName,
+    mimeType,
+    bytes
+  };
+}
+
+async function postChannelMessageWithAttachment(
+  token: string,
+  channelId: string,
+  body: Record<string, unknown>,
+  attachment: DiscordAttachmentInput
+) {
+  const formData = new FormData();
+  formData.append('payload_json', JSON.stringify(body));
+  formData.append('files[0]', new Blob([attachment.bytes], { type: attachment.mimeType }), attachment.fileName);
+
+  const response = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bot ${token}`
+    },
+    body: formData
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(formatDiscordApiError(`/channels/${channelId}/messages`, response.status, errorText));
+  }
+
+  if (response.status === 204) {
+    return;
+  }
+
+  await response.json();
+}
+
 async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const botToken = getEnv('DISCORD_BOT_TOKEN');
   const guildId = getEnv('DISCORD_GUILD_ID');
@@ -269,16 +365,17 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     throw new Error(`No se pudo crear el canal en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
 
-  const embed = buildDiscordEmbed(payload);
+  const proofAttachment = parseDataUrlAttachment(payload.transaction_proof_name, payload.transaction_proof_data_url);
+  const embed = buildDiscordEmbed(payload, proofAttachment.fileName);
   const adminRoleMentions = adminRoleIds.map((adminRoleId) => `<@&${adminRoleId}>`).join(' ');
   const adminUserMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
   const openingMessage = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
 
   try {
-    await postChannelMessage(botToken, channel.id, {
+    await postChannelMessageWithAttachment(botToken, channel.id, {
       content: openingMessage,
       embeds: [embed]
-    });
+    }, proofAttachment);
   } catch (error) {
     throw new Error(`No se pudo publicar el mensaje inicial del ticket en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -324,7 +421,7 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'El body JSON no es válido' }, 400);
   }
 
-  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'payment_method_name', 'payment_method_label', 'payment_method_value'] as const;
+  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'customer_contact', 'payment_method_name', 'payment_method_label', 'payment_method_value', 'transaction_proof_name', 'transaction_proof_data_url'] as const;
   for (const field of requiredFields) {
     if (!payload[field] || !String(payload[field]).trim()) {
       return jsonResponse({ error: `Falta el campo requerido: ${field}` }, 400);
@@ -339,9 +436,12 @@ Deno.serve(async (request) => {
     faction: String(payload.faction).trim(),
     character: String(payload.character).trim().slice(0, 80),
     trade: String(payload.trade).trim(),
+    customer_contact: String(payload.customer_contact).trim().slice(0, 160),
     payment_method_name: String(payload.payment_method_name).trim(),
     payment_method_label: String(payload.payment_method_label).trim(),
     payment_method_value: String(payload.payment_method_value).trim(),
+    transaction_proof_name: String(payload.transaction_proof_name).trim(),
+    transaction_proof_data_url: String(payload.transaction_proof_data_url).trim(),
     custom_amount: Boolean(payload.custom_amount),
     source: String(payload.source || 'web_gold_order').trim(),
     created_at: String(payload.created_at || new Date().toISOString())
