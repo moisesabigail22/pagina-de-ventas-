@@ -106,6 +106,28 @@ create table if not exists public.payment_methods (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
+  display_name text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.orders (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  order_type text not null,
+  title text not null,
+  summary text,
+  status text not null default 'ticket_creado',
+  discord_url text,
+  discord_channel_id text,
+  order_payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create temporary table if not exists tmp_backup_payload(payload jsonb) on commit drop;
 truncate tmp_backup_payload;
 
@@ -138,7 +160,8 @@ truncate table
   public.customer_references,
   public.settings,
   public.services,
-  public.payment_methods
+  public.payment_methods,
+  public.orders
 restart identity;
 
 -- settings
@@ -254,6 +277,8 @@ union all select 'account_categories', count(*) from public.account_categories
 union all select 'customer_references', count(*) from public.customer_references
 union all select 'services', count(*) from public.services
 union all select 'payment_methods', count(*) from public.payment_methods
+union all select 'profiles', count(*) from public.profiles
+union all select 'orders', count(*) from public.orders
 order by table_name;
 
 

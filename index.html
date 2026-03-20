@@ -2237,6 +2237,103 @@
             margin: 0 auto;
         }
 
+        .customer-menu {
+            position: relative;
+        }
+
+        .customer-menu-btn {
+            background: var(--panel);
+            border: 2px solid var(--wow-gold-dark);
+            color: var(--text);
+            padding: 12px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .customer-menu-btn strong {
+            color: var(--wow-gold-light);
+            font-size: 0.95rem;
+        }
+
+        .customer-menu-dropdown {
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 260px;
+            background: rgba(10, 25, 41, 0.98);
+            border: 2px solid var(--wow-gold-dark);
+            border-radius: 16px;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+            padding: 14px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1500;
+        }
+
+        .customer-menu-dropdown.open {
+            display: flex;
+        }
+
+        .customer-menu-item {
+            width: 100%;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(200, 170, 109, 0.18);
+            color: var(--text);
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .customer-menu-item:hover {
+            border-color: var(--wow-gold);
+            transform: translateY(-1px);
+        }
+
+        .customer-menu-footer {
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(200, 170, 109, 0.18);
+        }
+
+        .customer-profile-card, .customer-order-card {
+            background: var(--panel);
+            border: 2px solid var(--wow-gold-dark);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 14px;
+        }
+
+        .customer-profile-card h3, .customer-order-card h3 {
+            color: var(--wow-gold-light);
+            margin-bottom: 10px;
+        }
+
+        .customer-order-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .customer-order-pill {
+            background: rgba(200, 170, 109, 0.12);
+            border: 1px solid rgba(200, 170, 109, 0.25);
+            color: var(--wow-gold-light);
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
         /* Filter Buttons */
         .filter-buttons {
             display: flex;
@@ -3135,6 +3232,29 @@
             <i class="fas fa-key"></i> <span id="nav-access-label">ACCESO</span>
         </button>
 
+        <div class="customer-menu" id="customer-menu">
+            <button type="button" class="customer-menu-btn" id="customer-menu-btn" onclick="toggleCustomerMenu(event)">
+                <i class="fas fa-user-circle"></i>
+                <div style="text-align:left;">
+                    <div style="font-size:.78rem; color: var(--text-gray);">Cuenta</div>
+                    <strong id="customer-menu-label">Iniciar sesión</strong>
+                </div>
+            </button>
+            <div class="customer-menu-dropdown" id="customer-menu-dropdown">
+                <button type="button" class="customer-menu-item" onclick="showCustomerProfileModal()">
+                    <i class="fas fa-id-card"></i> Perfil
+                </button>
+                <button type="button" class="customer-menu-item" onclick="showCustomerOrdersModal()">
+                    <i class="fas fa-scroll"></i> Órdenes
+                </button>
+                <div class="customer-menu-footer">
+                    <button type="button" class="customer-menu-item" onclick="logoutCustomer()">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="language-switcher">
             <button type="button" id="lang-es-btn" onclick="enterStore('es')">ES</button>
             <button type="button" id="lang-en-btn" onclick="enterStore('en')">EN</button>
@@ -3608,6 +3728,50 @@
     </div>
 </div>
 
+<div id="customer-auth-modal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title" id="customer-auth-title">INICIAR SESIÓN</h2>
+        <div class="login-form">
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" id="customer-auth-email" placeholder="tucorreo@email.com" maxlength="120">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <input type="password" id="customer-auth-password" placeholder="Ingresa tu contraseña" maxlength="80">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre visible</label>
+                <input type="text" id="customer-auth-name" placeholder="Solo para registro" maxlength="80">
+            </div>
+            <button class="btn-primary" style="width:100%; margin-top:20px; padding:20px;" onclick="submitCustomerAuth()">
+                <i class="fas fa-user-check"></i> CONTINUAR
+            </button>
+            <button class="btn-secondary" type="button" style="width:100%; margin-top:12px; padding:18px;" onclick="toggleCustomerAuthMode()">
+                Cambiar a registro
+            </button>
+        </div>
+        <div class="message" id="customer-auth-message"></div>
+    </div>
+</div>
+
+<div id="customer-profile-modal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">PERFIL</h2>
+        <div id="customer-profile-content"></div>
+    </div>
+</div>
+
+<div id="customer-orders-modal" class="modal">
+    <div class="modal-content">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title">MIS ÓRDENES</h2>
+        <div id="customer-orders-content"></div>
+    </div>
+</div>
+
 <div id="account-modal" class="modal">
     <div class="modal-content">
         <button class="close-modal" onclick="closeModal()">&times;</button>
@@ -3927,13 +4091,6 @@
                     <div id="gold-order-payment-method-preview" style="display:none; margin-top:12px;"></div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Tu Discord (ID o mención)</label>
-                    <input type="text" id="gold-order-discord-user" placeholder="Ej: 123456789012345678 o <@123456789012345678>" maxlength="80">
-                    <small style="display:block; margin-top:8px; color:var(--text-gray);">
-                        Este usuario se agregará al ticket para que puedas ver el canal junto con los admins.
-                    </small>
-                </div>
             </div>
 
             <div class="gold-order-summary">
@@ -3976,6 +4133,10 @@
         server: ''
     };
     let currentLanguage = 'es';
+    let currentCustomer = null;
+    let customerProfile = null;
+    let customerOrders = [];
+    let customerAuthMode = 'login';
 
 
     const ENTRY_GATE_TRANSLATIONS = {
@@ -5077,6 +5238,8 @@
             connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
         }
 
+        await initCustomerAuth();
+
         // Renderizar contenido inicial
         renderAccounts();
         renderGold();
@@ -5123,6 +5286,11 @@
                 !dropdown.contains(event.target) &&
                 !dropdownBtn.contains(event.target)) {
                 closeCategoryDropdown();
+            }
+
+            const customerMenu = document.getElementById('customer-menu');
+            if (customerMenu && !customerMenu.contains(event.target)) {
+                closeCustomerMenu();
             }
         });
 
@@ -5984,7 +6152,6 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
-        const discordUserInput = document.getElementById('gold-order-discord-user');
 
         const selectedGame = goldOrderState.game;
         const selectedServer = goldOrderState.server;
@@ -5993,12 +6160,11 @@
         const characterName = characterInput?.value.trim() || '';
         const tradeType = tradeSelect?.value || '';
         const paymentMethodId = paymentMethodSelect?.value || '';
-        const customerDiscord = discordUserInput?.value.trim() || '';
         const selectedPaymentMethod = paymentMethods.find((method) => String(method.id) === String(paymentMethodId));
 
-        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod || !customerDiscord) {
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod) {
             return {
-                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade, método de pago y tu usuario de Discord.'
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade y método de pago.'
             };
         }
 
@@ -6040,7 +6206,6 @@
                 payment_method_name: selectedPaymentMethod.name,
                 payment_method_label: getPaymentMethodInfoLabel(selectedPaymentMethod.infoType),
                 payment_method_value: selectedPaymentMethod.infoValue,
-                customer_discord: customerDiscord,
                 custom_amount: selectedAmount === 'custom',
                 source: 'web_gold_order',
                 created_at: new Date().toISOString()
@@ -6049,14 +6214,14 @@
     }
 
     async function submitGoldOrderTicket() {
+        if (!(await ensureCustomerLoggedIn('crear tickets de oro'))) return;
         const { payload, error } = buildGoldOrderPayload();
         if (error) {
             showGoldOrderMessage(error, 'error');
             return;
         }
 
-        openDiscordFallback();
-        showGoldOrderMessage('Abriendo Discord y creando ticket...', 'info');
+        showGoldOrderMessage('Creando ticket...', 'info');
 
         try {
             const { data, error: invokeError } = await supabaseClient.functions.invoke('create-gold-ticket', {
@@ -6076,8 +6241,8 @@
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
-            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Te estamos llevando a tu canal en Discord.`, 'success');
-            openDiscordFallback(data && data.discord_url);
+            await saveCustomerOrder('gold', `${payload.game} • ${payload.server}`, `${payload.amount} • ${payload.price}`, payload, data);
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} También quedó guardado en tu sección de órdenes.`, 'success');
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error
@@ -6092,6 +6257,7 @@
     }
 
     async function submitAccountTicket(accountId) {
+        if (!(await ensureCustomerLoggedIn('crear tickets de cuenta'))) return;
         const account = accounts.find(entry => String(entry.id) === String(accountId));
         if (!account) {
             showMessage('No se encontró la cuenta seleccionada.', 'error', { force: true });
@@ -6126,8 +6292,13 @@
                 throw new Error(data.details || data.error);
             }
 
-            showMessage('✅ Ticket de cuenta enviado correctamente. Te estamos llevando a Discord.', 'success', { force: true });
-            openDiscordFallback(data && data.discord_url);
+            await saveCustomerOrder('account', account.name || 'Cuenta premium', `${account.server || 'No especificado'} • $${account.price || '0'}`, {
+                category: account.category || 'Sin categoría',
+                server: account.server || 'No especificado',
+                name: account.name || 'Cuenta premium',
+                price: String(account.price || '0')
+            }, data);
+            showMessage('✅ Ticket de cuenta enviado correctamente. También quedó guardado en tus órdenes.', 'success', { force: true });
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -6137,6 +6308,7 @@
     }
 
     async function submitServiceTicket(serviceId) {
+        if (!(await ensureCustomerLoggedIn('crear tickets de servicio'))) return;
         const service = services.find(entry => String(entry.id) === String(serviceId));
         if (!service) {
             showMessage('No se encontró el servicio seleccionado.', 'error', { force: true });
@@ -6171,8 +6343,13 @@
                 throw new Error(data.details || data.error);
             }
 
-            showMessage('✅ Ticket de servicio enviado correctamente. Te estamos llevando a Discord.', 'success', { force: true });
-            openDiscordFallback(data && data.discord_url);
+            await saveCustomerOrder('service', service.name || 'Servicio premium', `${service.game || 'WoW'} • $${service.price || '0'}`, {
+                category: service.category || 'servicios',
+                game: service.game || 'WoW',
+                name: service.name || 'Servicio premium',
+                price: String(service.price || '0')
+            }, data);
+            showMessage('✅ Ticket de servicio enviado correctamente. También quedó guardado en tus órdenes.', 'success', { force: true });
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -6388,7 +6565,6 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
-        const discordUserInput = document.getElementById('gold-order-discord-user');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
@@ -7184,6 +7360,224 @@
         setTimeout(() => {
             document.getElementById('references').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 500);
+    }
+
+    async function initCustomerAuth() {
+        try {
+            const { data } = await supabaseClient.auth.getSession();
+            await refreshCustomerSession(data?.session || null);
+
+            supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+                await refreshCustomerSession(session || null);
+            });
+        } catch (error) {
+            console.error('No se pudo iniciar auth de clientes:', error);
+        }
+    }
+
+    async function refreshCustomerSession(session) {
+        currentCustomer = session?.user || null;
+
+        if (!currentCustomer) {
+            customerProfile = null;
+            customerOrders = [];
+            updateCustomerMenuUI();
+            return;
+        }
+
+        const displayName = currentCustomer.user_metadata?.display_name || currentCustomer.email?.split('@')[0] || 'Cliente';
+        const upsertPayload = {
+            id: currentCustomer.id,
+            email: currentCustomer.email || '',
+            display_name: displayName,
+            updated_at: new Date().toISOString()
+        };
+
+        await supabaseClient.from('profiles').upsert(upsertPayload, { onConflict: 'id' });
+        const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentCustomer.id).maybeSingle();
+        customerProfile = profile || upsertPayload;
+        await loadCustomerOrders();
+        updateCustomerMenuUI();
+    }
+
+    function updateCustomerMenuUI() {
+        const label = document.getElementById('customer-menu-label');
+        if (!label) return;
+        label.textContent = currentCustomer?.email || 'Iniciar sesión';
+    }
+
+    function toggleCustomerMenu(event) {
+        if (event) event.stopPropagation();
+        if (!currentCustomer?.id) {
+            showCustomerAuthModal('login');
+            return;
+        }
+        const dropdown = document.getElementById('customer-menu-dropdown');
+        if (!dropdown) return;
+        dropdown.classList.toggle('open');
+    }
+
+    function closeCustomerMenu() {
+        const dropdown = document.getElementById('customer-menu-dropdown');
+        if (dropdown) dropdown.classList.remove('open');
+    }
+
+    function showCustomerAuthModal(mode = 'login') {
+        customerAuthMode = mode;
+        const title = document.getElementById('customer-auth-title');
+        const toggleBtn = document.querySelector('#customer-auth-modal .btn-secondary');
+        const nameGroup = document.getElementById('customer-auth-name')?.closest('.form-group');
+        const message = document.getElementById('customer-auth-message');
+        if (title) title.textContent = mode === 'login' ? 'INICIAR SESIÓN' : 'CREAR CUENTA';
+        if (toggleBtn) toggleBtn.textContent = mode === 'login' ? 'Cambiar a registro' : 'Cambiar a inicio de sesión';
+        if (nameGroup) nameGroup.style.display = mode === 'login' ? 'none' : 'block';
+        if (message) message.style.display = 'none';
+        showModal('customer-auth-modal');
+    }
+
+    function toggleCustomerAuthMode() {
+        showCustomerAuthModal(customerAuthMode === 'login' ? 'register' : 'login');
+    }
+
+    async function submitCustomerAuth() {
+        const email = document.getElementById('customer-auth-email')?.value.trim() || '';
+        const password = document.getElementById('customer-auth-password')?.value || '';
+        const name = document.getElementById('customer-auth-name')?.value.trim() || '';
+        const message = document.getElementById('customer-auth-message');
+        if (!email || !password) {
+            message.textContent = 'Completa correo y contraseña.';
+            message.className = 'message error';
+            message.style.display = 'block';
+            return;
+        }
+        try {
+            let result;
+            if (customerAuthMode === 'register') {
+                result = await supabaseClient.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: { display_name: name || email.split('@')[0] }
+                    }
+                });
+            } else {
+                result = await supabaseClient.auth.signInWithPassword({ email, password });
+            }
+
+            if (result.error) throw result.error;
+            message.textContent = customerAuthMode === 'register'
+                ? 'Cuenta creada correctamente. Si tu proyecto requiere confirmación por correo, revisa tu inbox.'
+                : 'Sesión iniciada correctamente.';
+            message.className = 'message success';
+            message.style.display = 'block';
+            await refreshCustomerSession(result.data?.session || (await supabaseClient.auth.getSession()).data.session || null);
+            setTimeout(() => closeModal(), 700);
+        } catch (error) {
+            message.textContent = error?.message || 'No se pudo completar la autenticación.';
+            message.className = 'message error';
+            message.style.display = 'block';
+        }
+    }
+
+    async function logoutCustomer() {
+        closeCustomerMenu();
+        await supabaseClient.auth.signOut();
+        currentCustomer = null;
+        customerProfile = null;
+        customerOrders = [];
+        updateCustomerMenuUI();
+        showMessage('Sesión cerrada correctamente.', 'info', { force: true });
+    }
+
+    async function ensureCustomerLoggedIn(actionLabel = 'crear un ticket') {
+        if (currentCustomer?.id) return true;
+        showMessage(`Debes iniciar sesión para ${actionLabel}.`, 'info', { force: true });
+        showCustomerAuthModal('login');
+        return false;
+    }
+
+    async function loadCustomerOrders() {
+        if (!currentCustomer?.id) {
+            customerOrders = [];
+            return [];
+        }
+        const { data, error } = await supabaseClient
+            .from('orders')
+            .select('*')
+            .eq('user_id', currentCustomer.id)
+            .order('created_at', { ascending: false });
+        if (error) {
+            console.error('No se pudieron cargar las órdenes:', error);
+            return customerOrders;
+        }
+        customerOrders = data || [];
+        return customerOrders;
+    }
+
+    async function saveCustomerOrder(type, title, summary, payload, ticketData) {
+        if (!currentCustomer?.id) return;
+        const insertPayload = {
+            user_id: currentCustomer.id,
+            order_type: type,
+            title,
+            summary,
+            status: 'ticket_creado',
+            discord_url: ticketData?.discord_url || '',
+            discord_channel_id: ticketData?.channel_id || '',
+            order_payload: payload || {}
+        };
+        const { error } = await supabaseClient.from('orders').insert(insertPayload);
+        if (error) {
+            console.error('No se pudo guardar la orden:', error);
+            throw error;
+        }
+        await loadCustomerOrders();
+    }
+
+    function showCustomerProfileModal() {
+        closeCustomerMenu();
+        if (!currentCustomer?.id) {
+            showCustomerAuthModal('login');
+            return;
+        }
+        const container = document.getElementById('customer-profile-content');
+        const profile = customerProfile || {};
+        container.innerHTML = `
+            <div class="customer-profile-card">
+                <h3>${profile.display_name || currentCustomer.email || 'Cliente'}</h3>
+                <p><strong>Correo:</strong> ${currentCustomer.email || 'Sin correo'}</p>
+                <p><strong>ID de usuario:</strong> ${currentCustomer.id}</p>
+                <p><strong>Órdenes registradas:</strong> ${customerOrders.length}</p>
+            </div>
+        `;
+        showModal('customer-profile-modal');
+    }
+
+    async function showCustomerOrdersModal() {
+        closeCustomerMenu();
+        if (!currentCustomer?.id) {
+            showCustomerAuthModal('login');
+            return;
+        }
+        await loadCustomerOrders();
+        const container = document.getElementById('customer-orders-content');
+        if (!customerOrders.length) {
+            container.innerHTML = '<div class="customer-order-card"><h3>Sin órdenes todavía</h3><p>Tus tickets aparecerán aquí cuando crees uno desde la web.</p></div>';
+        } else {
+            container.innerHTML = customerOrders.map(order => `
+                <div class="customer-order-card">
+                    <h3>${order.title || 'Orden'}</h3>
+                    <div class="customer-order-meta">
+                        <span class="customer-order-pill">${order.order_type || 'ticket'}</span>
+                        <span class="customer-order-pill">${order.status || 'pendiente'}</span>
+                        <span class="customer-order-pill">${new Date(order.created_at).toLocaleString()}</span>
+                    </div>
+                    <p>${order.summary || ''}</p>
+                    ${order.discord_url ? `<a href="${order.discord_url}" target="_blank" class="btn-buy" style="margin-top:12px; width:max-content;"><i class="fab fa-discord"></i> Abrir ticket</a>` : ''}
+                </div>
+            `).join('');
+        }
+        showModal('customer-orders-modal');
     }
 
     // ============================================
@@ -8988,6 +9382,9 @@
         document.getElementById('gold-modal').style.display = 'none';
         document.getElementById('gold-category-modal').style.display = 'none';
         document.getElementById('gold-order-modal').style.display = 'none';
+        document.getElementById('customer-auth-modal').style.display = 'none';
+        document.getElementById('customer-profile-modal').style.display = 'none';
+        document.getElementById('customer-orders-modal').style.display = 'none';
 
         updateBodyScrollLock();
 
