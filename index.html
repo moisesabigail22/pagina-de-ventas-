@@ -5510,8 +5510,52 @@
     }
 
     function getGoldCategoryGames() {
-        const games = goldCategories.map(category => category.game).filter(Boolean);
-        return Array.from(new Set(games)).sort();
+        const games = [
+            ...goldCategories.map(category => (category.game || '').trim()),
+            ...gameServers.map(server => (server.game || '').trim()),
+            ...gold.map(item => (item.game || '').trim())
+        ].filter(Boolean);
+
+        return Array.from(new Set(games)).sort((leftGame, rightGame) =>
+            leftGame.localeCompare(rightGame, 'es', { sensitivity: 'base' })
+        );
+    }
+
+    function getServersForGame(game = '') {
+        const safeGame = String(game || '').trim();
+        if (!safeGame) return [];
+
+        const servers = [
+            ...gameServers
+                .filter(server => (server.game || '').trim() === safeGame)
+                .map(server => (server.name || server.server || '').trim()),
+            ...gold
+                .filter(item => (item.game || '').trim() === safeGame)
+                .map(item => (item.server || '').trim()),
+            ...goldCategories
+                .filter(category => (category.game || '').trim() === safeGame)
+                .map(category => (category.server || '').trim())
+        ].filter(Boolean);
+
+        return Array.from(new Set(servers)).sort((leftServer, rightServer) =>
+            leftServer.localeCompare(rightServer, 'es', { sensitivity: 'base' })
+        );
+    }
+
+    function refreshGoldViews() {
+        writeGoldCatalogCache({
+            gold_categories: goldCategories,
+            game_servers: gameServers,
+            gold
+        });
+        renderGold();
+        renderCategoryDropdown();
+        updateGoldServerOptions();
+        updateGoldCategoryServerOptions();
+        updateCategorySelects();
+        updateGoldOrderForm();
+        setupAdminGoldPriceForm();
+        setupAdminGoldEditForm();
     }
 
     function updateCategorySelects() {
@@ -5563,9 +5607,11 @@
         if (!categorySelect || !serverSelect) return;
 
         const selectedGame = categorySelect.value;
-        const serversForGame = gameServers
-            .filter(server => server.game === selectedGame)
-            .sort((a, b) => a.name.localeCompare(b.name));
+        const serversForGame = getServersForGame(selectedGame).map((serverName, index) => ({
+            id: `${selectedGame}-${index}`,
+            game: selectedGame,
+            name: serverName
+        }));
 
         serverSelect.innerHTML = `
             <option value="">Selecciona un servidor</option>
@@ -5718,10 +5764,7 @@
 
     function getGoldOrderServers(game) {
         if (!game) return [];
-        const servers = gameServers
-            .filter(server => server.game === game)
-            .map(server => server.name);
-        return Array.from(new Set(servers)).sort();
+        return getServersForGame(game);
     }
 
     function showGoldOrderStep(step) {
@@ -5744,7 +5787,7 @@
         }
 
         list.innerHTML = games.map(game => {
-            const category = goldCategories.find(item => item.game === game) || {};
+            const category = goldCategories.find(item => item.game === game) || { game, description: '' };
             const image = getPublicCategoryImage(category) || getGameImage(game);
             const description = category.description || `Compra oro para ${game} con entrega rápida y segura.`;
             const serversCount = getGoldOrderServers(game).length;
@@ -6424,13 +6467,7 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const serversFromAdmin = gameServers
-                .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const serversFromGold = gold
-                .filter(item => item.game === selectedGame)
-                .map(item => item.server);
-            const servers = Array.from(new Set([...serversFromAdmin, ...serversFromGold])).sort();
+            const servers = getServersForGame(selectedGame);
 
             if (servers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores disponibles</option>';
@@ -6475,10 +6512,7 @@
 
         const updateServers = () => {
             const selectedGame = gameSelect.value;
-            const servers = gameServers
-                .filter(server => server.game === selectedGame)
-                .map(server => server.name);
-            const uniqueServers = Array.from(new Set(servers)).sort();
+            const uniqueServers = getServersForGame(selectedGame);
             if (uniqueServers.length === 0) {
                 serverSelect.innerHTML = '<option value="">Sin servidores</option>';
                 serverSelect.disabled = true;
@@ -7670,7 +7704,7 @@
         `;
     }
 
-    function addGameServer() {
+    async function addGameServer() {
         const gameSelect = document.getElementById('server-game');
         const nameInput = document.getElementById('server-name');
         const message = document.getElementById('server-message');
@@ -7702,39 +7736,41 @@
             return;
         }
 
-        gameServers.push({
+        const newServer = {
             id: Date.now(),
             game,
             name
-        });
-        persistToDatabase('epicgoldshop_game_servers', gameServers);
+        };
+        gameServers.push(newServer);
+
+        const saved = await persistToDatabase('epicgoldshop_game_servers', gameServers);
+        if (!saved) {
+            gameServers = gameServers.filter(server => server !== newServer);
+            return;
+        }
+
         nameInput.value = '';
         if (message) message.style.display = 'none';
 
-        updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
-        updateCategorySelects();
-        updateGoldOrderForm();
-        setupAdminGoldPriceForm();
-        setupAdminGoldEditForm();
+        refreshGoldViews();
         switchAdminTab('servers');
         showMessage('✅ Servidor agregado correctamente', 'success');
     }
 
-    function deleteGameServer(id) {
+    async function deleteGameServer(id) {
         const serverIndex = gameServers.findIndex(server => String(server.id) === String(id));
         if (serverIndex === -1) return;
 
         if (!confirm('¿Eliminar este servidor?')) return;
 
-        gameServers.splice(serverIndex, 1);
-        persistToDatabase('epicgoldshop_game_servers', gameServers);
-        updateGoldServerOptions();
-        updateGoldCategoryServerOptions();
-        updateCategorySelects();
-        updateGoldOrderForm();
-        setupAdminGoldPriceForm();
-        setupAdminGoldEditForm();
+        const [removedServer] = gameServers.splice(serverIndex, 1);
+        const saved = await persistToDatabase('epicgoldshop_game_servers', gameServers);
+        if (!saved) {
+            gameServers.splice(serverIndex, 0, removedServer);
+            return;
+        }
+
+        refreshGoldViews();
         switchAdminTab('servers');
         showMessage('✅ Servidor eliminado', 'success');
     }
