@@ -144,6 +144,17 @@ supabase secrets set DISCORD_TICKET_PREFIX="Ticket Oro"
 
 ## Paso 8: desplegar la function
 
+No tienes que crear otra function nueva.
+
+El código de la function ya existe en este repo, en:
+
+- `supabase/functions/create-gold-ticket/index.ts`
+
+Lo que tienes que hacer es:
+
+1. tener los secrets correctos en Supabase,
+2. y desplegar **esa misma function**.
+
 ```bash
 supabase functions deploy create-gold-ticket
 ```
