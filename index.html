@@ -4239,7 +4239,7 @@
     }
 
     function formatGoldPriceValue(value) {
-        return `$${Number(value || 0).toFixed(2)}`;
+        return `$${parseGoldPriceValue(value).toFixed(2)}`;
     }
 
     function formatGoldAmountLabel(value) {
@@ -6407,6 +6407,11 @@
 
         if (!gameSelect || !serverSelect) return;
 
+        const amountInput = document.getElementById('admin-gold-price-amount');
+        if (amountInput && !amountInput.value.trim()) {
+            amountInput.value = '100';
+        }
+
         const games = getAdminGoldGames();
         if (games.length === 0) {
             gameSelect.innerHTML = '<option value="">Sin juegos disponibles</option>';
@@ -6450,6 +6455,11 @@
         const priceInput = document.getElementById('admin-gold-edit-price');
 
         if (!gameSelect || !serverSelect || !packageSelect) return;
+
+        const amountInput = document.getElementById('admin-gold-price-amount');
+        if (amountInput && !amountInput.value.trim()) {
+            amountInput.value = '100';
+        }
 
         const games = getAdminGoldGames();
         if (games.length === 0) {
@@ -7703,6 +7713,10 @@
 
         updateGoldServerOptions();
         updateGoldCategoryServerOptions();
+        updateCategorySelects();
+        updateGoldOrderForm();
+        setupAdminGoldPriceForm();
+        setupAdminGoldEditForm();
         switchAdminTab('servers');
         showMessage('✅ Servidor agregado correctamente', 'success');
     }
@@ -7717,6 +7731,10 @@
         persistToDatabase('epicgoldshop_game_servers', gameServers);
         updateGoldServerOptions();
         updateGoldCategoryServerOptions();
+        updateCategorySelects();
+        updateGoldOrderForm();
+        setupAdminGoldPriceForm();
+        setupAdminGoldEditForm();
         switchAdminTab('servers');
         showMessage('✅ Servidor eliminado', 'success');
     }
@@ -8812,7 +8830,7 @@
         document.getElementById('gold-server-select').value = '';
         document.getElementById('gold-server-custom').value = '';
         document.getElementById('gold-server-custom').style.display = 'none';
-        document.getElementById('gold-amount').value = '';
+        document.getElementById('gold-amount').value = '100';
         document.getElementById('gold-price').value = '';
 
         // Actualizar select de categorías
