@@ -117,7 +117,7 @@ Ese valor será `DISCORD_WEB_LOG_CHANNEL_ID`.
 
 Necesitas estos IDs:
 
-- **Guild ID** → `DISCORD_GUILD_ID`
+- **Guild ID** → `DISCORD_GUILD_ID` (**es el ID del servidor de Discord completo**, o sea el grupo como tal, no el canal ni la categoría)
 - **Category ID** → `DISCORD_WEB_CATEGORY_ID`
 - **Admin Role IDs** → `DISCORD_WEB_ADMIN_ROLE_IDS` (lista separada por comas, opcional)
 - **Admin User IDs** → `DISCORD_WEB_ADMIN_IDS` (lista separada por comas, opcional)
@@ -129,6 +129,8 @@ Para obtenerlos:
 2. Activa **Modo desarrollador**.
 3. Haz clic derecho sobre servidor / categoría / usuario admin / canal.
 4. Usa **Copiar ID**.
+
+> Si en Supabase ves un error como `Discord API /guilds/.../channels failed (404)`, casi siempre significa que `DISCORD_GUILD_ID` no corresponde al servidor correcto, o que el bot ya no está dentro de ese servidor.
 
 > Debes configurar al menos uno de estos dos secrets: `DISCORD_WEB_ADMIN_ROLE_IDS` o `DISCORD_WEB_ADMIN_IDS`.
 
@@ -274,6 +276,7 @@ Revisa:
 
 - que `create-gold-ticket` esté desplegada,
 - que `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_WEB_CATEGORY_ID` y al menos uno entre `DISCORD_WEB_ADMIN_ROLE_IDS` o `DISCORD_WEB_ADMIN_IDS` estén bien cargados,
+- que `DISCORD_GUILD_ID` sea el ID del servidor completo y no el de un canal o una categoría,
 - que el bot siga dentro del servidor,
 - y que el bot tenga permisos para crear canales y enviar mensajes.
 

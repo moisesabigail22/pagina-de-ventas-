@@ -113,6 +113,14 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
   };
 }
 
+function formatDiscordApiError(path: string, status: number, errorText: string) {
+  if (status === 404 && path.includes('/guilds/') && path.endsWith('/channels')) {
+    return `Discord respondió 404 al intentar crear el canal en ${path}. Revisa que DISCORD_GUILD_ID sea el ID del servidor (guild) correcto y que el bot siga dentro de ese servidor. Respuesta original: ${errorText}`;
+  }
+
+  return `La API de Discord falló en ${path} (${status}). Respuesta: ${errorText}`;
+}
+
 async function discordApi<T>(path: string, token: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(`https://discord.com/api/v10${path}`, {
     ...init,
@@ -125,7 +133,7 @@ async function discordApi<T>(path: string, token: string, init: RequestInit = {}
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new Error(`Discord API ${path} failed (${response.status}): ${errorText}`);
+    throw new Error(formatDiscordApiError(path, response.status, errorText));
   }
 
   if (response.status === 204) {
@@ -214,11 +222,11 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   ].filter(([, value]) => !value).map(([name]) => name);
 
   if (missingSecrets.length > 0) {
-    throw new Error(`Missing Discord bot secrets: ${missingSecrets.join(', ')}`);
+    throw new Error(`Faltan secretos del bot de Discord: ${missingSecrets.join(', ')}`);
   }
 
   if (adminRoleIds.length === 0 && adminUserIds.length === 0) {
-    throw new Error('Missing Discord admin visibility config: set DISCORD_WEB_ADMIN_ROLE_IDS and/or DISCORD_WEB_ADMIN_IDS with one or more Discord IDs.');
+    throw new Error('Falta la configuración de visibilidad para admins: define DISCORD_WEB_ADMIN_ROLE_IDS y/o DISCORD_WEB_ADMIN_IDS con uno o más IDs de Discord.');
   }
 
   const visibilityConfig: DiscordVisibilityConfig = {
@@ -231,7 +239,7 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   try {
     channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, channelName, payload);
   } catch (error) {
-    throw new Error(`Discord channel creation failed: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`No se pudo crear el canal en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   const embed = buildDiscordEmbed(payload);
@@ -245,7 +253,7 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
       embeds: [embed]
     });
   } catch (error) {
-    throw new Error(`Discord ticket message failed: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(`No se pudo publicar el mensaje inicial del ticket en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   if (logChannelId && logChannelId !== channel.id) {
@@ -279,20 +287,20 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== 'POST') {
-    return jsonResponse({ error: 'Method not allowed' }, 405);
+    return jsonResponse({ error: 'Método no permitido' }, 405);
   }
 
   let payload: GoldTicketPayload;
   try {
     payload = await request.json();
   } catch {
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+    return jsonResponse({ error: 'El body JSON no es válido' }, 400);
   }
 
   const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'payment_method_name', 'payment_method_label', 'payment_method_value'] as const;
   for (const field of requiredFields) {
     if (!payload[field] || !String(payload[field]).trim()) {
-      return jsonResponse({ error: `Missing field: ${field}` }, 400);
+      return jsonResponse({ error: `Falta el campo requerido: ${field}` }, 400);
     }
   }
 
@@ -317,7 +325,7 @@ Deno.serve(async (request) => {
   } catch (error) {
     console.error(error);
     return jsonResponse({
-      error: 'Ticket creation failed',
+      error: 'No se pudo crear el ticket',
       details: error instanceof Error ? error.message : String(error),
       mode: 'bot'
     }, 502);
