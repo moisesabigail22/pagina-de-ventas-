@@ -17,10 +17,12 @@ Cuando el usuario compra oro en la web:
 1. La web recoge los datos del pedido.
 2. La web llama a la Edge Function `create-gold-ticket`.
 3. La función crea un canal privado en tu servidor.
-4. La función deja acceso a:
+4. La función convierte el campo del comprador en un **Discord user ID** válido.
+5. La función deja acceso a:
    - los roles admin configurados,
-   - y/o los usuarios admin configurados.
-5. La función devuelve la URL del canal para abrir Discord directamente.
+   - y/o los usuarios admin configurados,
+   - y al comprador que pegó su ID/mención/link de perfil en el formulario.
+6. La función devuelve la URL del canal para abrir Discord directamente.
 
 ## Lo que necesitas antes de empezar
 
@@ -238,7 +240,8 @@ Cuando el usuario pulse **Comprar**:
 3. Selecciona cantidad.
 4. Completa facción, personaje y tipo de trade.
 5. Selecciona un **método de pago** de los que configuraste en el panel admin.
-6. Pulsa **Crear ticket**.
+6. Pega tu **ID de Discord**, una mención tipo `<@123...>` o el link de tu perfil.
+7. Pulsa **Crear ticket**.
 
 La web enviará el método de pago elegido al ticket para que el admin vea cómo continuar el cobro.
 
@@ -250,7 +253,8 @@ Cuando llega el pedido:
 2. El canal queda oculto para `@everyone`.
 3. El canal queda visible para:
    - tus roles admin configurados,
-   - y/o tus usuarios admin configurados.
+   - y/o tus usuarios admin configurados,
+   - y el comprador que envió su usuario de Discord.
 4. El bot publica el embed con:
    - juego,
    - servidor,

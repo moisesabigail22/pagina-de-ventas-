@@ -15,6 +15,7 @@ type GoldTicketPayload = {
   payment_method_name?: string;
   payment_method_label?: string;
   payment_method_value?: string;
+  customer_discord?: string;
   custom_amount?: boolean;
   source?: string;
   created_at?: string;
@@ -108,6 +109,7 @@ function buildDiscordEmbed(payload: Required<GoldTicketPayload>) {
       { name: 'Personaje', value: payload.character, inline: true },
       { name: 'Método de pago', value: payload.payment_method_name, inline: true },
       { name: payload.payment_method_label, value: payload.payment_method_value, inline: true },
+      { name: 'Comprador Discord', value: payload.customer_discord, inline: true },
       { name: 'Tipo', value: payload.custom_amount ? 'Cantidad específica' : 'Paquete estándar', inline: true },
       { name: 'Origen', value: payload.source, inline: true }
     ],
@@ -162,6 +164,7 @@ async function createGuildChannel(
   parentId: string,
   visibilityConfig: DiscordVisibilityConfig,
   botUserId: DiscordSnowflake,
+  customerUserId: DiscordSnowflake,
   channelName: string,
   payload: Required<GoldTicketPayload>
 ) {
@@ -183,6 +186,12 @@ async function createGuildChannel(
     },
     {
       id: botUserId,
+      type: 1,
+      allow: adminAllow,
+      deny: '0'
+    },
+    {
+      id: customerUserId,
       type: 1,
       allow: adminAllow,
       deny: '0'
@@ -261,10 +270,15 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     throw new Error(`No se pudo identificar el bot de Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
 
+  const customerUserId = normalizeDiscordSnowflake(payload.customer_discord);
+  if (!customerUserId) {
+    throw new Error('No pudimos identificar tu usuario de Discord. Pega tu ID, una mención (<@...>) o el link de tu perfil.');
+  }
+
   const channelName = buildTicketName(ticketPrefix, payload.character);
   let channel: DiscordChannelResponse;
   try {
-    channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, botUserId, channelName, payload);
+    channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, botUserId, customerUserId, channelName, payload);
   } catch (error) {
     throw new Error(`No se pudo crear el canal en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -272,7 +286,7 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const embed = buildDiscordEmbed(payload);
   const adminRoleMentions = adminRoleIds.map((adminRoleId) => `<@&${adminRoleId}>`).join(' ');
   const adminUserMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
-  const openingMessage = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
+  const openingMessage = [`<@${customerUserId}>`, adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
 
   try {
     await postChannelMessage(botToken, channel.id, {
@@ -300,7 +314,7 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     channel_id: channel.id,
     channel_name: channel.name || channelName,
     discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
-    customer_visibility: 'admins_only',
+    customer_visibility: 'admins_and_buyer',
     visibility_scope: {
       roles: adminRoleIds.length,
       users: adminUserIds.length
@@ -324,7 +338,7 @@ Deno.serve(async (request) => {
     return jsonResponse({ error: 'El body JSON no es válido' }, 400);
   }
 
-  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'payment_method_name', 'payment_method_label', 'payment_method_value'] as const;
+  const requiredFields = ['game', 'server', 'amount', 'price', 'faction', 'character', 'trade', 'payment_method_name', 'payment_method_label', 'payment_method_value', 'customer_discord'] as const;
   for (const field of requiredFields) {
     if (!payload[field] || !String(payload[field]).trim()) {
       return jsonResponse({ error: `Falta el campo requerido: ${field}` }, 400);
@@ -342,6 +356,7 @@ Deno.serve(async (request) => {
     payment_method_name: String(payload.payment_method_name).trim(),
     payment_method_label: String(payload.payment_method_label).trim(),
     payment_method_value: String(payload.payment_method_value).trim(),
+    customer_discord: String(payload.customer_discord).trim(),
     custom_amount: Boolean(payload.custom_amount),
     source: String(payload.source || 'web_gold_order').trim(),
     created_at: String(payload.created_at || new Date().toISOString())

@@ -3926,6 +3926,14 @@
                     </small>
                     <div id="gold-order-payment-method-preview" style="display:none; margin-top:12px;"></div>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tu Discord (ID o mención)</label>
+                    <input type="text" id="gold-order-discord-user" placeholder="Ej: 123456789012345678 o <@123456789012345678>" maxlength="80">
+                    <small style="display:block; margin-top:8px; color:var(--text-gray);">
+                        Este usuario se agregará al ticket para que puedas ver el canal junto con los admins.
+                    </small>
+                </div>
             </div>
 
             <div class="gold-order-summary">
@@ -5976,6 +5984,7 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const discordUserInput = document.getElementById('gold-order-discord-user');
 
         const selectedGame = goldOrderState.game;
         const selectedServer = goldOrderState.server;
@@ -5984,11 +5993,12 @@
         const characterName = characterInput?.value.trim() || '';
         const tradeType = tradeSelect?.value || '';
         const paymentMethodId = paymentMethodSelect?.value || '';
+        const customerDiscord = discordUserInput?.value.trim() || '';
         const selectedPaymentMethod = paymentMethods.find((method) => String(method.id) === String(paymentMethodId));
 
-        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod) {
+        if (!selectedGame || !selectedServer || !selectedAmount || !selectedFaction || !characterName || !tradeType || !selectedPaymentMethod || !customerDiscord) {
             return {
-                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade y método de pago.'
+                error: 'Completa juego, servidor, cantidad, facción, personaje, tipo de trade, método de pago y tu usuario de Discord.'
             };
         }
 
@@ -6030,6 +6040,7 @@
                 payment_method_name: selectedPaymentMethod.name,
                 payment_method_label: getPaymentMethodInfoLabel(selectedPaymentMethod.infoType),
                 payment_method_value: selectedPaymentMethod.infoValue,
+                customer_discord: customerDiscord,
                 custom_amount: selectedAmount === 'custom',
                 source: 'web_gold_order',
                 created_at: new Date().toISOString()
@@ -6065,7 +6076,8 @@
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
-            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Un admin revisará tu método de pago y seguirá el pedido.`, 'success');
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} Te estamos llevando a tu canal en Discord.`, 'success');
+            openDiscordFallback(data && data.discord_url);
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error
@@ -6376,6 +6388,7 @@
         const characterInput = document.getElementById('gold-order-character');
         const tradeSelect = document.getElementById('gold-order-trade');
         const paymentMethodSelect = document.getElementById('gold-order-payment-method');
+        const discordUserInput = document.getElementById('gold-order-discord-user');
         if (serverSelect) {
             serverSelect.value = '';
             serverSelect.disabled = true;
