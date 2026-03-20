@@ -28,6 +28,11 @@ type DiscordChannelResponse = {
   name?: string;
 };
 
+type DiscordBotUserResponse = {
+  id: DiscordSnowflake;
+  username?: string;
+};
+
 type DiscordPermissionOverwrite = {
   id: DiscordSnowflake;
   type: 0 | 1;
@@ -118,6 +123,10 @@ function formatDiscordApiError(path: string, status: number, errorText: string) 
     return `Discord respondió 404 al intentar crear el canal en ${path}. Revisa que DISCORD_GUILD_ID sea el ID del servidor (guild) correcto y que el bot siga dentro de ese servidor. Respuesta original: ${errorText}`;
   }
 
+  if (status === 403 && path.includes('/channels/') && path.endsWith('/messages')) {
+    return `Discord respondió 403 al intentar publicar el mensaje del ticket en ${path}. El canal se creó, pero el bot no tiene acceso para escribir ahí. Revisa los permisos heredados de la categoría y asegúrate de que el bot conserve acceso al canal. Respuesta original: ${errorText}`;
+  }
+
   return `La API de Discord falló en ${path} (${status}). Respuesta: ${errorText}`;
 }
 
@@ -143,11 +152,16 @@ async function discordApi<T>(path: string, token: string, init: RequestInit = {}
   return await response.json() as T;
 }
 
+async function getBotUser(token: string) {
+  return await discordApi<DiscordBotUserResponse>('/users/@me', token, { method: 'GET' });
+}
+
 async function createGuildChannel(
   token: string,
   guildId: string,
   parentId: string,
   visibilityConfig: DiscordVisibilityConfig,
+  botUserId: DiscordSnowflake,
   channelName: string,
   payload: Required<GoldTicketPayload>
 ) {
@@ -166,6 +180,12 @@ async function createGuildChannel(
       type: 0,
       allow: everyoneAllow,
       deny: everyoneDeny
+    },
+    {
+      id: botUserId,
+      type: 1,
+      allow: adminAllow,
+      deny: '0'
     }
   ];
 
@@ -234,10 +254,17 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     adminUserIds
   };
 
+  let botUserId = '';
+  try {
+    botUserId = (await getBotUser(botToken)).id;
+  } catch (error) {
+    throw new Error(`No se pudo identificar el bot de Discord: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
   const channelName = buildTicketName(ticketPrefix, payload.character);
   let channel: DiscordChannelResponse;
   try {
-    channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, channelName, payload);
+    channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, botUserId, channelName, payload);
   } catch (error) {
     throw new Error(`No se pudo crear el canal en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }

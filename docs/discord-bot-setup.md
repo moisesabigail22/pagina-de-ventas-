@@ -280,14 +280,21 @@ Revisa:
 - que el bot siga dentro del servidor,
 - y que el bot tenga permisos para crear canales y enviar mensajes.
 
-### 2. El ticket se crea pero no lo ven los admins
+### 2. El ticket se crea pero queda vacío o da error al mandar el mensaje
+Revisa:
+
+- que el bot conserve acceso al canal recién creado,
+- que la categoría no esté heredando permisos que bloqueen al bot,
+- y que si ves un `403` en `/channels/.../messages`, el bot tenga permiso real para ver y escribir en ese canal.
+
+### 3. El ticket se crea pero no lo ven los admins
 Revisa:
 
 - que los IDs puestos en `DISCORD_WEB_ADMIN_ROLE_IDS` y/o `DISCORD_WEB_ADMIN_IDS` sean los correctos,
 - que esos roles y/o usuarios pertenezcan a tu servidor,
 - y que el bot haya podido aplicar los overwrites al canal.
 
-### 3. El método de pago no sale en el ticket
+### 4. El método de pago no sale en el ticket
 Revisa:
 
 - que ya agregaste métodos de pago desde el panel admin,

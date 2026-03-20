@@ -6031,8 +6031,11 @@
             });
 
             if (invokeError) {
-                const backendMessage = data && (data.details || data.error);
-                throw new Error(backendMessage || invokeError.message || 'No se pudo invocar create-gold-ticket.');
+                const backendMessage = (data && (data.details || data.error))
+                    || invokeError?.context?.details
+                    || invokeError?.context?.error
+                    || invokeError?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-gold-ticket.');
             }
 
             if (data && data.error) {
