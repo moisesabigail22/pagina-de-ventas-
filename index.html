@@ -5238,7 +5238,7 @@
             connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
         }
 
-        await initCustomerAuth();
+        initCustomerAuth();
 
         // Renderizar contenido inicial
         renderAccounts();
@@ -6241,8 +6241,9 @@
             }
 
             const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
-            await saveCustomerOrder('gold', `${payload.game} • ${payload.server}`, `${payload.amount} • ${payload.price}`, payload, data);
-            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel} También quedó guardado en tu sección de órdenes.`, 'success');
+            const orderSaved = await saveCustomerOrder('gold', `${payload.game} • ${payload.server}`, `${payload.amount} • ${payload.price}`, payload, data);
+            const savedSuffix = orderSaved ? ' También quedó guardado en tu sección de órdenes.' : ' El ticket se envió, pero no se pudo guardar en tus órdenes todavía.';
+            showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}${savedSuffix}`, 'success');
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error
@@ -6292,13 +6293,15 @@
                 throw new Error(data.details || data.error);
             }
 
-            await saveCustomerOrder('account', account.name || 'Cuenta premium', `${account.server || 'No especificado'} • $${account.price || '0'}`, {
+            const orderSaved = await saveCustomerOrder('account', account.name || 'Cuenta premium', `${account.server || 'No especificado'} • $${account.price || '0'}`, {
                 category: account.category || 'Sin categoría',
                 server: account.server || 'No especificado',
                 name: account.name || 'Cuenta premium',
                 price: String(account.price || '0')
             }, data);
-            showMessage('✅ Ticket de cuenta enviado correctamente. También quedó guardado en tus órdenes.', 'success', { force: true });
+            showMessage(orderSaved
+                ? '✅ Ticket de cuenta enviado correctamente. También quedó guardado en tus órdenes.'
+                : '✅ Ticket de cuenta enviado correctamente, pero no se pudo guardar en tus órdenes todavía.', 'success', { force: true });
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -6343,13 +6346,15 @@
                 throw new Error(data.details || data.error);
             }
 
-            await saveCustomerOrder('service', service.name || 'Servicio premium', `${service.game || 'WoW'} • $${service.price || '0'}`, {
+            const orderSaved = await saveCustomerOrder('service', service.name || 'Servicio premium', `${service.game || 'WoW'} • $${service.price || '0'}`, {
                 category: service.category || 'servicios',
                 game: service.game || 'WoW',
                 name: service.name || 'Servicio premium',
                 price: String(service.price || '0')
             }, data);
-            showMessage('✅ Ticket de servicio enviado correctamente. También quedó guardado en tus órdenes.', 'success', { force: true });
+            showMessage(orderSaved
+                ? '✅ Ticket de servicio enviado correctamente. También quedó guardado en tus órdenes.'
+                : '✅ Ticket de servicio enviado correctamente, pero no se pudo guardar en tus órdenes todavía.', 'success', { force: true });
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -7393,10 +7398,23 @@
             updated_at: new Date().toISOString()
         };
 
-        await supabaseClient.from('profiles').upsert(upsertPayload, { onConflict: 'id' });
-        const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentCustomer.id).maybeSingle();
-        customerProfile = profile || upsertPayload;
-        await loadCustomerOrders();
+        customerProfile = upsertPayload;
+        updateCustomerMenuUI();
+
+        try {
+            await supabaseClient.from('profiles').upsert(upsertPayload, { onConflict: 'id' });
+            const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentCustomer.id).maybeSingle();
+            customerProfile = profile || upsertPayload;
+        } catch (error) {
+            console.warn('Profiles no disponible todavía:', error);
+        }
+
+        try {
+            await loadCustomerOrders();
+        } catch (error) {
+            console.warn('Orders no disponible todavía:', error);
+        }
+
         updateCustomerMenuUI();
     }
 
@@ -7481,7 +7499,11 @@
 
     async function logoutCustomer() {
         closeCustomerMenu();
-        await supabaseClient.auth.signOut();
+        try {
+            await supabaseClient.auth.signOut();
+        } catch (error) {
+            console.warn('No se pudo cerrar sesión en Supabase, limpiando estado local:', error);
+        }
         currentCustomer = null;
         customerProfile = null;
         customerOrders = [];
@@ -7501,21 +7523,24 @@
             customerOrders = [];
             return [];
         }
-        const { data, error } = await supabaseClient
-            .from('orders')
-            .select('*')
-            .eq('user_id', currentCustomer.id)
-            .order('created_at', { ascending: false });
-        if (error) {
-            console.error('No se pudieron cargar las órdenes:', error);
+        try {
+            const { data, error } = await supabaseClient
+                .from('orders')
+                .select('*')
+                .eq('user_id', currentCustomer.id)
+                .order('created_at', { ascending: false });
+            if (error) throw error;
+            customerOrders = data || [];
+            return customerOrders;
+        } catch (error) {
+            console.warn('No se pudieron cargar las órdenes:', error);
+            customerOrders = customerOrders || [];
             return customerOrders;
         }
-        customerOrders = data || [];
-        return customerOrders;
     }
 
     async function saveCustomerOrder(type, title, summary, payload, ticketData) {
-        if (!currentCustomer?.id) return;
+        if (!currentCustomer?.id) return false;
         const insertPayload = {
             user_id: currentCustomer.id,
             order_type: type,
@@ -7526,12 +7551,15 @@
             discord_channel_id: ticketData?.channel_id || '',
             order_payload: payload || {}
         };
-        const { error } = await supabaseClient.from('orders').insert(insertPayload);
-        if (error) {
-            console.error('No se pudo guardar la orden:', error);
-            throw error;
+        try {
+            const { error } = await supabaseClient.from('orders').insert(insertPayload);
+            if (error) throw error;
+            await loadCustomerOrders();
+            return true;
+        } catch (error) {
+            console.warn('No se pudo guardar la orden, pero el ticket sí pudo haberse creado:', error);
+            return false;
         }
-        await loadCustomerOrders();
     }
 
     function showCustomerProfileModal() {
