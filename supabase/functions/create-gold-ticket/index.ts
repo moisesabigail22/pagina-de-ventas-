@@ -207,21 +207,35 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   }
 
   const channelName = buildTicketName(ticketPrefix, payload.character);
-  const channel = await createGuildChannel(botToken, guildId, categoryId, adminUserIds, channelName, payload);
+  let channel: DiscordChannelResponse;
+  try {
+    channel = await createGuildChannel(botToken, guildId, categoryId, adminUserIds, channelName, payload);
+  } catch (error) {
+    throw new Error(`Discord channel creation failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
   const embed = buildDiscordEmbed(payload);
   const adminMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
   const openingMessage = adminMentions || 'Nuevo pedido desde la web.';
 
-  await postChannelMessage(botToken, channel.id, {
-    content: openingMessage,
-    embeds: [embed]
-  });
-
-  if (logChannelId && logChannelId !== channel.id) {
-    await postChannelMessage(botToken, logChannelId, {
-      content: `Nuevo ticket creado: <#${channel.id}>`,
+  try {
+    await postChannelMessage(botToken, channel.id, {
+      content: openingMessage,
       embeds: [embed]
     });
+  } catch (error) {
+    throw new Error(`Discord ticket message failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
+  if (logChannelId && logChannelId !== channel.id) {
+    try {
+      await postChannelMessage(botToken, logChannelId, {
+        content: `Nuevo ticket creado: <#${channel.id}>`,
+        embeds: [embed]
+      });
+    } catch (error) {
+      console.warn('Discord log channel notification failed:', error);
+    }
   }
 
   return {
