@@ -35,6 +35,11 @@ type DiscordPermissionOverwrite = {
   deny: string;
 };
 
+type DiscordVisibilityConfig = {
+  adminRoleIds: DiscordSnowflake[];
+  adminUserIds: DiscordSnowflake[];
+};
+
 const DISCORD_PERMISSION_VIEW_CHANNEL = 1n << 10n;
 const DISCORD_PERMISSION_SEND_MESSAGES = 1n << 11n;
 const DISCORD_PERMISSION_READ_HISTORY = 1n << 16n;
@@ -70,16 +75,16 @@ function buildTicketName(ticketPrefix: string, character: string) {
   return `${prefix}-${safeCharacter}`.slice(0, 100);
 }
 
-function normalizeDiscordUserId(value: string) {
+function normalizeDiscordSnowflake(value: string) {
   const match = String(value || '').trim().match(/(\d{17,20})/);
   return match ? match[1] : '';
 }
 
-function parseDiscordUserIdList(value: string) {
+function parseDiscordSnowflakeList(value: string) {
   return Array.from(new Set(
     String(value || '')
       .split(',')
-      .map((entry) => normalizeDiscordUserId(entry))
+      .map((entry) => normalizeDiscordSnowflake(entry))
       .filter(Boolean)
   ));
 }
@@ -134,7 +139,7 @@ async function createGuildChannel(
   token: string,
   guildId: string,
   parentId: string,
-  adminUserIds: DiscordSnowflake[],
+  visibilityConfig: DiscordVisibilityConfig,
   channelName: string,
   payload: Required<GoldTicketPayload>
 ) {
@@ -156,7 +161,16 @@ async function createGuildChannel(
     }
   ];
 
-  adminUserIds.forEach((adminUserId) => {
+  visibilityConfig.adminRoleIds.forEach((adminRoleId) => {
+    permissionOverwrites.push({
+      id: adminRoleId,
+      type: 0,
+      allow: adminAllow,
+      deny: '0'
+    });
+  });
+
+  visibilityConfig.adminUserIds.forEach((adminUserId) => {
     permissionOverwrites.push({
       id: adminUserId,
       type: 1,
@@ -189,7 +203,8 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
   const guildId = getEnv('DISCORD_GUILD_ID');
   const categoryId = getEnv('DISCORD_WEB_CATEGORY_ID');
   const logChannelId = getEnv('DISCORD_WEB_LOG_CHANNEL_ID');
-  const adminUserIds = parseDiscordUserIdList(getEnv('DISCORD_WEB_ADMIN_IDS'));
+  const adminRoleIds = parseDiscordSnowflakeList(getEnv('DISCORD_WEB_ADMIN_ROLE_IDS'));
+  const adminUserIds = parseDiscordSnowflakeList(getEnv('DISCORD_WEB_ADMIN_IDS'));
   const ticketPrefix = getEnv('DISCORD_TICKET_PREFIX', 'ticket-oro');
 
   const missingSecrets = [
@@ -202,21 +217,27 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     throw new Error(`Missing Discord bot secrets: ${missingSecrets.join(', ')}`);
   }
 
-  if (adminUserIds.length === 0) {
-    throw new Error('Missing Discord admin visibility config: set DISCORD_WEB_ADMIN_IDS with one or more admin user IDs.');
+  if (adminRoleIds.length === 0 && adminUserIds.length === 0) {
+    throw new Error('Missing Discord admin visibility config: set DISCORD_WEB_ADMIN_ROLE_IDS and/or DISCORD_WEB_ADMIN_IDS with one or more Discord IDs.');
   }
+
+  const visibilityConfig: DiscordVisibilityConfig = {
+    adminRoleIds,
+    adminUserIds
+  };
 
   const channelName = buildTicketName(ticketPrefix, payload.character);
   let channel: DiscordChannelResponse;
   try {
-    channel = await createGuildChannel(botToken, guildId, categoryId, adminUserIds, channelName, payload);
+    channel = await createGuildChannel(botToken, guildId, categoryId, visibilityConfig, channelName, payload);
   } catch (error) {
     throw new Error(`Discord channel creation failed: ${error instanceof Error ? error.message : String(error)}`);
   }
 
   const embed = buildDiscordEmbed(payload);
-  const adminMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
-  const openingMessage = adminMentions || 'Nuevo pedido desde la web.';
+  const adminRoleMentions = adminRoleIds.map((adminRoleId) => `<@&${adminRoleId}>`).join(' ');
+  const adminUserMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
+  const openingMessage = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nuevo pedido desde la web.';
 
   try {
     await postChannelMessage(botToken, channel.id, {
@@ -244,7 +265,11 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     channel_id: channel.id,
     channel_name: channel.name || channelName,
     discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
-    customer_visibility: 'admins_only'
+    customer_visibility: 'admins_only',
+    visibility_scope: {
+      roles: adminRoleIds.length,
+      users: adminUserIds.length
+    }
   };
 }
 

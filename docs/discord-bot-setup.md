@@ -6,26 +6,21 @@ Esta guía es para el caso en que quieres que:
 - presione **Comprar**,
 - complete el formulario,
 - y se cree un **ticket privado en Discord**
-- visible **solo para tus usuarios admin y para ese comprador**.
+- visible **solo para tus admins configurados**.
 
-> **Importante:** este flujo ahora quedó **solo con bot propio**. Ya no dependas de webhook para oro. La function `create-gold-ticket` crea el canal privado usando tu bot y los `permission_overwrites` para admins configurados + comprador.
+> **Importante:** este flujo ahora quedó **solo con bot propio**. Ya no dependas de webhook para oro. La function `create-gold-ticket` crea el canal privado usando tu bot y los `permission_overwrites` para los roles y/o usuarios admin configurados.
 
 ## Cómo funciona el flujo actual
 
 Cuando el usuario compra oro en la web:
 
 1. La web recoge los datos del pedido.
-2. También recoge un identificador del comprador en Discord.
-   - puede ser su **ID**,
-   - una **mención** tipo `<@123...>`,
-   - o un **link de perfil** de Discord.
-3. La web llama a la Edge Function `create-gold-ticket`.
-4. La función convierte ese valor a un **Discord user ID real**.
-5. La función crea un canal privado en tu servidor.
-6. La función deja acceso a:
-   - tus usuarios admin configurados,
-   - y el usuario de Discord indicado en el formulario.
-7. La función devuelve la URL del canal para abrir Discord directamente.
+2. La web llama a la Edge Function `create-gold-ticket`.
+3. La función crea un canal privado en tu servidor.
+4. La función deja acceso a:
+   - los roles admin configurados,
+   - y/o los usuarios admin configurados.
+5. La función devuelve la URL del canal para abrir Discord directamente.
 
 ## Lo que necesitas antes de empezar
 
@@ -81,6 +76,22 @@ Ese valor será `DISCORD_WEB_CATEGORY_ID`.
 
 ## Paso 4: definir qué admins verán los tickets
 
+Tienes dos formas válidas, y puedes usar una o ambas al mismo tiempo.
+
+### Opción A: por roles de Discord
+
+1. Decide qué **rol** debe ver los tickets privados.
+2. Copia el **ID del rol**.
+3. Guarda esos IDs separados por coma en el secret `DISCORD_WEB_ADMIN_ROLE_IDS`.
+
+Ejemplo:
+
+```
+123456789012345678,234567890123456789
+```
+
+### Opción B: por usuarios concretos
+
 1. Decide qué usuarios concretos de Discord verán los tickets privados.
 2. Copia el **ID de usuario** de cada admin.
 3. Guarda esos IDs separados por coma en el secret `DISCORD_WEB_ADMIN_IDS`.
@@ -108,7 +119,8 @@ Necesitas estos IDs:
 
 - **Guild ID** → `DISCORD_GUILD_ID`
 - **Category ID** → `DISCORD_WEB_CATEGORY_ID`
-- **Admin User IDs** → `DISCORD_WEB_ADMIN_IDS` (lista separada por comas)
+- **Admin Role IDs** → `DISCORD_WEB_ADMIN_ROLE_IDS` (lista separada por comas, opcional)
+- **Admin User IDs** → `DISCORD_WEB_ADMIN_IDS` (lista separada por comas, opcional)
 - **Log Channel ID** → `DISCORD_WEB_LOG_CHANNEL_ID`
 
 Para obtenerlos:
@@ -117,6 +129,8 @@ Para obtenerlos:
 2. Activa **Modo desarrollador**.
 3. Haz clic derecho sobre servidor / categoría / usuario admin / canal.
 4. Usa **Copiar ID**.
+
+> Debes configurar al menos uno de estos dos secrets: `DISCORD_WEB_ADMIN_ROLE_IDS` o `DISCORD_WEB_ADMIN_IDS`.
 
 ## Paso 7: configurar los secrets en Supabase
 
@@ -138,6 +152,7 @@ supabase secrets set DISCORD_BOT_TOKEN="TU_BOT_TOKEN"
 supabase secrets set DISCORD_GUILD_ID="TU_GUILD_ID"
 supabase secrets set DISCORD_WEB_CATEGORY_ID="TU_CATEGORY_ID"
 supabase secrets set DISCORD_WEB_LOG_CHANNEL_ID="TU_LOG_CHANNEL_ID"
+supabase secrets set DISCORD_WEB_ADMIN_ROLE_IDS="ID_ROL_1,ID_ROL_2"
 supabase secrets set DISCORD_WEB_ADMIN_IDS="ID_ADMIN_1,ID_ADMIN_2"
 supabase secrets set DISCORD_TICKET_PREFIX="Ticket Oro"
 ```
@@ -200,7 +215,8 @@ Cuando llega el pedido:
 1. El bot crea un canal nuevo dentro de la categoría configurada.
 2. El canal queda oculto para `@everyone`.
 3. El canal queda visible para:
-   - tus usuarios admin configurados.
+   - tus roles admin configurados,
+   - y/o tus usuarios admin configurados.
 4. El bot publica el embed con:
    - juego,
    - servidor,
@@ -221,7 +237,7 @@ Haz esta prueba de punta a punta:
 2. Selecciona un método de pago válido.
 3. Envía el ticket.
 4. Verifica que:
-   - los admins configurados vean el canal,
+   - el rol o los admins configurados vean el canal,
    - el ticket traiga el método de pago correcto,
    - y que otro usuario normal del servidor **no** lo vea.
 
@@ -257,15 +273,15 @@ Si alguna vez pegas tu `DISCORD_BOT_TOKEN` en un chat, captura o lugar público,
 Revisa:
 
 - que `create-gold-ticket` esté desplegada,
-- que `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_WEB_CATEGORY_ID` y `DISCORD_WEB_ADMIN_IDS` estén bien cargados,
+- que `DISCORD_BOT_TOKEN`, `DISCORD_GUILD_ID`, `DISCORD_WEB_CATEGORY_ID` y al menos uno entre `DISCORD_WEB_ADMIN_ROLE_IDS` o `DISCORD_WEB_ADMIN_IDS` estén bien cargados,
 - que el bot siga dentro del servidor,
 - y que el bot tenga permisos para crear canales y enviar mensajes.
 
 ### 2. El ticket se crea pero no lo ven los admins
 Revisa:
 
-- que los IDs puestos en `DISCORD_WEB_ADMIN_IDS` sean los correctos,
-- que esos usuarios pertenezcan a tu servidor,
+- que los IDs puestos en `DISCORD_WEB_ADMIN_ROLE_IDS` y/o `DISCORD_WEB_ADMIN_IDS` sean los correctos,
+- que esos roles y/o usuarios pertenezcan a tu servidor,
 - y que el bot haya podido aplicar los overwrites al canal.
 
 ### 3. El método de pago no sale en el ticket
@@ -280,7 +296,7 @@ Revisa:
 - [ ] Bot creado en Discord Developer Portal.
 - [ ] Bot invitado a tu servidor.
 - [ ] Categoría privada para tickets creada.
-- [ ] IDs de los admins copiados.
+- [ ] IDs de los roles y/o admins copiados.
 - [ ] Canal de logs creado.
 - [ ] IDs copiados con modo desarrollador.
 - [ ] Secrets cargados en Supabase.
