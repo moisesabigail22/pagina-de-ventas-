@@ -183,6 +183,38 @@ supabase functions deploy create-account-ticket
 supabase functions deploy create-service-ticket
 ```
 
+### Secrets para cuentas y servicios
+
+Si quieres que **cuentas** y **servicios** usen el mismo flujo privado con bot (igual que oro), estas son las Edge Functions:
+
+- `create-account-ticket`
+- `create-service-ticket`
+
+Y puedes configurarlas con secrets propios por categoría, logs y admins.
+Si no defines sus admins/roles, toman como respaldo los de oro/web.
+
+Ejemplo para **cuentas**:
+
+```bash
+supabase secrets set DISCORD_ACCOUNTS_CATEGORY_ID="TU_CATEGORY_ID_CUENTAS"
+supabase secrets set DISCORD_ACCOUNTS_LOG_CHANNEL_ID="TU_LOG_ID_CUENTAS"
+supabase secrets set DISCORD_ACCOUNTS_ADMIN_ROLE_IDS="ID_ROL_1,ID_ROL_2"
+supabase secrets set DISCORD_ACCOUNTS_ADMIN_IDS="ID_ADMIN_1,ID_ADMIN_2"
+supabase secrets set DISCORD_ACCOUNTS_TICKET_PREFIX="ticket-cuenta"
+```
+
+Ejemplo para **servicios**:
+
+```bash
+supabase secrets set DISCORD_SERVICES_CATEGORY_ID="TU_CATEGORY_ID_SERVICIOS"
+supabase secrets set DISCORD_SERVICES_LOG_CHANNEL_ID="TU_LOG_ID_SERVICIOS"
+supabase secrets set DISCORD_SERVICES_ADMIN_ROLE_IDS="ID_ROL_1,ID_ROL_2"
+supabase secrets set DISCORD_SERVICES_ADMIN_IDS="ID_ADMIN_1,ID_ADMIN_2"
+supabase secrets set DISCORD_SERVICES_TICKET_PREFIX="ticket-servicio"
+```
+
+> Si no defines `DISCORD_ACCOUNTS_CATEGORY_ID` o `DISCORD_SERVICES_CATEGORY_ID`, esas functions intentarán usar `DISCORD_WEB_CATEGORY_ID` como respaldo.
+
 > Si cambiaste el código local pero **no** ejecutaste `supabase functions deploy create-gold-ticket`, Supabase seguirá usando la versión vieja de la function. Ese es el motivo más común cuando parece que “todavía usa webhook” aunque ya hayas cambiado los secrets.
 
 ## Paso 9: desactivar webhook y dejar solo tu bot

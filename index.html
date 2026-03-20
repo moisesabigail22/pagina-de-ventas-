@@ -6080,12 +6080,24 @@
                 }
             });
 
-            if (error) throw error;
+            if (error) {
+                const backendMessage = (data && (data.details || data.error))
+                    || error?.context?.details
+                    || error?.context?.error
+                    || error?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-account-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
+            }
+
             showMessage('✅ Ticket de cuenta enviado correctamente. Te estamos llevando a Discord.', 'success', { force: true });
             openDiscordFallback(data && data.discord_url);
         } catch (submitError) {
             console.error(submitError);
-            showMessage('No se pudo crear el ticket automático de la cuenta. Se abrió Discord como respaldo.', 'error', { force: true });
+            const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
+            showMessage(`No se pudo crear el ticket automático de la cuenta. ${errorDetail}`, 'error', { force: true });
             openDiscordFallback();
         }
     }
@@ -6113,12 +6125,24 @@
                 }
             });
 
-            if (error) throw error;
+            if (error) {
+                const backendMessage = (data && (data.details || data.error))
+                    || error?.context?.details
+                    || error?.context?.error
+                    || error?.message;
+                throw new Error(backendMessage || 'No se pudo invocar create-service-ticket.');
+            }
+
+            if (data && data.error) {
+                throw new Error(data.details || data.error);
+            }
+
             showMessage('✅ Ticket de servicio enviado correctamente. Te estamos llevando a Discord.', 'success', { force: true });
             openDiscordFallback(data && data.discord_url);
         } catch (submitError) {
             console.error(submitError);
-            showMessage('No se pudo crear el ticket automático del servicio. Se abrió Discord como respaldo.', 'error', { force: true });
+            const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
+            showMessage(`No se pudo crear el ticket automático del servicio. ${errorDetail}`, 'error', { force: true });
             openDiscordFallback();
         }
     }
