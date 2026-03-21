@@ -4413,6 +4413,7 @@
     }
 
     const GOLD_CATALOG_CACHE_KEY = 'epicgoldshop_gold_catalog_cache_v2';
+    const STOREFRONT_CACHE_KEY = 'epicgoldshop_storefront_cache_v1';
 
     function readGoldCatalogCache() {
         try {
@@ -4437,6 +4438,71 @@
         } catch (error) {
             console.warn('No se pudo guardar caché local de oro:', error);
         }
+    }
+
+    function readStorefrontCache() {
+        try {
+            const raw = window.localStorage.getItem(STOREFRONT_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch (error) {
+            console.warn('No se pudo leer caché local de tienda:', error);
+            return null;
+        }
+    }
+
+    function writeStorefrontCache(payload = {}) {
+        try {
+            window.localStorage.setItem(STOREFRONT_CACHE_KEY, JSON.stringify({
+                updatedAt: new Date().toISOString(),
+                settings: payload.settings && typeof payload.settings === 'object' ? payload.settings : {},
+                accounts: Array.isArray(payload.accounts) ? payload.accounts : [],
+                account_categories: Array.isArray(payload.account_categories) ? payload.account_categories : [],
+                references: Array.isArray(payload.references) ? payload.references : [],
+                services: Array.isArray(payload.services) ? payload.services : [],
+                payment_methods: Array.isArray(payload.payment_methods) ? payload.payment_methods : []
+            }));
+        } catch (error) {
+            console.warn('No se pudo guardar caché local de tienda:', error);
+        }
+    }
+
+    function hydrateStorefrontFromCache() {
+        const cachedStorefront = readStorefrontCache();
+        if (!cachedStorefront) return false;
+
+        const cachedSettings = cachedStorefront.settings && typeof cachedStorefront.settings === 'object'
+            ? cachedStorefront.settings
+            : {};
+
+        settings = {
+            ...settings,
+            whatsapp: cachedSettings.whatsapp || settings.whatsapp,
+            tiktok: cachedSettings.tiktok || settings.tiktok,
+            email: cachedSettings.email || settings.email,
+            site: cachedSettings.site || settings.site
+        };
+
+        accounts = Array.isArray(cachedStorefront.accounts) ? cachedStorefront.accounts : [];
+        categories = normalizeAccountCategories(cachedStorefront.account_categories, accounts);
+        references = normalizeReferenceRecords(cachedStorefront.references);
+        services = Array.isArray(cachedStorefront.services)
+            ? normalizeServiceCatalog(cachedStorefront.services.map(item => ({
+                ...item,
+                price: item?.price != null ? String(item.price) : '0'
+            })))
+            : [];
+        paymentMethods = normalizePaymentMethods(cachedStorefront.payment_methods);
+
+        connectionLog('Tienda precargada desde caché local.', 'warning');
+        return Boolean(
+            accounts.length
+            || categories.length
+            || references.length
+            || services.length
+            || paymentMethods.length
+        );
     }
 
     function hydrateGoldCatalogFromCache() {
@@ -5108,6 +5174,7 @@
 
     async function init() {
         hydrateGoldCatalogFromCache();
+        hydrateStorefrontFromCache();
 
         // Renderizar contenido inicial
         renderAccounts();
@@ -5156,7 +5223,7 @@
             updateAverageRating();
             if (supabaseReady && !hasShownWelcomeMessage) {
                 hasShownWelcomeMessage = true;
-                showMessage('👋 Bienvenido, la base de datos está conectada correctamente.', 'success', { force: true });
+                showMessage('✨💰 Bienvenidos a Epic Gold Shop 🎮🔥', 'success', { force: true });
             }
         } catch (error) {
             console.error('Error inicializando datos de Supabase:', error);
@@ -5352,6 +5419,14 @@
         }
 
         updateContactLinks();
+        writeStorefrontCache({
+            settings,
+            accounts,
+            account_categories: accountCategoriesRes.error ? categories : accountCategoriesRes.data,
+            references,
+            services,
+            payment_methods: paymentMethods
+        });
 
         connectionLog(`Datos cargados desde DB: gold=${gold.length}, cuentas=${accounts.length}, refs=${references.length}, categorías=${goldCategories.length}, pagos=${paymentMethods.length}`, 'success');
     }
