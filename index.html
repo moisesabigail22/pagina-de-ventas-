@@ -3761,7 +3761,7 @@
     </div>
 </div>
 
-<div id="gold-order-modal" class="modal" onclick="handleGoldOrderBackdropClick(event)">
+<div id="gold-order-modal" class="modal">
     <div class="modal-content">
         <button class="close-modal" onclick="closeModal()">&times;</button>
         <h2 class="modal-title" id="gold-order-modal-title">Selecciona un juego</h2>
@@ -7067,7 +7067,7 @@
 
         // Click fuera del modal para cerrar
         document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
+            if (e.target.classList.contains('modal') && e.target.id !== 'gold-order-modal') {
                 closeModal();
             }
         });
@@ -9437,11 +9437,6 @@
         });
     }
 
-    function handleGoldOrderBackdropClick(event) {
-        if (event?.target?.id !== 'gold-order-modal') return;
-        closeModal();
-    }
-
     function showMessage(text, type, options = {}) {
         const adminVisible = document.getElementById('admin-section').style.display === 'flex';
         const shouldShowOutsideAdmin = options.force === true;
@@ -9522,7 +9517,6 @@
 
     window.openGoldOrderModal = openGoldOrderModal;
     window.submitGoldOrderTicket = submitGoldOrderTicket;
-    window.handleGoldOrderBackdropClick = handleGoldOrderBackdropClick;
     window.submitAccountTicket = submitAccountTicket;
     window.submitServiceTicket = submitServiceTicket;
     window.submitBuyerContactRequest = submitBuyerContactRequest;
