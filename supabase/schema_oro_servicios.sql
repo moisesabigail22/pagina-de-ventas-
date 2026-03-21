@@ -44,7 +44,6 @@ with src(game, name) as (
     ('WoW Turtle', 'Nordanaar'),
     ('WoW Turtle', 'Telabim'),
     ('Servidores Privados', 'Bronzebeard'),
-    ('Servidores Privados', 'South Sea'),
     ('Servidores Privados', 'Warmane Onyxia'),
     ('Servidores Privados', 'Project Epoch - Kezan'),
     ('Servidores Privados', 'Project Epoch - Gurubashi'),
@@ -60,6 +59,10 @@ where not exists (
     and gs.name = src.name
 );
 
+delete from public.game_servers
+where game = 'Servidores Privados'
+  and name = 'South Sea';
+
 -- ==========================================
 -- 3) GOLD PACKAGES (solo oro)
 -- ==========================================
@@ -69,7 +72,6 @@ with src(game, server, amount, price) as (
     ('WoW Turtle', 'Nordanaar', 100, 2.90),
     ('WoW Turtle', 'Telabim', 100, 4.50),
     ('Servidores Privados', 'Bronzebeard', 100, 3.50),
-    ('Servidores Privados', 'South Sea', 100, 4.50),
     ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00),
     ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00),
     ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00)
@@ -90,7 +92,6 @@ from (
     ('WoW Turtle', 'Nordanaar', 100, 2.90),
     ('WoW Turtle', 'Telabim', 100, 4.50),
     ('Servidores Privados', 'Bronzebeard', 100, 3.50),
-    ('Servidores Privados', 'South Sea', 100, 4.50),
     ('Servidores Privados', 'Warmane Onyxia', 1000, 2.00),
     ('Servidores Privados', 'Project Epoch - Kezan', 100, 4.00),
     ('Servidores Privados', 'Project Epoch - Gurubashi', 100, 3.00)
@@ -102,6 +103,10 @@ where not exists (
     and g.server = src.server
     and g.amount::text = src.amount::text
 );
+
+delete from public.gold
+where game = 'Servidores Privados'
+  and server = 'South Sea';
 
 -- ==========================================
 -- 4) SERVICES (visibles al público + admin)

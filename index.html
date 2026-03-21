@@ -3871,6 +3871,39 @@
     </div>
 </div>
 
+<div id="buyer-contact-modal" class="modal">
+    <div class="modal-content" style="max-width: 620px;">
+        <button class="close-modal" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title" id="buyer-contact-modal-title">Datos del comprador</h2>
+        <p style="color: var(--text-gray); margin-bottom: 20px;">
+            Completa los datos del comprador para enviar la solicitud a Discord.
+        </p>
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label">Nombre del comprador</label>
+                <input type="text" id="buyer-contact-name" placeholder="Ej: Juan Pérez" maxlength="80">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Correo Gmail</label>
+                <input type="email" id="buyer-contact-email" placeholder="Ej: comprador@gmail.com" maxlength="120">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Discord</label>
+                <input type="text" id="buyer-contact-discord" placeholder="Ej: @usuario o usuario#1234" maxlength="120">
+            </div>
+        </div>
+        <div id="buyer-contact-product-summary" style="margin: 10px 0 20px; color: var(--text-gray);"></div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+            <button class="btn-buy" type="button" onclick="submitBuyerContactRequest()" style="flex:1; min-width:220px;">
+                <i class="fab fa-discord"></i> ENVIAR A DISCORD
+            </button>
+            <button class="btn-secondary" type="button" onclick="closeModal()" style="flex:1; min-width:180px;">
+                <i class="fas fa-times"></i> CANCELAR
+            </button>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
     // ============================================
@@ -3889,6 +3922,12 @@
     let paymentMethodImageData = '';
     let goldOrderProofData = '';
     let goldOrderProofName = '';
+    let hasShownWelcomeMessage = false;
+    let buyerContactRequest = {
+        type: '',
+        itemId: '',
+        itemName: ''
+    };
     let currentFilter = 'all';
     let isDropdownOpen = false;
     let currentOptimization = 'auto';
@@ -4243,13 +4282,20 @@
     };
 
     // Normalizadores de datos
+    function isDeprecatedPrivateServer(game = '', serverName = '') {
+        return String(game || '').trim() === 'Servidores Privados'
+            && String(serverName || '').trim() === 'South Sea';
+    }
+
     function normalizeGameServers(servers) {
         if (!Array.isArray(servers)) return [];
-        return servers.map((server, index) => ({
-            id: server.id || Date.now() + index,
-            game: server.game || 'Sin juego',
-            name: server.name || server.server || 'Sin servidor'
-        }));
+        return servers
+            .map((server, index) => ({
+                id: server.id || Date.now() + index,
+                game: server.game || 'Sin juego',
+                name: server.name || server.server || 'Sin servidor'
+            }))
+            .filter((server) => !isDeprecatedPrivateServer(server.game, server.name));
     }
 
     function parseGoldPriceValue(value) {
@@ -4284,7 +4330,7 @@
                     amount: row.amount != null ? String(row.amount).replace(/,/g, '') : '',
                     price: row.price != null ? String(row.price) : '',
                 };
-            })
+            }).filter((row) => !isDeprecatedPrivateServer(row.game, row.server))
             : [];
 
         const officialGame = 'WoW Oficial';
@@ -4367,6 +4413,7 @@
     }
 
     const GOLD_CATALOG_CACHE_KEY = 'epicgoldshop_gold_catalog_cache_v2';
+    const STOREFRONT_CACHE_KEY = 'epicgoldshop_storefront_cache_v1';
 
     function readGoldCatalogCache() {
         try {
@@ -4391,6 +4438,71 @@
         } catch (error) {
             console.warn('No se pudo guardar caché local de oro:', error);
         }
+    }
+
+    function readStorefrontCache() {
+        try {
+            const raw = window.localStorage.getItem(STOREFRONT_CACHE_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            return parsed && typeof parsed === 'object' ? parsed : null;
+        } catch (error) {
+            console.warn('No se pudo leer caché local de tienda:', error);
+            return null;
+        }
+    }
+
+    function writeStorefrontCache(payload = {}) {
+        try {
+            window.localStorage.setItem(STOREFRONT_CACHE_KEY, JSON.stringify({
+                updatedAt: new Date().toISOString(),
+                settings: payload.settings && typeof payload.settings === 'object' ? payload.settings : {},
+                accounts: Array.isArray(payload.accounts) ? payload.accounts : [],
+                account_categories: Array.isArray(payload.account_categories) ? payload.account_categories : [],
+                references: Array.isArray(payload.references) ? payload.references : [],
+                services: Array.isArray(payload.services) ? payload.services : [],
+                payment_methods: Array.isArray(payload.payment_methods) ? payload.payment_methods : []
+            }));
+        } catch (error) {
+            console.warn('No se pudo guardar caché local de tienda:', error);
+        }
+    }
+
+    function hydrateStorefrontFromCache() {
+        const cachedStorefront = readStorefrontCache();
+        if (!cachedStorefront) return false;
+
+        const cachedSettings = cachedStorefront.settings && typeof cachedStorefront.settings === 'object'
+            ? cachedStorefront.settings
+            : {};
+
+        settings = {
+            ...settings,
+            whatsapp: cachedSettings.whatsapp || settings.whatsapp,
+            tiktok: cachedSettings.tiktok || settings.tiktok,
+            email: cachedSettings.email || settings.email,
+            site: cachedSettings.site || settings.site
+        };
+
+        accounts = Array.isArray(cachedStorefront.accounts) ? cachedStorefront.accounts : [];
+        categories = normalizeAccountCategories(cachedStorefront.account_categories, accounts);
+        references = normalizeReferenceRecords(cachedStorefront.references);
+        services = Array.isArray(cachedStorefront.services)
+            ? normalizeServiceCatalog(cachedStorefront.services.map(item => ({
+                ...item,
+                price: item?.price != null ? String(item.price) : '0'
+            })))
+            : [];
+        paymentMethods = normalizePaymentMethods(cachedStorefront.payment_methods);
+
+        connectionLog('Tienda precargada desde caché local.', 'warning');
+        return Boolean(
+            accounts.length
+            || categories.length
+            || references.length
+            || services.length
+            || paymentMethods.length
+        );
     }
 
     function hydrateGoldCatalogFromCache() {
@@ -5062,6 +5174,7 @@
 
     async function init() {
         hydrateGoldCatalogFromCache();
+        hydrateStorefrontFromCache();
 
         // Renderizar contenido inicial
         renderAccounts();
@@ -5108,6 +5221,10 @@
             updateCategorySelects();
             renderCategoryDropdown();
             updateAverageRating();
+            if (supabaseReady && !hasShownWelcomeMessage) {
+                hasShownWelcomeMessage = true;
+                showMessage('✨💰 Bienvenidos a Epic Gold Shop 🎮🔥', 'success', { force: true });
+            }
         } catch (error) {
             console.error('Error inicializando datos de Supabase:', error);
             connectionLog(`Error cargando datos iniciales: ${error?.message || error}`, 'error');
@@ -5155,6 +5272,7 @@
             const gameSafe = (game || '').trim();
             const serverSafe = (serverName || '').trim();
             if (!gameSafe || !serverSafe) return;
+            if (isDeprecatedPrivateServer(gameSafe, serverSafe)) return;
             const key = `${gameSafe}::${serverSafe}`.toLowerCase();
             if (!serverMap.has(key)) {
                 serverMap.set(key, { id: Date.now() + serverMap.size, game: gameSafe, name: serverSafe });
@@ -5301,6 +5419,14 @@
         }
 
         updateContactLinks();
+        writeStorefrontCache({
+            settings,
+            accounts,
+            account_categories: accountCategoriesRes.error ? categories : accountCategoriesRes.data,
+            references,
+            services,
+            payment_methods: paymentMethods
+        });
 
         connectionLog(`Datos cargados desde DB: gold=${gold.length}, cuentas=${accounts.length}, refs=${references.length}, categorías=${goldCategories.length}, pagos=${paymentMethods.length}`, 'success');
     }
@@ -5918,14 +6044,6 @@
             <option value="">Selecciona un servidor</option>
             ${servers.map(server => `<option value="${server}">${server}</option>`).join('')}
         `;
-
-        if (servers.length === 1) {
-            serverSelect.value = servers[0];
-            goldOrderState.server = servers[0];
-            updateGoldOrderAmountOptions();
-            document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
-            showGoldOrderStep('details');
-        }
     }
     function parseGoldOrderAmount(value) {
         const normalizedValue = String(value || '')
@@ -6200,6 +6318,10 @@
 
             const createdChannelLabel = data && data.channel_name ? ` Ticket creado: #${data.channel_name}.` : '';
             showGoldOrderMessage(`✅ Ticket enviado correctamente.${createdChannelLabel}`, 'success');
+            const targetUrl = data?.discord_message_url || data?.discord_url || '';
+            if (targetUrl) {
+                setTimeout(() => openDiscordFallback(targetUrl), 300);
+            }
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error
@@ -6213,7 +6335,98 @@
         window.open(url || settings.discord || DISCORD_LINK, '_blank', 'noopener,noreferrer');
     }
 
-    async function submitAccountTicket(accountId) {
+    function resetBuyerContactRequest() {
+        buyerContactRequest = {
+            type: '',
+            itemId: '',
+            itemName: ''
+        };
+
+        const nameInput = document.getElementById('buyer-contact-name');
+        const emailInput = document.getElementById('buyer-contact-email');
+        const discordInput = document.getElementById('buyer-contact-discord');
+        const summary = document.getElementById('buyer-contact-product-summary');
+        const title = document.getElementById('buyer-contact-modal-title');
+
+        if (nameInput) nameInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (discordInput) discordInput.value = '';
+        if (summary) summary.innerHTML = '';
+        if (title) title.textContent = 'Datos del comprador';
+    }
+
+    function openBuyerContactModal(type, itemId) {
+        const isAccount = type === 'account';
+        const item = isAccount
+            ? accounts.find(entry => String(entry.id) === String(itemId))
+            : services.find(entry => String(entry.id) === String(itemId));
+
+        if (!item) {
+            showMessage(isAccount ? 'No se encontró la cuenta seleccionada.' : 'No se encontró el servicio seleccionado.', 'error', { force: true });
+            return;
+        }
+
+        resetBuyerContactRequest();
+        buyerContactRequest = {
+            type,
+            itemId: String(itemId),
+            itemName: item.name || (isAccount ? 'Cuenta premium' : 'Servicio premium')
+        };
+
+        const title = document.getElementById('buyer-contact-modal-title');
+        const summary = document.getElementById('buyer-contact-product-summary');
+        if (title) {
+            title.textContent = isAccount ? 'Compra de cuenta' : 'Solicitud de servicio';
+        }
+        if (summary) {
+            summary.innerHTML = isAccount
+                ? `<strong>Cuenta:</strong> ${item.name || 'Cuenta premium'}<br><strong>Categoría:</strong> ${item.category || 'Sin categoría'}<br><strong>Servidor:</strong> ${item.server || 'No especificado'}`
+                : `<strong>Servicio:</strong> ${item.name || 'Servicio premium'}<br><strong>Categoría:</strong> ${item.category || 'servicios'}<br><strong>Juego:</strong> ${item.game || 'WoW'}`;
+        }
+
+        showModal('buyer-contact-modal');
+        document.getElementById('buyer-contact-name')?.focus();
+    }
+
+    function getBuyerContactPayload() {
+        const customerName = document.getElementById('buyer-contact-name')?.value.trim() || '';
+        const customerEmail = document.getElementById('buyer-contact-email')?.value.trim() || '';
+        const customerDiscord = document.getElementById('buyer-contact-discord')?.value.trim() || '';
+
+        if (!customerName) {
+            showMessage('El nombre del comprador es obligatorio.', 'error', { force: true });
+            document.getElementById('buyer-contact-name')?.focus();
+            return null;
+        }
+
+        if (!customerEmail && !customerDiscord) {
+            showMessage('Debes colocar al menos un Gmail o un Discord para contactar al comprador.', 'error', { force: true });
+            document.getElementById('buyer-contact-email')?.focus();
+            return null;
+        }
+
+        return {
+            customer_name: customerName,
+            customer_email: customerEmail,
+            customer_discord: customerDiscord
+        };
+    }
+
+    async function submitBuyerContactRequest() {
+        const buyerContact = getBuyerContactPayload();
+        if (!buyerContact) return;
+
+        if (buyerContactRequest.type === 'account') {
+            await submitAccountTicket(buyerContactRequest.itemId, buyerContact);
+            return;
+        }
+
+        if (buyerContactRequest.type === 'service') {
+            await submitServiceTicket(buyerContactRequest.itemId, buyerContact);
+        }
+    }
+
+    async function submitAccountTicket(accountId, buyerContact = {}) {
         const account = accounts.find(entry => String(entry.id) === String(accountId));
         if (!account) {
             showMessage('No se encontró la cuenta seleccionada.', 'error', { force: true });
@@ -6231,6 +6444,9 @@
                     price: String(account.price || '0'),
                     description: account.description || '',
                     image: account.image || '',
+                    customer_name: String(buyerContact.customer_name || '').trim(),
+                    customer_email: String(buyerContact.customer_email || '').trim(),
+                    customer_discord: String(buyerContact.customer_discord || '').trim(),
                     source: 'web_account_order',
                     created_at: new Date().toISOString()
                 }
@@ -6248,7 +6464,11 @@
                 throw new Error(data.details || data.error);
             }
 
+            closeModal();
+            resetBuyerContactRequest();
+            const targetUrl = data?.discord_message_url || data?.discord_url || '';
             showMessage('✅ Ticket de cuenta enviado correctamente.', 'success', { force: true });
+            if (targetUrl) openDiscordFallback(targetUrl);
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -6257,7 +6477,7 @@
         }
     }
 
-    async function submitServiceTicket(serviceId) {
+    async function submitServiceTicket(serviceId, buyerContact = {}) {
         const service = services.find(entry => String(entry.id) === String(serviceId));
         if (!service) {
             showMessage('No se encontró el servicio seleccionado.', 'error', { force: true });
@@ -6275,6 +6495,9 @@
                     price: String(service.price || '0'),
                     description: service.description || '',
                     image: service.image || '',
+                    customer_name: String(buyerContact.customer_name || '').trim(),
+                    customer_email: String(buyerContact.customer_email || '').trim(),
+                    customer_discord: String(buyerContact.customer_discord || '').trim(),
                     source: 'web_service_order',
                     created_at: new Date().toISOString()
                 }
@@ -6292,7 +6515,11 @@
                 throw new Error(data.details || data.error);
             }
 
+            closeModal();
+            resetBuyerContactRequest();
+            const targetUrl = data?.discord_message_url || data?.discord_url || '';
             showMessage('✅ Ticket de servicio enviado correctamente.', 'success', { force: true });
+            if (targetUrl) openDiscordFallback(targetUrl);
         } catch (submitError) {
             console.error(submitError);
             const errorDetail = submitError instanceof Error ? submitError.message : String(submitError || 'Error desconocido');
@@ -6816,6 +7043,10 @@
                 if (document.getElementById('gold-category-modal').style.display === 'flex') {
                     saveGoldCategory();
                 }
+                // Modal de datos del comprador
+                if (document.getElementById('buyer-contact-modal').style.display === 'flex') {
+                    submitBuyerContactRequest();
+                }
             }
         });
 
@@ -6828,7 +7059,7 @@
 
         // Click fuera del modal para cerrar
         document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('modal')) {
+            if (e.target.classList.contains('modal') && e.target.id !== 'gold-order-modal') {
                 closeModal();
             }
         });
@@ -6926,14 +7157,14 @@
             const accountButton = event.target.closest('.account-ticket-btn');
             if (accountButton) {
                 event.preventDefault();
-                submitAccountTicket(accountButton.dataset.accountId);
+                openBuyerContactModal('account', accountButton.dataset.accountId);
                 return;
             }
 
             const serviceButton = event.target.closest('.service-ticket-btn');
             if (serviceButton) {
                 event.preventDefault();
-                submitServiceTicket(serviceButton.dataset.serviceId);
+                openBuyerContactModal('service', serviceButton.dataset.serviceId);
             }
         });
 
@@ -8454,9 +8685,10 @@
         document.getElementById('payment-method-cancel-btn').style.display = 'inline-flex';
     }
 
-    function savePaymentMethod() {
+    async function savePaymentMethod() {
         const name = document.getElementById('payment-method-name')?.value.trim();
-        const image = paymentMethodImageData || document.getElementById('payment-method-image')?.value.trim() || '';
+        const imageUrl = document.getElementById('payment-method-image')?.value.trim() || '';
+        const imageFile = document.getElementById('payment-method-image-file')?.files?.[0] || null;
         const infoType = document.getElementById('payment-method-info-type')?.value || 'payment_id';
         const infoValue = document.getElementById('payment-method-info-value')?.value.trim();
 
@@ -8464,6 +8696,17 @@
         if (!infoValue) return showMessage(`La información de ${getPaymentMethodInfoLabel(infoType).toLowerCase()} es obligatoria`, 'error');
 
         const existingMethod = paymentMethods.find((entry) => String(entry.id) === String(editingPaymentMethodId));
+        let image = paymentMethodImageData || imageUrl || existingMethod?.image || '';
+        if (imageFile && !paymentMethodImageData) {
+            try {
+                image = await readFileAsDataUrl(imageFile);
+                paymentMethodImageData = image;
+            } catch (error) {
+                showMessage('No se pudo cargar la imagen del archivo', 'error');
+                return;
+            }
+        }
+
         const nextMethod = {
             id: existingMethod?.id || ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`),
             name,
@@ -8480,7 +8723,8 @@
         }
 
         paymentMethods = normalizePaymentMethods(paymentMethods);
-        persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        const persisted = await persistToDatabase('epicgoldshop_payment_methods', paymentMethods);
+        if (!persisted) return;
         resetPaymentMethodForm();
         switchAdminTab('settings');
         updateGoldOrderPaymentMethodOptions();
@@ -9170,6 +9414,8 @@
         document.getElementById('gold-modal').style.display = 'none';
         document.getElementById('gold-category-modal').style.display = 'none';
         document.getElementById('gold-order-modal').style.display = 'none';
+        document.getElementById('buyer-contact-modal').style.display = 'none';
+        resetBuyerContactRequest();
 
         updateBodyScrollLock();
 
@@ -9265,6 +9511,7 @@
     window.submitGoldOrderTicket = submitGoldOrderTicket;
     window.submitAccountTicket = submitAccountTicket;
     window.submitServiceTicket = submitServiceTicket;
+    window.submitBuyerContactRequest = submitBuyerContactRequest;
     window.enterStore = enterStore;
     window.googleTranslateElementInit = googleTranslateElementInit;
 
