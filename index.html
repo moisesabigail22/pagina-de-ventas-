@@ -6044,14 +6044,6 @@
             <option value="">Selecciona un servidor</option>
             ${servers.map(server => `<option value="${server}">${server}</option>`).join('')}
         `;
-
-        if (servers.length === 1) {
-            serverSelect.value = servers[0];
-            goldOrderState.server = servers[0];
-            updateGoldOrderAmountOptions();
-            document.getElementById('gold-order-modal-title').textContent = 'Completa tu compra';
-            showGoldOrderStep('details');
-        }
     }
     function parseGoldOrderAmount(value) {
         const normalizedValue = String(value || '')
