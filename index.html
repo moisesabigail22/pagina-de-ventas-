@@ -4243,13 +4243,20 @@
     };
 
     // Normalizadores de datos
+    function isDeprecatedPrivateServer(game = '', serverName = '') {
+        return String(game || '').trim() === 'Servidores Privados'
+            && String(serverName || '').trim() === 'South Sea';
+    }
+
     function normalizeGameServers(servers) {
         if (!Array.isArray(servers)) return [];
-        return servers.map((server, index) => ({
-            id: server.id || Date.now() + index,
-            game: server.game || 'Sin juego',
-            name: server.name || server.server || 'Sin servidor'
-        }));
+        return servers
+            .map((server, index) => ({
+                id: server.id || Date.now() + index,
+                game: server.game || 'Sin juego',
+                name: server.name || server.server || 'Sin servidor'
+            }))
+            .filter((server) => !isDeprecatedPrivateServer(server.game, server.name));
     }
 
     function parseGoldPriceValue(value) {
@@ -4284,7 +4291,7 @@
                     amount: row.amount != null ? String(row.amount).replace(/,/g, '') : '',
                     price: row.price != null ? String(row.price) : '',
                 };
-            })
+            }).filter((row) => !isDeprecatedPrivateServer(row.game, row.server))
             : [];
 
         const officialGame = 'WoW Oficial';
@@ -5155,6 +5162,7 @@
             const gameSafe = (game || '').trim();
             const serverSafe = (serverName || '').trim();
             if (!gameSafe || !serverSafe) return;
+            if (isDeprecatedPrivateServer(gameSafe, serverSafe)) return;
             const key = `${gameSafe}::${serverSafe}`.toLowerCase();
             if (!serverMap.has(key)) {
                 serverMap.set(key, { id: Date.now() + serverMap.size, game: gameSafe, name: serverSafe });
