@@ -36,6 +36,10 @@ type DiscordBotUserResponse = {
   username?: string;
 };
 
+type DiscordMessageResponse = {
+  id: DiscordSnowflake;
+};
+
 type DiscordPermissionOverwrite = {
   id: DiscordSnowflake;
   type: 0 | 1;
@@ -239,7 +243,7 @@ async function createGuildChannel(
 }
 
 async function postChannelMessage(token: string, channelId: string, body: Record<string, unknown>) {
-  return await discordApi(`/channels/${channelId}/messages`, token, {
+  return await discordApi<DiscordMessageResponse>(`/channels/${channelId}/messages`, token, {
     method: 'POST',
     body: JSON.stringify(body)
   });
@@ -325,10 +329,10 @@ async function postChannelMessageWithAttachment(
   }
 
   if (response.status === 204) {
-    return;
+    return { id: '' };
   }
 
-  await response.json();
+  return await response.json() as DiscordMessageResponse;
 }
 
 async function createBotTicket(payload: Required<GoldTicketPayload>) {
@@ -386,11 +390,15 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     `Pago: ${payload.payment_method_name} (${payload.payment_method_label}: ${payload.payment_method_value})`
   ].filter(Boolean).join('\n');
 
+  let ticketMessageId = '';
   try {
-    await postChannelMessageWithAttachment(botToken, channel.id, {
+    const ticketMessage = await postChannelMessageWithAttachment(botToken, channel.id, {
       content: openingSummary,
       embeds: [embed]
     }, proofAttachment);
+    if (ticketMessage?.id) {
+      ticketMessageId = ticketMessage.id;
+    }
   } catch (error) {
     throw new Error(`No se pudo publicar el mensaje inicial del ticket en Discord: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -412,6 +420,9 @@ async function createBotTicket(payload: Required<GoldTicketPayload>) {
     channel_id: channel.id,
     channel_name: channel.name || channelName,
     discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
+    discord_message_url: ticketMessageId
+      ? `https://discord.com/channels/${guildId}/${channel.id}/${ticketMessageId}`
+      : '',
     customer_visibility: 'admins_only',
     visibility_scope: {
       roles: adminRoleIds.length,

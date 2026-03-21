@@ -11,6 +11,9 @@ type AccountTicketPayload = {
   price?: string;
   description?: string;
   image?: string;
+  customer_name?: string;
+  customer_email?: string;
+  customer_discord?: string;
   source?: string;
   created_at?: string;
 };
@@ -26,6 +29,10 @@ type DiscordChannelResponse = {
 type DiscordBotUserResponse = {
   id: DiscordSnowflake;
   username?: string;
+};
+
+type DiscordMessageResponse = {
+  id: DiscordSnowflake;
 };
 
 type DiscordPermissionOverwrite = {
@@ -92,6 +99,12 @@ function buildTicketName(ticketPrefix: string, accountName: string) {
 }
 
 function buildDiscordEmbed(payload: Required<AccountTicketPayload>) {
+  const contactLines = [
+    payload.customer_name ? `Nombre: ${payload.customer_name}` : '',
+    payload.customer_email ? `Gmail: ${payload.customer_email}` : '',
+    payload.customer_discord ? `Discord: ${payload.customer_discord}` : ''
+  ].filter(Boolean).join('\n');
+
   return {
     title: 'Nuevo ticket de cuenta',
     color: 0x4f8cff,
@@ -100,6 +113,8 @@ function buildDiscordEmbed(payload: Required<AccountTicketPayload>) {
       { name: 'Servidor', value: payload.server, inline: true },
       { name: 'Cuenta', value: payload.name, inline: true },
       { name: 'Precio', value: payload.price, inline: true },
+      { name: 'Comprador', value: payload.customer_name || 'No indicado', inline: true },
+      { name: 'Contacto', value: contactLines || 'No indicado', inline: false },
       { name: 'Origen', value: payload.source, inline: true },
       { name: 'Descripción', value: payload.description || 'Sin descripción', inline: false }
     ],
@@ -213,7 +228,7 @@ async function createGuildChannel(
 }
 
 async function postChannelMessage(token: string, channelId: string, body: Record<string, unknown>) {
-  return await discordApi(`/channels/${channelId}/messages`, token, {
+  return await discordApi<DiscordMessageResponse>(`/channels/${channelId}/messages`, token, {
     method: 'POST',
     body: JSON.stringify(body)
   });
@@ -255,7 +270,7 @@ async function createBotTicket(payload: Required<AccountTicketPayload>) {
   const adminUserMentions = adminUserIds.map((adminUserId) => `<@${adminUserId}>`).join(' ');
   const openingMessage = [adminRoleMentions, adminUserMentions].filter(Boolean).join(' ').trim() || 'Nueva consulta de cuenta desde la web.';
 
-  await postChannelMessage(botToken, channel.id, {
+  const ticketMessage = await postChannelMessage(botToken, channel.id, {
     content: openingMessage,
     embeds: [embed]
   });
@@ -277,6 +292,7 @@ async function createBotTicket(payload: Required<AccountTicketPayload>) {
     channel_id: channel.id,
     channel_name: channel.name || channelName,
     discord_url: `https://discord.com/channels/${guildId}/${channel.id}`,
+    discord_message_url: `https://discord.com/channels/${guildId}/${channel.id}/${ticketMessage.id}`,
     visibility_scope: {
       roles: adminRoleIds.length,
       users: adminUserIds.length
@@ -314,6 +330,9 @@ Deno.serve(async (request) => {
     price: String(payload.price).trim(),
     description: String(payload.description || 'Sin descripción').trim().slice(0, 1000),
     image: String(payload.image || '').trim(),
+    customer_name: String(payload.customer_name || '').trim().slice(0, 120),
+    customer_email: String(payload.customer_email || '').trim().slice(0, 160),
+    customer_discord: String(payload.customer_discord || '').trim().slice(0, 120),
     source: String(payload.source || 'web_account_order').trim(),
     created_at: String(payload.created_at || new Date().toISOString())
   };
